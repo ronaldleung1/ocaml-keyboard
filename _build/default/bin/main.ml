@@ -17,6 +17,6 @@ let rec print_notes pressed_notes notes =
   | _, _ -> ()
 
 let () =
-  print_endline "Welcome to Caml Music!";
+  print_endline "Welcome to Caml Music";
   print_notes pressed_notes notes;
   print_newline ()
