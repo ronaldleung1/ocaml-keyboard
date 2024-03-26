@@ -1,0 +1,29 @@
+---
+# Members of your group.
+group:
+  - name: Michael Clarkson
+    netid: mrc26
+  - name: Justin Hsu
+    netid: jah659
+# Your PM.
+pm:
+  name: Wendy Carlos
+  netid: wc39
+# Set to false if you don't want your gallery entry to be public.
+publish: true
+# Pithy title
+title: "The Complete Caml Calculator (CCC)"
+# OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
+git-repo: "https://github.com/cs3110/textbook"
+# If you have no demo screencast, replace the url string with an empty string ""
+demo-video-url: "https://www.youtube.com/watch?v=eSBybJGZoCU"
+# Write a short, attention-grabbing description of your project.
+desc: >
+  Our project is an interactive calculator. It supports standard mathematical
+  operations like addition, multiplication, negation, and division on both
+  integers and floating-point numbers. The interface is completely
+  programmable--new functions can easily be defined and assigned to new "keys"
+  in the visual interface.
+
+  Standard visual I/O is supported, but the calculator can also emit sound. By
+  pressing down a special key, it can play a little melody.
