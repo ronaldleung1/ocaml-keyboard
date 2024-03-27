@@ -1,3 +1,5 @@
+open Music
+
 let notes = [ 'A'; 'B'; 'C'; 'D'; 'E'; 'F'; 'G' ]
 
 let print_notes pressed_note =
@@ -22,3 +24,6 @@ let () =
     print_notes pressed_note
   else print_endline "No note entered";
   print_newline ()
+
+
+let () = Lwt_main.run (Metronome.start_metronome ())
