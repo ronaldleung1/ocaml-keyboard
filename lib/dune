@@ -1,2 +1,3 @@
 (library
- (name music))
+ (name music)
+ (libraries unix lwt lwt.unix))
