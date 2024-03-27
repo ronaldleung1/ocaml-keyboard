@@ -1,0 +1,152 @@
+commit 0801f20f67d0b438930eadfc76493be6d69b8ffd
+Merge: 574c978 fbf6e0b
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 17:48:26 2024 -0400
+
+    Merge pull request #4 from ronaldleung1/metronome
+    
+    Implement concurrent operation to play metronome while taking in user…
+
+commit fbf6e0bf59cf1a43598c5fc491af05d365ecb8f2
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 17:47:49 2024 -0400
+
+    Implement concurrent operation to play metronome while taking in user input.
+
+commit 574c978732cb8595a6874dc260e53acc48dfa713
+Merge: 996b86a 531a320
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 13:04:42 2024 -0400
+
+    Merge pull request #3 from ronaldleung1/metronome
+    
+    Metronome Player
+
+commit 531a3204a65fd734c48a4be30a989aae9f9d3e96
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 13:03:52 2024 -0400
+
+    Integrate user input of Metronome beats per minute in terminal
+
+commit adc56e21dce8ca0709c31b334b41058d9d7539ee
+Merge: 996b86a 49f1044
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 12:55:26 2024 -0400
+
+    Merge branch 'dev' into metronome
+    - Implemented metronome functionality that plays .wav file by bpm
+
+commit 49f1044a221112b1eb1ed9c4fa3bd58c0bc48d67
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 12:50:55 2024 -0400
+
+    Implement Metronome module to get consistent ticking sound playing.
+    - still need to figure out how to run other processes in main while metronome is running
+    -added some things to install.md
+
+commit 996b86a6cd628416306c9430e2702f17fc34c7e5
+Merge: c8d9d29 a653f07
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Tue Mar 26 17:31:26 2024 -0400
+
+    Merge pull request #2 from ronaldleung1/cassidy/terminal-ui-basic
+    
+    Handle User Input from Terminal
+
+commit a653f07ee4beb2b4de7d27d79b7d2ceb9aef3dce
+Merge: 2cc417b c8d9d29
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Mar 26 17:28:28 2024 -0400
+
+    Merge branch 'main' into cassidy/terminal-ui-basic
+
+commit 2cc417b8c389d9dcd754bfedeee40ac47e95b18d
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Mar 26 17:25:20 2024 -0400
+
+    Refactor note display to handle user input handling to indicate note being played
+    
+    - Implement dynamic user input processing
+    - Expand the notes range to include 'A' through ‘G’
+    - Allow users to type a single note, which is then highlighted in green if present in the notes list
+    - Add user prompts: users enter a note from 'A' to 'G'.
+
+commit c8d9d2950d08012d0f8d69cf310e300b9c35443c
+Merge: fe87ea7 9f70a3f
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Mon Mar 25 17:46:43 2024 -0400
+
+    Merge pull request #1 from ronaldleung1/cassidy/terminal-ui-basic
+    
+    Basic Colored Terminal Output
+
+commit 9f70a3f46c492fb8c1ecccb5b4dc267b33e915fc
+Merge: 602db2d fe87ea7
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Mon Mar 25 17:46:28 2024 -0400
+
+    Merge branch 'main' into cassidy/terminal-ui-basic
+
+commit 602db2dd83344b060b23550ddde40863bd62b7bc
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Mon Mar 25 17:43:26 2024 -0400
+
+    Add .gitignore
+
+commit 9c3c1d97b086aa981ee27a9ed3f43d61d8c69992
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Mon Mar 25 17:40:37 2024 -0400
+
+    Implement color-coded terminal output
+    
+    - Include a welcome message at the start of the program
+    - Use ANSITerminal to highlight pressed notes in green and unpressed notes in white against a black background
+    - Set up formatting in .ocamlformat file
+
+commit fe87ea7e403e39908a382897b6ac4964e114a5e3
+Author: Ronald Leung <rfl68@cornell.edu>
+Date:   Mon Mar 25 17:28:22 2024 -0400
+
+    add project configuration files
+
+commit a70b3356ad5e5c865abd5276dbce397b4c239d13
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Mar 25 16:21:46 2024 -0400
+
+    Initialize dune project named 'music'
+
+commit a81ffb125b01cbe9358b28f7d6642413f62b30b5
+Author: Ganesh Rayavarapu <116599817+gan0412@users.noreply.github.com>
+Date:   Mon Mar 11 17:56:03 2024 -0400
+
+    Update README.md
+
+commit f8a45c8bdc583b45b7766a23dbcbaf73381b3fb4
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Mar 11 17:53:11 2024 -0400
+
+    name
+
+commit cc25e02b86834c07c9cabb0722d0e672788a2ddf
+Author: EricQiu <sq225@cornell.edu>
+Date:   Mon Mar 11 17:51:54 2024 -0400
+
+    add name and netID
+
+commit bc9ec26c12f27b7742d8a3b8f2f88da93f2f3eb0
+Author: Ronald Leung <rfl68@cornell.edu>
+Date:   Mon Mar 11 17:50:21 2024 -0400
+
+    add ronald to readme
+
+commit ddfd8e8fa18c022e3312c38ad1286bae60dbac7a
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Mon Mar 11 17:48:50 2024 -0400
+
+    Add name and netid
+
+commit 8fc085a45f485aa29a1b6657605c7d9469eb83a9
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Mon Mar 11 17:33:47 2024 -0400
+
+    Create README.md
