@@ -23,7 +23,12 @@ let () =
     let pressed_note = input.[0] in
     print_notes pressed_note
   else print_endline "No note entered";
+  print_newline ();
+  print_endline "Enter your metronome's desired beats per minute: ";
+  let bpm = read_line () in
+  Metronome.set_bpm (float_of_int ((int_of_string) bpm));
   print_newline ()
 
-
-let () = Lwt_main.run (Metronome.start_metronome ())
+let () = 
+  print_endline "Starting your metronome...";
+  Lwt_main.run (Metronome.start_metronome ())

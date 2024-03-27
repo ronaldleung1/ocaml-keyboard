@@ -1,4 +1,0 @@
-(lang dune 3.14)
-(name music)
-(sections (lib .) (bin ../../bin) (doc ../../doc/music))
-(files (lib (META dune-package opam)) (bin (music)) (doc (README.md)))
