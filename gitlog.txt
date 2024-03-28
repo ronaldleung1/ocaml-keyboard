@@ -1,3 +1,27 @@
+commit e1ba6afdd382df4b5cdf2380c79d14bc41fe3237
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu Mar 28 15:38:48 2024 -0400
+
+    Terminate program on stop
+
+commit 9374fe16175344fde9bbd82a6b492a54caa3d9a5
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu Mar 28 15:26:59 2024 -0400
+
+    Change instruction for user interface
+
+commit c387af13b031aa2a9a6aa21feeb9ac21b11b1aad
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 22:05:32 2024 -0400
+
+    Update installation requirements
+
+commit 332e27b8d0d815b88d694b73f15096fbdaf30906
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed Mar 27 17:55:39 2024 -0400
+
+    Add gitlog
+
 commit 0801f20f67d0b438930eadfc76493be6d69b8ffd
 Merge: 574c978 fbf6e0b
 Author: Justin Xiang <jx372@cornell.edu>
