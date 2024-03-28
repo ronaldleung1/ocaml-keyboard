@@ -38,14 +38,16 @@ let listen_for_commands () =
 
 let metronome_commands pool () = 
   let start = Task.async pool (fun _ -> Metronome.start_metronome (Unix.gettimeofday() +. 1.) ()) in
-  let _ = Task.async pool (fun _ -> listen_for_commands ()) in
-  let _ = Task.await pool start in ()
+  let listener = Task.async pool (fun _ -> listen_for_commands ()) in
+  let _ = Task.await pool start in 
+  let _ = Task.await pool listener in ()
+
 
 let () = 
   let pool = Task.setup_pool ~num_domains:4 () in
   print_endline "Starting your metronome... (type 'stop' to stop and an integer to change the bpm)";
   let _ = Task.run pool (fun () -> metronome_commands pool ()) in
-  Task.teardown_pool pool;
+  (* Task.teardown_pool pool; *)
   print_endline "Metronome stopped.";
 
 
