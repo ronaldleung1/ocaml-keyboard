@@ -1,3 +1,3 @@
 opam install lwt lwt_ppx domainslib
 
-make sure aflplay is installed
+Must have MacOS so the program called use the afplay system command to play sound.
