@@ -1,20 +1,19 @@
 open Music
 open Domainslib
 
-let notes = [ 'A'; 'B'; 'C'; 'D'; 'E'; 'F'; 'G' ]
-
 let print_notes pressed_note =
   List.iter
     (fun note ->
-      if Char.equal note (Char.uppercase_ascii pressed_note) then
+      if Char.equal note (Char.uppercase_ascii pressed_note) then (
         ANSITerminal.print_string
           [ ANSITerminal.green; ANSITerminal.on_black ]
-          (String.make 1 note)
+          (String.make 1 note);
+        Note.play note)
       else
         ANSITerminal.print_string
           [ ANSITerminal.white; ANSITerminal.on_black ]
           (String.make 1 note))
-    notes;
+    Note.notes;
   print_newline ()
 
 let () =
