@@ -1,4 +1,16 @@
-opam install lwt lwt_ppx domainslib
+> Note: This project currently only runs on devices running MacOS as it uses the afplay system command to play sound. The project should be able to run on other devices using the VirtualBox virtual machine with the guest OS set to a MacOS release.
 
-Must have MacOS so the program called use the afplay system command to play sound.
-Make sure the audio is coming out of your computer and not earbuds or a bluetooth device.
+> Note: Speakers should be set to the device's internal speakers, as audio behaves inconsistently with earbuds and other bluetooth devices.
+
+## Getting Started
+
+Install dependencies:
+```
+opam install lwt lwt_ppx domainslib
+```
+
+Build and run program:
+```
+dune build
+dune exec bin/main.exe
+```
