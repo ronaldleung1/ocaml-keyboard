@@ -11,11 +11,12 @@ let setup () =
   (* let music = load_sound "assets/metronome-trimmed.wav" in
 
      play_sound music; *)
-  Metronome.start 60. ();
+  let metronome = Metronome.start 60. in
 
-  set_target_fps 60
+  set_target_fps 60;
+  metronome
 
-let rec loop () =
+let rec loop metronome =
   if Raylib.window_should_close () then Raylib.close_window ()
   else
     let open Raylib in
@@ -26,10 +27,13 @@ let rec loop () =
     draw_rectangle 50 0 20 100 Color.white;
     draw_text "Welcome to OCaml Music!" 190 200 20 Color.white;
 
+    metronome ();
     end_drawing ();
-    loop ()
+    loop metronome
 
-let () = setup () |> loop
+let () =
+  let metronome = setup () in
+  loop metronome
 
 (* open Music open Domainslib
 

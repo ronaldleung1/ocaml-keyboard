@@ -1,15 +1,8 @@
-let start bpm () =
+let start bpm =
   let tick = Raylib.load_sound "assets/metronome-trimmed.wav" in
-  let rec loop start_time =
-    if bpm > 0. then (
-      let interval = 60. /. bpm in
-      while Unix.gettimeofday () < start_time do
-        ()
-      done;
-      (* Loop until Unix.gettimeofday () is start_time *)
+  let interval = 60. /. bpm in
+  let next_time = ref (Unix.gettimeofday () +. interval) in
+  fun () ->
+    if Unix.gettimeofday () >= !next_time then (
       Raylib.play_sound tick;
-      let next_time = Unix.gettimeofday () +. interval in
-      (* Capture end time after playing tick *)
-      loop next_time)
-  in
-  loop (Unix.gettimeofday () +. 1.)
+      next_time := Unix.gettimeofday () +. interval)
