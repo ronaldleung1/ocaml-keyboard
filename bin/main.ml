@@ -12,7 +12,7 @@ let setup () =
 
      play_sound music; *)
   let metronome = Metronome.start 60. in
-  let key = Button.create in
+  let key = Button.create () in
 
   set_target_fps 60;
   (metronome, key)
@@ -27,8 +27,8 @@ let rec loop metronome key =
        Color.white; draw_rectangle 50 0 20 100 Color.white; *)
     draw_text "Welcome to OCaml Music!" 190 200 20 Color.white;
 
-    metronome ();
     key ();
+    metronome ();
     end_drawing ();
     loop metronome key
 
