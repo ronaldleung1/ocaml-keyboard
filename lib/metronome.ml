@@ -1,42 +1,24 @@
-open Lwt
+open Raylib
 
-let is_on = Atomic.make true
-let bpm = Atomic.make 0.
-let beats_played = ref 0
-let start_time = ref (Unix.gettimeofday ())
-let set_bpm beat = Atomic.set bpm beat
-let get_bpm () = Atomic.get bpm
+let start (start_bpm : float) =
+  let tick = load_sound "assets/metronome-trimmed.wav" in
+  set_sound_volume tick 0.5;
+  let bpm = ref start_bpm in
+  let next_time = ref (Unix.gettimeofday ()) in
+  let running = ref true in
+  fun () ->
+    if !running then (
+      if is_key_down Key.Up then bpm := !bpm +. 1.0
+      else if is_key_down Key.Down then bpm := !bpm -. 1.0
+      else if is_key_pressed Key.Space then running := false
+      else if Unix.gettimeofday () >= !next_time then (
+        play_sound tick;
+        next_time := Unix.gettimeofday () +. (60. /. !bpm)))
+    else if is_key_pressed Key.Space then running := true;
 
-let reset () =
-  let time = Unix.gettimeofday () in
-  start_time := time;
-  Atomic.set bpm 0. (* Reset to default BPM instead of 0. *)
-
-let play_tick () =
-  let () =
-    Lwt_preemptive.set_bounds (!beats_played + 1, !beats_played + 1)
-  in
-  Lwt.async (fun () ->
-      Lwt_preemptive.detach
-        (fun () ->
-          let _ = Sys.command "afplay ./assets/metronome-trimmed.wav" in
-          ())
-        ()
-      >>= fun _ -> Lwt.return_unit)
-
-let rec start_metronome start_time () =
-  if Atomic.get is_on then
-    let bpm = get_bpm () in
-    if bpm > 0. then (
-      let interval = 60. /. bpm in
-      while Unix.gettimeofday () < start_time do
-        ()
-      done;
-      (* Loop until Unix.gettimeofday () is start_time *)
-      play_tick ();
-      beats_played := !beats_played + 1;
-      let next_time = Unix.gettimeofday () +. interval in
-      (* Capture end time after playing tick *)
-      start_metronome next_time ())
-    else Lwt.return_unit
-  else Lwt.return_unit
+    (* removes the extra period after the bpm's float value *)
+    let trunc_bpm =
+      String.sub (string_of_float !bpm) 0
+        (String.length (string_of_float !bpm) - 1)
+    in
+    draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold
