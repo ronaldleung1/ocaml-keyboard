@@ -12,28 +12,29 @@ let setup () =
 
      play_sound music; *)
   let metronome = Metronome.start 60. in
+  let key = Button.create in
 
   set_target_fps 60;
-  metronome
+  (metronome, key)
 
-let rec loop metronome =
+let rec loop metronome key =
   if Raylib.window_should_close () then Raylib.close_window ()
   else
     let open Raylib in
     begin_drawing ();
     clear_background Color.gray;
-    draw_rectangle 0 0 20 100 Color.white;
-    draw_rectangle 25 0 20 100 Color.white;
-    draw_rectangle 50 0 20 100 Color.white;
+    (* draw_rectangle 0 0 20 100 Color.white; draw_rectangle 25 0 20 100
+       Color.white; draw_rectangle 50 0 20 100 Color.white; *)
     draw_text "Welcome to OCaml Music!" 190 200 20 Color.white;
 
     metronome ();
+    key ();
     end_drawing ();
-    loop metronome
+    loop metronome key
 
 let () =
-  let metronome = setup () in
-  loop metronome
+  let metronome, key = setup () in
+  loop metronome key
 
 (* open Music open Domainslib
 
