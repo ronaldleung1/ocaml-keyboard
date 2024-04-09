@@ -6,7 +6,7 @@
 
 Install dependencies:
 ```
-opam install lwt lwt_ppx domainslib
+opam install lwt lwt_ppx domainslib raylib
 ```
 
 Build and run program:
