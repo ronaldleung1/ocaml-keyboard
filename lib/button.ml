@@ -1,14 +1,12 @@
-(* adapted from
-   https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button *)
 open Raylib
 
-let create note rect =
+let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
   let tick = load_sound ("assets/notes/" ^ note ^ ".mp3") in
-  let color = ref Color.white in
+  let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
   (* may be best to move to main.ml *)
   fun () ->
-    color := Color.white;
+    color := opt_color;
     mouse_point := get_mouse_position ();
 
     if check_collision_point_rec !mouse_point rect then (
@@ -20,4 +18,25 @@ let create note rect =
       (int_of_float (Rectangle.y rect))
       (int_of_float (Rectangle.width rect))
       (int_of_float (Rectangle.height rect))
-      !color
+      !color;
+
+    (* draws the text of 'note' in the middle of the rectangle when
+       optional 'draw_text' is true *)
+    if draw_text then
+      let text = note in
+      let text_width = measure_text text 20 in
+      let text_x =
+        int_of_float
+          (Rectangle.x rect
+          +. (Rectangle.width rect /. 2.)
+          -. (float_of_int text_width /. 2.))
+      in
+      let text_y =
+        int_of_float
+          (Rectangle.y rect +. (Rectangle.height rect /. 2.) -. 10.)
+      in
+      let text_color =
+        if !color = Color.black then Color.white else Color.black
+      in
+      Raylib.(draw_text text text_x text_y 20 text_color)
+    else ()
