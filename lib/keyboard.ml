@@ -87,19 +87,29 @@ let notes =
 
 let init_keyboard init_octave =
   let curr_octave = ref init_octave in
+  (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
+     the octave *)
   let curr_notes =
     List.filter
       (fun note ->
         let octave_ascii = !curr_octave + 48 in
         String.contains note (char_of_int octave_ascii)
+        || String.contains note (char_of_int octave_ascii)
+        || String.contains note (char_of_int (octave_ascii + 1))
         || String.contains note 'C'
-           && String.contains note (char_of_int (octave_ascii + 1)))
+           && String.contains note (char_of_int (octave_ascii + 2)))
       notes
   in
+  let screen_length = Raylib.get_screen_width () in
+
+  let num_octaves = 2 in
+  let num_keys_octave = 15 in
+
+  (* 7 white keys, 5 black keys *)
   let white_keys =
-    let num_white_keys = 8 in
-    let screen_length = Raylib.get_screen_width () in
-    let key_width = screen_length / num_white_keys in
+    let num_segments = (7 * num_octaves) + 1 in
+    (* 15 segments, 15 white keys *)
+    let key_width = screen_length / num_segments in
     let white_notes =
       List.filter
         (fun note -> not (String.contains note 'b'))
@@ -107,7 +117,7 @@ let init_keyboard init_octave =
     in
     List.mapi
       (fun i note ->
-        let x = i * (key_width + 1) in
+        let x = i * key_width in
         let y = 100 in
         let width = key_width in
         let height = 300 in
@@ -117,21 +127,30 @@ let init_keyboard init_octave =
              (float_of_int width) (float_of_int height)))
       white_notes
   in
+
   let black_keys =
-    let num_black_keys = 12 in
-    let screen_length = Raylib.get_screen_width () in
-    let white_key_width = screen_length / 8 in
-    let key_width =
-      (screen_length - white_key_width) / num_black_keys
-    in
+    (* 25 black key segments, only 10 black keys though *)
+    let num_segments = 12 * num_octaves in
+
+    (* 15 segments, 15 white keys *)
+    let num_white_segments = (7 * num_octaves) + 1 in
+    (* account for gap between keys of 1 *)
+    let white_key_width = (screen_length / num_white_segments) + 1 in
+
+    let key_width = (screen_length - white_key_width) / num_segments in
+
     let black_notes =
       List.filter (fun note -> String.contains note 'b') curr_notes
     in
+    (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
       List.mapi
         (fun i note ->
-          let x = List.nth black_indices i * key_width in
+          let x =
+            (List.nth black_indices (i mod 5) + (i / 5 * 12))
+            * key_width
+          in
           let y = 100 in
           let width = key_width in
           let height = 200 in

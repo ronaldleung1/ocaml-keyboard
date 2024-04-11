@@ -16,7 +16,7 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
     draw_rectangle
       (int_of_float (Rectangle.x rect))
       (int_of_float (Rectangle.y rect))
-      (int_of_float (Rectangle.width rect))
+      (int_of_float (Rectangle.width rect) - 1)
       (int_of_float (Rectangle.height rect))
       !color;
 
@@ -38,5 +38,5 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
       let text_color =
         if !color = Color.black then Color.white else Color.black
       in
-      Raylib.(draw_text text text_x text_y 20 text_color)
+      Raylib.(draw_text text text_x text_y 16 text_color)
     else ()
