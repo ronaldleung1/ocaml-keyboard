@@ -14,3 +14,9 @@ let remove_song playlist song_title =
 
 let contains playlist song_title =
   List.exists (fun song -> Song.title song = song_title) playlist.songs
+
+let display playlist =
+  List.fold_left
+    (fun acc x -> x ^ "\n" ^ acc)
+    ""
+    (List.map (fun song -> Song.to_string song) playlist.songs)
