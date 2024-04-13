@@ -61,6 +61,7 @@ let rec playlist_menu my_playlist =
   print_endline "2. Add a song to a playlist";
   print_endline "3. Remove a song from a playlist";
   print_endline "4. Check if a playlist contains a song";
+  print_endline "5. View total duration a playlist";
   print_endline "Type 'quit' to exit.";
   let choice = read_line () in
   match choice with
@@ -93,6 +94,7 @@ let rec playlist_menu my_playlist =
       print_endline
         (string_of_bool (Playlist.contains my_playlist title));
       playlist_menu my_playlist
+  | "5" -> print_endline (Playlist.total_duration my_playlist)
   | _ -> playlist_menu my_playlist
 
 let () =
