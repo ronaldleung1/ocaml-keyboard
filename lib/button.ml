@@ -6,15 +6,14 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
   let mouse_point = ref (Vector2.create 0. 0.) in
 
   (* may be best to move to main.ml *)
-
-  (*let notes = [||] in*)
+  let note_blocks = ref [] in
   (* (y, height) array *)
-  let draw_note () =
+  let draw_note_block (pos, length) =
     draw_rectangle
       (int_of_float (Rectangle.x rect))
-      (int_of_float (Rectangle.y rect) - 100)
+      (int_of_float (Rectangle.y rect) - pos)
       (int_of_float (Rectangle.width rect) - 1)
-      100 Color.blue
+      length Color.blue
   in
 
   fun () ->
@@ -22,12 +21,19 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
     mouse_point := get_mouse_position ();
 
     if check_collision_point_rec !mouse_point rect then (
-      if is_mouse_button_pressed MouseButton.Left then play_sound tick;
+      if is_mouse_button_pressed MouseButton.Left then (
+        play_sound tick;
+        note_blocks := (0, 0) :: !note_blocks);
       if is_mouse_button_down MouseButton.Left then (
         color := Color.green;
-        draw_note ()));
+        match !note_blocks with
+        | [] -> ()
+        | (pos, length) :: t -> note_blocks := (pos, length + 1) :: t));
 
-    (* Array.iter(fun note -> draw_note note ) notes; *)
+    note_blocks :=
+      List.map (fun (pos, length) -> (pos + 1, length)) !note_blocks;
+    List.iter (fun note -> draw_note_block note) !note_blocks;
+
     draw_rectangle
       (int_of_float (Rectangle.x rect))
       (int_of_float (Rectangle.y rect))
