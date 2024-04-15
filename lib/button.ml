@@ -5,6 +5,18 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 
+  let block_color note =
+    match String.sub note 0 1 with
+    | "A" -> Color.red
+    | "B" -> Color.orange
+    | "C" -> Color.yellow
+    | "D" -> Color.green
+    | "E" -> Color.blue
+    | "F" -> Color.purple
+    | "G" -> Color.pink
+    | _ -> Color.white
+  in
+
   (* may be best to move to main.ml *)
   let note_blocks = ref [] in
   (* (y, height) array *)
@@ -13,7 +25,7 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
       (int_of_float (Rectangle.x rect))
       (int_of_float (Rectangle.y rect) - pos)
       (int_of_float (Rectangle.width rect) - 1)
-      length Color.blue
+      length (block_color note)
   in
 
   fun () ->
@@ -32,6 +44,13 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
 
     note_blocks :=
       List.map (fun (pos, length) -> (pos + 1, length)) !note_blocks;
+
+    note_blocks :=
+      List.filter
+        (fun (pos, length) ->
+          pos - length < int_of_float (Rectangle.y rect))
+        !note_blocks;
+
     List.iter (fun note -> draw_note_block note) !note_blocks;
 
     draw_rectangle
