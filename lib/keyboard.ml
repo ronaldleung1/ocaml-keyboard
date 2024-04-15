@@ -85,7 +85,7 @@ let notes =
     "G7";
   ]
 
-let init_keyboard (rect : Raylib.Rectangle.t) init_octave =
+let init_keyboard init_octave rect =
   let curr_octave = ref init_octave in
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)

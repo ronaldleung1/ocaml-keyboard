@@ -4,15 +4,30 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
   let tick = load_sound ("assets/notes/" ^ note ^ ".mp3") in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
+
   (* may be best to move to main.ml *)
+
+  (*let notes = [||] in*)
+  (* (y, height) array *)
+  let draw_note () =
+    draw_rectangle
+      (int_of_float (Rectangle.x rect))
+      (int_of_float (Rectangle.y rect) - 100)
+      (int_of_float (Rectangle.width rect) - 1)
+      100 Color.blue
+  in
+
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
 
     if check_collision_point_rec !mouse_point rect then (
       if is_mouse_button_pressed MouseButton.Left then play_sound tick;
-      if is_mouse_button_down MouseButton.Left then color := Color.green);
+      if is_mouse_button_down MouseButton.Left then (
+        color := Color.green;
+        draw_note ()));
 
+    (* Array.iter(fun note -> draw_note note ) notes; *)
     draw_rectangle
       (int_of_float (Rectangle.x rect))
       (int_of_float (Rectangle.y rect))

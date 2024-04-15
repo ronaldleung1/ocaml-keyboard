@@ -14,12 +14,11 @@ let setup () =
 
   (* Initialize volume control with default volume level *)
   let keys =
-    Keyboard.init_keyboard
+    Keyboard.init_keyboard 5
       (Rectangle.create 0.
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      5
   in
 
   set_target_fps 60;
