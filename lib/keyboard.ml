@@ -85,7 +85,7 @@ let notes =
     "G7";
   ]
 
-let init_keyboard init_octave =
+let init_keyboard (rect : Raylib.Rectangle.t) init_octave =
   let curr_octave = ref init_octave in
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -100,16 +100,15 @@ let init_keyboard init_octave =
            && String.contains note (char_of_int (octave_ascii + 2)))
       notes
   in
-  let screen_length = Raylib.get_screen_width () in
+  let keyboard_width = int_of_float (Raylib.Rectangle.width rect) in
 
   let num_octaves = 2 in
-  let num_keys_octave = 15 in
 
   (* 7 white keys, 5 black keys *)
   let white_keys =
     let num_segments = (7 * num_octaves) + 1 in
     (* 15 segments, 15 white keys *)
-    let key_width = screen_length / num_segments in
+    let key_width = keyboard_width / num_segments in
     let white_notes =
       List.filter
         (fun note -> not (String.contains note 'b'))
@@ -117,10 +116,12 @@ let init_keyboard init_octave =
     in
     List.mapi
       (fun i note ->
-        let x = i * key_width in
-        let y = 100 in
+        let x =
+          (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
+        in
+        let y = int_of_float (Raylib.Rectangle.y rect) in
         let width = key_width in
-        let height = 300 in
+        let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
         Button.create ~draw_text:true ~opt_color:color note
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
@@ -135,9 +136,9 @@ let init_keyboard init_octave =
     (* 15 segments, 15 white keys *)
     let num_white_segments = (7 * num_octaves) + 1 in
     (* account for gap between keys of 1 *)
-    let white_key_width = (screen_length / num_white_segments) + 1 in
+    let white_key_width = (keyboard_width / num_white_segments) + 1 in
 
-    let key_width = (screen_length - white_key_width) / num_segments in
+    let key_width = (keyboard_width - white_key_width) / num_segments in
 
     let black_notes =
       List.filter (fun note -> String.contains note 'b') curr_notes
@@ -151,9 +152,11 @@ let init_keyboard init_octave =
             (List.nth black_indices (i mod 5) + (i / 5 * 12))
             * key_width
           in
-          let y = 100 in
+          let y = int_of_float (Raylib.Rectangle.y rect) in
           let width = key_width in
-          let height = 200 in
+          let height =
+            int_of_float (Raylib.Rectangle.height rect *. 2. /. 3.)
+          in
           let color = Raylib.Color.black in
           Button.create ~draw_text:true ~opt_color:color note
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)

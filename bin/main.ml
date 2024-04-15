@@ -10,9 +10,17 @@ let setup () =
   init_audio_device ();
 
   let metronome = Metronome.start 60. in
-  let volume_control = Volume.start 5. in  (* Initialize volume control with default volume level *)
+  let volume_control = Volume.start 5. in
 
-  let keys = Keyboard.init_keyboard 5 in
+  (* Initialize volume control with default volume level *)
+  let keys =
+    Keyboard.init_keyboard
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      5
+  in
 
   set_target_fps 60;
   (metronome, keys, volume_control)
@@ -27,7 +35,8 @@ let rec loop metronome keys volume_control =
 
     (List.iter (fun key -> key ())) keys;
     metronome ();
-    volume_control ();  (* Adjust volume as needed *)
+    volume_control ();
+    (* Adjust volume as needed *)
     end_drawing ();
     loop metronome keys volume_control
 
