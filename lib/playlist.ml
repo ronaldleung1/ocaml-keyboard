@@ -4,6 +4,7 @@ type t = {
 }
 
 let create name = { name; songs = [] }
+let get_name playlist = playlist.name
 let add_song playlist song = playlist.songs <- song :: playlist.songs
 
 let remove_song playlist song_title =
