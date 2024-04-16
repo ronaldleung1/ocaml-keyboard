@@ -4,6 +4,8 @@ type t = {
 }
 
 let create name = { name; songs = [] }
+let is_empty playlist = List.length playlist.songs == 0
+let get_name playlist = playlist.name
 let add_song playlist song = playlist.songs <- song :: playlist.songs
 
 let remove_song playlist song_title =
@@ -34,7 +36,11 @@ let total_duration (playlist : t) =
   "Total Duration: " ^ time_to_string (seconds_to_minutes total_seconds)
 
 let display playlist =
-  List.fold_left
-    (fun acc x -> x ^ "\n" ^ acc)
-    ""
-    (List.map (fun song -> Song.to_string_detailed song) playlist.songs)
+  if is_empty playlist then "Playlist is empty."
+  else
+    List.fold_left
+      (fun acc x -> x ^ "\n" ^ acc)
+      ""
+      (List.map
+         (fun song -> Song.to_string_detailed song)
+         playlist.songs)
