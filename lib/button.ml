@@ -4,14 +4,54 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
   let tick = load_sound ("assets/notes/" ^ note ^ ".mp3") in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
+
+  let block_color note =
+    match String.sub note 0 1 with
+    | "A" -> Color.red
+    | "B" -> Color.orange
+    | "C" -> Color.yellow
+    | "D" -> Color.green
+    | "E" -> Color.blue
+    | "F" -> Color.purple
+    | "G" -> Color.pink
+    | _ -> Color.white
+  in
+
   (* may be best to move to main.ml *)
+  let note_blocks = ref [] in
+  (* (y, height) array *)
+  let draw_note_block (pos, length) =
+    draw_rectangle
+      (int_of_float (Rectangle.x rect))
+      (int_of_float (Rectangle.y rect) - pos)
+      (int_of_float (Rectangle.width rect) - 1)
+      length (block_color note)
+  in
+
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
 
     if check_collision_point_rec !mouse_point rect then (
-      if is_mouse_button_pressed MouseButton.Left then play_sound tick;
-      if is_mouse_button_down MouseButton.Left then color := Color.green);
+      if is_mouse_button_pressed MouseButton.Left then (
+        play_sound tick;
+        note_blocks := (0, 0) :: !note_blocks);
+      if is_mouse_button_down MouseButton.Left then (
+        color := Color.green;
+        match !note_blocks with
+        | [] -> ()
+        | (pos, length) :: t -> note_blocks := (pos, length + 1) :: t));
+
+    note_blocks :=
+      List.map (fun (pos, length) -> (pos + 1, length)) !note_blocks;
+
+    note_blocks :=
+      List.filter
+        (fun (pos, length) ->
+          pos - length < int_of_float (Rectangle.y rect))
+        !note_blocks;
+
+    List.iter (fun note -> draw_note_block note) !note_blocks;
 
     draw_rectangle
       (int_of_float (Rectangle.x rect))
