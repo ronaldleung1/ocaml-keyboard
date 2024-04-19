@@ -39,27 +39,6 @@ let rec loop metronome keys volume_control =
     end_drawing ();
     loop metronome keys volume_control
 
-let playlist () =
-  let song1 = Song.create "Song 1" "Artist 1" 240 in
-  let song2 = Song.create "Song 2" "Artist 2" 300 in
-  let song3 = Song.create "Song 3" "Artist 3" 180 in
-
-  let my_playlist = Playlist.create "My Favorite Songs" in
-
-  Playlist.add_song my_playlist song1;
-  Playlist.add_song my_playlist song2;
-  Playlist.add_song my_playlist song3;
-
-  let song1_in_playlist = Playlist.contains my_playlist "Song 2" in
-  Printf.printf "Is 'Song Two' in the playlist? %B" song1_in_playlist;
-  print_newline ();
-
-  Playlist.remove_song my_playlist "Song 3";
-
-  let song3_in_playlist = Playlist.contains my_playlist "Song 3" in
-  Printf.printf "Is 'Song Three' in the playlist after removal? %B\n"
-    song3_in_playlist
-
 let rec playlist_menu my_playlist =
   print_endline "What do you want to do with the playlist?";
   print_endline "1. View playlist";
@@ -67,12 +46,10 @@ let rec playlist_menu my_playlist =
   print_endline "3. Remove a song from a playlist";
   print_endline "4. Check if a playlist contains a song";
   print_endline "5. View total duration a playlist";
-  print_endline "Type 'quit' to exit.";
+  print_endline "Type 'quit' to return to playlist manager";
   let choice = read_line () in
   match choice with
-  | "quit" ->
-      print_endline "Exiting playlist manager.";
-      exit 0
+  | "quit" -> print_endline "Returning to playlist manager."
   | "1" ->
       print_endline "Viewing playlist...";
       print_endline (Playlist.display my_playlist);
@@ -102,18 +79,46 @@ let rec playlist_menu my_playlist =
   | "5" -> print_endline (Playlist.total_duration my_playlist)
   | _ -> playlist_menu my_playlist
 
+let rec library_menu library =
+  print_endline "Select an option:";
+  print_endline "1. View all playlists";
+  print_endline "2. Add a new empty playlist";
+  print_endline "3. Remove a playlist";
+  print_endline "4. Manage a specific playlist";
+  print_endline "Type 'quit' to exit.";
+  let choice = read_line () in
+  match choice with
+  | "quit" ->
+      print_endline "Exiting playlist manager.";
+      exit 0
+  | "1" ->
+      print_endline "Viewing library...";
+      print_endline (Library.display library);
+      library_menu library
+  | "2" ->
+      print_endline "What is the name of the playlist?";
+      let name = read_line () in
+      let playlist = Playlist.create name in
+      Library.add_new_playlist playlist library;
+      print_endline "Added new playlist to library.";
+      library_menu library
+  | "3" ->
+      print_endline "Enter the name of the playlist to remove:";
+      let name = read_line () in
+      Library.remove_playlist name library;
+      print_endline "Removed playlist from library.";
+      library_menu library
+  | "4" ->
+      print_endline "Enter the name of the playlist to manage:";
+      let name = read_line () in
+      (match Library.find_playlist name library with
+      | Some playlist -> playlist_menu playlist
+      | None -> print_endline "Playlist not found.");
+      library_menu library
+  | _ -> library_menu library
+
 let () =
-  let song1 = Song.create "Song 1" "Artist 1" 240 in
-  let song2 = Song.create "Song 2" "Artist 2" 300 in
-  let song3 = Song.create "Song 3" "Artist 3" 180 in
-
-  let my_playlist = Playlist.create "My Favorite Songs" in
-
-  Playlist.add_song my_playlist song1;
-  Playlist.add_song my_playlist song2;
-  Playlist.add_song my_playlist song3;
-
-  if List.mem "playlist" argv then playlist_menu my_playlist
+  if List.mem "playlist" argv then library_menu Library.empty
   else begin
     let metronome, keys, volume_control = setup () in
     loop metronome keys volume_control
