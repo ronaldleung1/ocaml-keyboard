@@ -85,6 +85,57 @@ let notes =
     "G7";
   ]
 
+let white_key_codes =
+  let open Raylib.Key in
+  [
+    [ Z ];
+    [ X ];
+    [ C ];
+    [ V ];
+    [ B ];
+    [ N ];
+    [ M ];
+    [ Comma; Q ];
+    [ W ];
+    [ E ];
+    [ R ];
+    [ T ];
+    [ Y ];
+    [ U ];
+    [ I ];
+  ]
+
+let black_key_codes =
+  let open Raylib.Key in
+  [
+    [ S ];
+    [ D ];
+    [ G ];
+    [ H ];
+    [ J ];
+    [ Two ];
+    [ Three ];
+    [ Five ];
+    [ Six ];
+    [ Seven ];
+  ]
+
+(* TODO test this *)
+(* combine two lists l1 and l2 into an association list *)
+let rec combine_lists l1 l2 =
+  match (l1, l2) with
+  | [], [] -> []
+  | [], _ | _, [] -> failwith "Lists have different lengths"
+  | x :: xs, y :: ys -> (x, y) :: combine_lists xs ys
+
+(* map a function f over two lists l1 and l2, with the index of the
+   element as the first argument to f *)
+let map2i f l1 l2 =
+  List.map2
+    (fun i (x, y) -> f i x y)
+    (List.init (List.length l1) Fun.id)
+    (combine_lists l1 l2)
+
 let init_keyboard init_octave rect =
   let curr_octave = ref init_octave in
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
@@ -114,8 +165,8 @@ let init_keyboard init_octave rect =
         (fun note -> not (String.contains note 'b'))
         curr_notes
     in
-    List.mapi
-      (fun i note ->
+    map2i
+      (fun i note key_code ->
         let x =
           (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
         in
@@ -123,10 +174,10 @@ let init_keyboard init_octave rect =
         let width = key_width in
         let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
-        Button.create ~draw_text:true ~opt_color:color note
+        Button.create ~draw_text:true ~opt_color:color note key_code
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
              (float_of_int width) (float_of_int height)))
-      white_notes
+      white_notes white_key_codes
   in
 
   let black_keys =
@@ -146,8 +197,8 @@ let init_keyboard init_octave rect =
     (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
-      List.mapi
-        (fun i note ->
+      map2i
+        (fun i note key_code ->
           let x =
             (List.nth black_indices (i mod 5) + (i / 5 * 12))
             * key_width
@@ -158,10 +209,10 @@ let init_keyboard init_octave rect =
             int_of_float (Raylib.Rectangle.height rect *. 2. /. 3.)
           in
           let color = Raylib.Color.black in
-          Button.create ~draw_text:true ~opt_color:color note
+          Button.create ~draw_text:true ~opt_color:color note key_code
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
                (float_of_int width) (float_of_int height)))
-        black_notes
+        black_notes black_key_codes
     in
     black_keys
   in

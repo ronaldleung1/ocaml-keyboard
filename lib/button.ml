@@ -1,11 +1,16 @@
 open Raylib
 
-let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
-  let tick = load_sound ("assets/notes/" ^ note ^ ".mp3") in
+let create
+    ?(draw_text = false)
+    ?(opt_color = Color.white)
+    note
+    key_list
+    rect =
+  let sound = load_sound ("assets/notes/" ^ note ^ ".mp3") in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 
-  let block_color note =
+  let block_color =
     match String.sub note 0 1 with
     | "A" -> Color.red
     | "B" -> Color.orange
@@ -25,23 +30,47 @@ let create ?(draw_text = false) ?(opt_color = Color.white) note rect =
       (int_of_float (Rectangle.x rect))
       (int_of_float (Rectangle.y rect) - pos)
       (int_of_float (Rectangle.width rect) - 1)
-      length (block_color note)
+      length block_color
+  in
+
+  let play_note () =
+    play_sound sound;
+    note_blocks := (0, 0) :: !note_blocks
   in
 
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
 
-    if check_collision_point_rec !mouse_point rect then (
-      if is_mouse_button_pressed MouseButton.Left then (
-        play_sound tick;
-        note_blocks := (0, 0) :: !note_blocks);
-      if is_mouse_button_down MouseButton.Left then (
+    if check_collision_point_rec !mouse_point rect then begin
+      if is_mouse_button_pressed MouseButton.Left then begin
+        play_note ()
+      end;
+      if is_mouse_button_down MouseButton.Left then begin
         color := Color.green;
         match !note_blocks with
         | [] -> ()
-        | (pos, length) :: t -> note_blocks := (pos, length + 1) :: t));
+        | (pos, length) :: t -> note_blocks := (pos, length + 1) :: t
+      end
+    end;
 
+    List.iter
+      (fun key ->
+        begin
+          if is_key_pressed key then begin
+            play_note ()
+          end;
+          if is_key_down key then begin
+            color := Color.green;
+            match !note_blocks with
+            | [] -> ()
+            | (pos, length) :: t ->
+                note_blocks := (pos, length + 1) :: t
+          end
+        end)
+      key_list;
+
+    (* remove notes that are off the screen *)
     note_blocks :=
       List.map (fun (pos, length) -> (pos + 1, length)) !note_blocks;
 
