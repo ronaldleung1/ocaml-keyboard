@@ -39,17 +39,29 @@ let rec loop metronome keys volume_control =
     end_drawing ();
     loop metronome keys volume_control
 
+let print_blue text =
+  print_endline
+    (ANSITerminal.sprintf
+       [ ANSITerminal.Foreground ANSITerminal.Blue ]
+       "%s" text)
+
+let print_cyan text =
+  print_endline
+    (ANSITerminal.sprintf
+       [ ANSITerminal.Foreground ANSITerminal.Cyan ]
+       "%s" text)
+
 let rec playlist_menu my_playlist =
-  print_endline "What do you want to do with the playlist?";
-  print_endline "1. View playlist";
-  print_endline "2. Add a song to a playlist";
-  print_endline "3. Remove a song from a playlist";
-  print_endline "4. Check if a playlist contains a song";
-  print_endline "5. View total duration a playlist";
-  print_endline "Type 'quit' to return to playlist manager";
+  print_cyan "What do you want to do with the playlist?";
+  print_cyan "1. View playlist";
+  print_cyan "2. Add a song to a playlist";
+  print_cyan "3. Remove a song from a playlist";
+  print_cyan "4. Check if a playlist contains a song";
+  print_cyan "5. View total duration a playlist";
+  print_cyan "Type 'quit' to return to playlist manager";
   let choice = read_line () in
   match choice with
-  | "quit" -> print_endline "Returning to playlist manager."
+  | "quit" -> print_cyan "Returning to playlist manager."
   | "1" ->
       print_endline "Viewing playlist...";
       print_endline (Playlist.display my_playlist);
@@ -80,16 +92,16 @@ let rec playlist_menu my_playlist =
   | _ -> playlist_menu my_playlist
 
 let rec library_menu library =
-  print_endline "Select an option:";
-  print_endline "1. View all playlists";
-  print_endline "2. Add a new empty playlist";
-  print_endline "3. Remove a playlist";
-  print_endline "4. Manage a specific playlist";
-  print_endline "Type 'quit' to exit.";
+  print_blue "Select an option:";
+  print_blue "1. View all playlists";
+  print_blue "2. Add a new empty playlist";
+  print_blue "3. Remove a playlist";
+  print_blue "4. Manage a specific playlist";
+  print_blue "Type 'quit' to exit.";
   let choice = read_line () in
   match choice with
   | "quit" ->
-      print_endline "Exiting playlist manager.";
+      print_blue "Exiting playlist manager.";
       exit 0
   | "1" ->
       print_endline "Viewing library...";
