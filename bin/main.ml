@@ -1,8 +1,14 @@
 open Music
+open Instrument 
 
 let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
+
+(*user can pick instrument*)
+let instruments = [("guitar", create_instrument "guitar"); ("brass", create_instrument "brass"); ("drumkit", create_instrument "drumkit"); 
+("yodele", create_instrument "yodele")] 
+let instrument = List.assoc (Sys.argv.((Array.length Sys.argv) - 1)) instruments 
 
 let setup () =
   let open Raylib in
