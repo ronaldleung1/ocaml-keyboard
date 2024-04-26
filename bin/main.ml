@@ -14,7 +14,7 @@ let setup () =
 
   (* Initialize volume control with default volume level *)
   let keys =
-    Keyboard.init_keyboard 4
+    Keyboard.init_keyboard 5
       (Rectangle.create 0.
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))

@@ -235,7 +235,7 @@ let init_decrease_octave_key =
   Button.create_general_with_key_binding ~draw_text:true
     ~opt_color:color ~opt_text:text decrease_octave_key x_pos_top_left
     y_pos_top_left width height (fun () ->
-      curr_octave := !curr_octave - 1)
+      if !curr_octave > 1 then curr_octave := !curr_octave - 1)
 
 let init_increase_octave_key =
   let increase_octave_key = Raylib.Key.Equal in
@@ -248,6 +248,17 @@ let init_increase_octave_key =
   Button.create_general_with_key_binding ~draw_text:true
     ~opt_color:color ~opt_text:text increase_octave_key x_pos_top_left
     y_pos_top_left width height (fun () ->
-      curr_octave := !curr_octave + 1)
+      if !curr_octave < 5 then curr_octave := !curr_octave + 1)
 
-let refresh rect = init_keyboard !curr_octave rect
+(* last_octave and keyboard is needed to make sure that refresh only
+   recreates the keyboard when octave is different. Otherwise it would
+   redraw in every loop, canceling the block animation *)
+let last_octave = ref (-1)
+let keyboard = ref []
+
+let refresh rect =
+  if !curr_octave <> !last_octave then begin
+    keyboard := init_keyboard !curr_octave rect;
+    last_octave := !curr_octave
+  end;
+  !keyboard
