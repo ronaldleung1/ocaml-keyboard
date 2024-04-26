@@ -120,6 +120,11 @@ let black_key_codes =
     [ Seven ];
   ]
 
+let curr_octave = ref 0
+
+(* let octave_key_codes = let open Raylib.Key in [ [ Minus ]; [ Equal ]
+   ] *)
+
 (* TODO test this *)
 (* combine two lists l1 and l2 into an association list *)
 let rec combine_lists l1 l2 =
@@ -136,8 +141,8 @@ let map2i f l1 l2 =
     (List.init (List.length l1) Fun.id)
     (combine_lists l1 l2)
 
-let init_keyboard init_octave rect =
-  let curr_octave = ref init_octave in
+let init_keyboard (init_octave : int) rect =
+  curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
   let curr_notes =
@@ -217,3 +222,32 @@ let init_keyboard init_octave rect =
     black_keys
   in
   white_keys @ black_keys
+
+let init_decrease_octave_key =
+  let decrease_octave_key = Raylib.Key.Minus in
+  (* let increase_octave_key = Raylib.Key.Equal in *)
+  let x_pos_top_left = 0 in
+  let y_pos_top_left = 50 in
+  let width = 30 in
+  let height = 30 in
+  let color = Raylib.Color.lightgray in
+  let text = "-" in
+  Button.create_general_with_key_binding ~draw_text:true
+    ~opt_color:color ~opt_text:text decrease_octave_key x_pos_top_left
+    y_pos_top_left width height (fun () ->
+      curr_octave := !curr_octave - 1)
+
+let init_increase_octave_key =
+  let increase_octave_key = Raylib.Key.Equal in
+  let x_pos_top_left = 100 in
+  let y_pos_top_left = 50 in
+  let width = 30 in
+  let height = 30 in
+  let color = Raylib.Color.lightgray in
+  let text = "+" in
+  Button.create_general_with_key_binding ~draw_text:true
+    ~opt_color:color ~opt_text:text increase_octave_key x_pos_top_left
+    y_pos_top_left width height (fun () ->
+      curr_octave := !curr_octave + 1)
+
+let refresh rect = init_keyboard !curr_octave rect

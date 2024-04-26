@@ -1,5 +1,78 @@
 open Raylib
 
+(* idea for button overlap issue: create a stack of button to keep track
+   of. Each button's check for clicks just iterates through the stack to
+   see if mouse position is inside the dimension of the button *)
+
+let create_general_with_key_binding
+    ?(draw_text = false)
+    ?(opt_color = Color.gray)
+    ?(opt_text = "")
+    (key_binding : Raylib.Key.t)
+    x
+    y
+    width
+    height
+    (func : unit -> unit) =
+  let rect =
+    Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+      (float_of_int width) (float_of_int height)
+  in
+  let color = ref opt_color in
+  let mouse_point = ref (Vector2.create 0. 0.) in
+
+  fun () ->
+    color := opt_color;
+    mouse_point := get_mouse_position ();
+
+    (* if mouse click is within the rectangle dimension when
+       left-clicked, the corresponding function will be executed *)
+    if check_collision_point_rec !mouse_point rect then begin
+      if is_mouse_button_pressed MouseButton.Left then begin
+        func ()
+      end;
+      if is_mouse_button_down MouseButton.Left then begin
+        color := Color.green
+      end
+    end;
+
+    (fun key_binding ->
+      if is_key_pressed key_binding then begin
+        func ()
+      end;
+      if is_key_down key_binding then begin
+        color := Color.green
+      end)
+      key_binding;
+
+    draw_rectangle
+      (int_of_float (Rectangle.x rect))
+      (int_of_float (Rectangle.y rect))
+      (int_of_float (Rectangle.width rect) - 1)
+      (int_of_float (Rectangle.height rect))
+      !color;
+
+    (* draws the text of 'note' in the middle of the rectangle when
+       optional 'draw_text' is true *)
+    if draw_text then
+      let text = opt_text in
+      let text_width = measure_text text 20 in
+      let text_x =
+        int_of_float
+          (Rectangle.x rect
+          +. (Rectangle.width rect /. 2.)
+          -. (float_of_int text_width /. 2.))
+      in
+      let text_y =
+        int_of_float
+          (Rectangle.y rect +. (Rectangle.height rect /. 2.) -. 10.)
+      in
+      let text_color =
+        if !color = Color.black then Color.white else Color.black
+      in
+      Raylib.(draw_text text text_x text_y 16 text_color)
+    else ()
+
 let create
     ?(draw_text = false)
     ?(opt_color = Color.white)

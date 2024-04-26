@@ -14,17 +14,23 @@ let setup () =
 
   (* Initialize volume control with default volume level *)
   let keys =
-    Keyboard.init_keyboard 5
+    Keyboard.init_keyboard 4
       (Rectangle.create 0.
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
   in
+  let octave_keys =
+    [
+      Keyboard.init_decrease_octave_key;
+      Keyboard.init_increase_octave_key;
+    ]
+  in
 
   set_target_fps 60;
-  (metronome, keys, volume_control)
+  (metronome, keys, octave_keys, volume_control)
 
-let rec loop metronome keys volume_control =
+let rec loop metronome keys octave_keys volume_control =
   if Raylib.window_should_close () then Raylib.close_window ()
   else
     let open Raylib in
@@ -32,12 +38,21 @@ let rec loop metronome keys volume_control =
     clear_background Color.gray;
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
+    let keys =
+      Keyboard.refresh
+        (Rectangle.create 0.
+           (float_of_int (Raylib.get_screen_height ()) -. 100.)
+           (float_of_int (Raylib.get_screen_width ()))
+           100.)
+    in
+
     (List.iter (fun key -> key ())) keys;
+    (List.iter (fun key -> key ())) octave_keys;
     metronome ();
     volume_control ();
     (* Adjust volume as needed *)
     end_drawing ();
-    loop metronome keys volume_control
+    loop metronome keys octave_keys volume_control
 
 let print_blue text =
   print_endline
@@ -132,6 +147,6 @@ let rec library_menu library =
 let () =
   if List.mem "playlist" argv then library_menu Library.empty
   else begin
-    let metronome, keys, volume_control = setup () in
-    loop metronome keys volume_control
+    let metronome, keys, octave_keys, volume_control = setup () in
+    loop metronome keys octave_keys volume_control
   end
