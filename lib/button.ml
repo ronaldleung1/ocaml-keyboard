@@ -3,6 +3,15 @@ open Raylib
 (* idea for button overlap issue: create a stack of button to keep track
    of. Each button's check for clicks just iterates through the stack to
    see if mouse position is inside the dimension of the button *)
+let button_stack : Rectangle.t list ref = ref []
+
+let rec check_collision mouse_point button button_list =
+  match button_list with
+  | [] -> false
+  | h :: t ->
+      if check_collision_point_rec mouse_point h then
+        if button == h then true else false
+      else check_collision mouse_point button t
 
 let create_general_with_key_binding
     ?(draw_text = false)
@@ -18,6 +27,8 @@ let create_general_with_key_binding
     Raylib.Rectangle.create (float_of_int x) (float_of_int y)
       (float_of_int width) (float_of_int height)
   in
+  button_stack := rect :: !button_stack;
+
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 
@@ -27,7 +38,7 @@ let create_general_with_key_binding
 
     (* if mouse click is within the rectangle dimension when
        left-clicked, the corresponding function will be executed *)
-    if check_collision_point_rec !mouse_point rect then begin
+    if check_collision !mouse_point rect !button_stack then begin
       if is_mouse_button_pressed MouseButton.Left then begin
         func ()
       end;
@@ -79,6 +90,8 @@ let create
     note
     key_list
     rect =
+  button_stack := rect :: !button_stack;
+
   let sound = load_sound ("assets/notes/" ^ note ^ ".mp3") in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
@@ -115,7 +128,7 @@ let create
     color := opt_color;
     mouse_point := get_mouse_position ();
 
-    if check_collision_point_rec !mouse_point rect then begin
+    if check_collision !mouse_point rect !button_stack then begin
       if is_mouse_button_pressed MouseButton.Left then begin
         play_note ()
       end;
