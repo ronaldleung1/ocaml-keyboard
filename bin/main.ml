@@ -8,7 +8,8 @@ let argv : string list = Array.to_list Sys.argv
 (*user can pick instrument*)
 let instruments = [("guitar", create_instrument "guitar"); ("brass", create_instrument "brass"); ("drumkit", create_instrument "drumkit"); 
 ("yodele", create_instrument "yodele")] 
-let instrument = List.assoc (Sys.argv.((Array.length Sys.argv) - 1)) instruments 
+(* let instrument = List.assoc (Sys.argv.((Array.length Sys.argv) - 1)) instruments  *)
+let instrument = Sys.argv.((Array.length Sys.argv) - 1)
 
 let setup () =
   let open Raylib in
@@ -20,15 +21,20 @@ let setup () =
 
   (* Initialize volume control with default volume level *)
   let keys =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
+      ref (Keyboard.init_keyboard 5
+        (Rectangle.create 0.
+          (float_of_int (Raylib.get_screen_height ()) -. 100.)
+          (float_of_int (Raylib.get_screen_width ()))
+          100.))
   in
-
   set_target_fps 60;
-  (metronome, keys, volume_control)
+  (metronome, !keys, volume_control)
+  let () = 
+  match instrument with 
+  | "guitar" -> print_endline "guitar"
+  | "drumkit" -> print_endline "drumkit"
+  | "yodele" -> print_endline "yodele"
+  | _ -> print_endline "default piano"
 
 let rec loop metronome keys volume_control =
   if Raylib.window_should_close () then Raylib.close_window ()

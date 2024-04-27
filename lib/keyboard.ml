@@ -144,7 +144,7 @@ let init_keyboard init_octave rect =
     List.filter
       (fun note ->
         let octave_ascii = !curr_octave + 48 in
-        String.contains note (char_of_int octave_ascii)
+        String.contains note (char_of_int octave_ascii) 
         || String.contains note (char_of_int octave_ascii)
         || String.contains note (char_of_int (octave_ascii + 1))
         || String.contains note 'C'
