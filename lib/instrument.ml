@@ -6,4 +6,3 @@ type t = {
 let get_name instrument = instrument.name
 
 let create_instrument (name : string) : t = {name}
-

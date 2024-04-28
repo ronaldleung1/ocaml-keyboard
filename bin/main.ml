@@ -6,10 +6,13 @@ let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
 
 (*user can pick instrument*)
-let instruments = [("guitar", create_instrument "guitar"); ("brass", create_instrument "brass"); ("drumkit", create_instrument "drumkit"); 
-("yodele", create_instrument "yodele")] 
-(* let instrument = List.assoc (Sys.argv.((Array.length Sys.argv) - 1)) instruments  *)
-let instrument = Sys.argv.((Array.length Sys.argv) - 1)
+let instruments = [("Guitar", create_instrument "Guitar"); 
+("Brass", create_instrument "Brass"); 
+("Drumkit", create_instrument "Drumkit"); 
+("Yodele", create_instrument "Yodele")] 
+let instrument_names = String.concat ";" (List.map fst instruments)
+let instrument_index = ref 0
+let dropdown_active = ref false
 
 let setup () =
   let open Raylib in
@@ -29,12 +32,6 @@ let setup () =
   in
   set_target_fps 60;
   (metronome, !keys, volume_control)
-  let () = 
-  match instrument with 
-  | "guitar" -> print_endline "guitar"
-  | "drumkit" -> print_endline "drumkit"
-  | "yodele" -> print_endline "yodele"
-  | _ -> print_endline "default piano"
 
 let rec loop metronome keys volume_control =
   if Raylib.window_should_close () then Raylib.close_window ()
@@ -48,6 +45,19 @@ let rec loop metronome keys volume_control =
     metronome ();
     volume_control ();
     (* Adjust volume as needed *)
+    Raygui.(
+      set_style (DropdownBox `Text_alignment) TextAlignment.(to_int Left));
+    let rect = Rectangle.create 10. 40. 120. 30. in
+    let () =
+      match
+        Raygui.dropdown_box rect instrument_names !instrument_index
+          !dropdown_active
+      with
+      | vl, true -> let () = instrument_index := vl; dropdown_active := not !dropdown_active in ()
+      | vl, false -> let () = instrument_index := vl; dropdown_active := !dropdown_active in ()
+    in
+    let selected_instrument = List.nth instruments !instrument_index |> snd in
+    
     end_drawing ();
     loop metronome keys volume_control
 
@@ -144,6 +154,7 @@ let rec library_menu library =
 let () =
   if List.mem "playlist" argv then library_menu Library.empty
   else begin
-    let metronome, keys, volume_control = setup () in
+    let metronome, keys, volume_control  = setup () in
     loop metronome keys volume_control
   end
+
