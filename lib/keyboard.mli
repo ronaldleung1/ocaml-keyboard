@@ -11,7 +11,8 @@ val init_keyboard :
 val init_increase_octave_key : unit -> unit
 val init_decrease_octave_key : unit -> unit
 
-val refresh : Raylib.Rectangle.t -> string -> (unit -> unit) list
+val refresh :
+  Raylib.Rectangle.t -> string -> bool -> (unit -> unit) list
 (** [init_increase_octave_key ()] creates the increase octave button.
     [init_decrease_octave_key ()] creates the decrease octave button.
     [refresh rect] redraws the keyboard. *)

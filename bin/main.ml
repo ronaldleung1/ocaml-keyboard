@@ -193,7 +193,7 @@ let rec loop
            (float_of_int (Raylib.get_screen_height ()) -. 100.)
            (float_of_int (Raylib.get_screen_width ()))
            100.)
-        !current_instrument
+        !current_instrument false
     in
 
     draw_text
@@ -236,12 +236,12 @@ let rec loop
       current_instrument := selected_instrument;
 
       let keys =
-        Keyboard.init_keyboard 5
+        Keyboard.refresh
           (Rectangle.create 0.
              (float_of_int (Raylib.get_screen_height ()) -. 100.)
              (float_of_int (Raylib.get_screen_width ()))
              100.)
-          !current_instrument
+          !current_instrument true
       in
       end_drawing ();
       loop metronome keys octave_keys volume_control
