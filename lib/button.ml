@@ -89,10 +89,14 @@ let create
     ?(opt_color = Color.white)
     note
     key_list
-    rect =
+    string_key_list
+    rect
+    (instrument : string) =
   button_stack := rect :: !button_stack;
 
-  let sound = load_sound ("assets/notes/" ^ note ^ ".mp3") in
+let sound =
+    load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
+  in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 
@@ -124,6 +128,31 @@ let create
     note_blocks := (0, 0) :: !note_blocks
   in
 
+  let stop_note () =
+    let fade_duration = 0.25 in
+    (* duration in seconds *)
+    let steps = 10 in
+    let step_delay = fade_duration /. float_of_int steps in
+    let volume_step = 1.0 /. float_of_int steps in
+
+    let rec fade_out current_volume =
+      if current_volume > 0.0 then begin
+        set_sound_volume sound current_volume;
+        Unix.sleepf step_delay;
+        fade_out (current_volume -. volume_step)
+      end
+      else begin
+        stop_sound sound;
+        set_sound_volume sound 1.0 (* Reset volume for next play *)
+      end
+    in
+
+    let domain_fade_out () = fade_out 1.0 in
+
+    let _ = Domain.spawn domain_fade_out in
+    ()
+  in
+
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
@@ -137,6 +166,9 @@ let create
         match !note_blocks with
         | [] -> ()
         | (pos, length) :: t -> note_blocks := (pos, length + 1) :: t
+      end;
+      if is_mouse_button_released MouseButton.Left then begin
+        stop_note ()
       end
     end;
 
@@ -145,6 +177,9 @@ let create
         begin
           if is_key_pressed key then begin
             play_note ()
+          end;
+          if is_key_released key then begin
+            stop_note ()
           end;
           if is_key_down key then begin
             color := Color.green;
@@ -177,7 +212,7 @@ let create
 
     (* draws the text of 'note' in the middle of the rectangle when
        optional 'draw_text' is true *)
-    if draw_text then
+    if draw_text then (
       let text = note in
       let text_width = measure_text text 20 in
       let text_x =
@@ -193,5 +228,13 @@ let create
       let text_color =
         if !color = Color.black then Color.white else Color.black
       in
-      Raylib.(draw_text text text_x text_y 16 text_color)
+      let key_text_color = Color.gold in
+      Raylib.(draw_text text text_x text_y 16 text_color);
+      let key_code_text = String.concat ", " string_key_list in
+      let key_code_text_x = int_of_float (Rectangle.x rect +. 3.) in
+      let key_code_text_y =
+        int_of_float (Rectangle.y rect +. Rectangle.height rect -. 14.)
+      in
+      Raylib.draw_text key_code_text key_code_text_x key_code_text_y 14
+        key_text_color)
     else ()

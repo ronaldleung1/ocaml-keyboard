@@ -95,7 +95,7 @@ let white_key_codes =
     [ B ];
     [ N ];
     [ M ];
-    [ Comma; Q ];
+    [ Q ];
     [ W ];
     [ E ];
     [ R ];
@@ -103,6 +103,25 @@ let white_key_codes =
     [ Y ];
     [ U ];
     [ I ];
+  ]
+
+let white_key_code_strings =
+  [
+    [ "Z" ];
+    [ "X" ];
+    [ "C" ];
+    [ "V" ];
+    [ "B" ];
+    [ "N" ];
+    [ "M" ];
+    [ "Q" ];
+    [ "W" ];
+    [ "E" ];
+    [ "R" ];
+    [ "T" ];
+    [ "Y" ];
+    [ "U" ];
+    [ "I" ];
   ]
 
 let black_key_codes =
@@ -122,8 +141,19 @@ let black_key_codes =
 
 let curr_octave = ref 0
 
-(* let octave_key_codes = let open Raylib.Key in [ [ Minus ]; [ Equal ]
-   ] *)
+let black_key_code_strings =
+  [
+    [ "S" ];
+    [ "D" ];
+    [ "G" ];
+    [ "H" ];
+    [ "J" ];
+    [ "2" ];
+    [ "3" ];
+    [ "5" ];
+    [ "6" ];
+    [ "7" ];
+  ]
 
 (* TODO test this *)
 (* combine two lists l1 and l2 into an association list *)
@@ -141,7 +171,7 @@ let map2i f l1 l2 =
     (List.init (List.length l1) Fun.id)
     (combine_lists l1 l2)
 
-let init_keyboard (init_octave : int) rect =
+let init_keyboard (init_octave : int) rect instrument =
   curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -179,9 +209,12 @@ let init_keyboard (init_octave : int) rect =
         let width = key_width in
         let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
+        let key_string = List.nth white_key_code_strings i in
         Button.create ~draw_text:true ~opt_color:color note key_code
+          key_string
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-             (float_of_int width) (float_of_int height)))
+             (float_of_int width) (float_of_int height))
+          instrument)
       white_notes white_key_codes
   in
 
@@ -214,9 +247,12 @@ let init_keyboard (init_octave : int) rect =
             int_of_float (Raylib.Rectangle.height rect *. 2. /. 3.)
           in
           let color = Raylib.Color.black in
+          let key_string = List.nth black_key_code_strings i in
           Button.create ~draw_text:true ~opt_color:color note key_code
+            key_string
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-               (float_of_int width) (float_of_int height)))
+               (float_of_int width) (float_of_int height))
+            instrument)
         black_notes black_key_codes
     in
     black_keys
