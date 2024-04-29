@@ -104,24 +104,25 @@ let white_key_codes =
     [ U ];
     [ I ];
   ]
-let white_key_code_strings = 
+
+let white_key_code_strings =
   [
-  [ "Z" ];
-  [ "X" ];
-  [ "C" ];
-  [ "V" ];
-  [ "B" ];
-  [ "N" ];
-  [ "M" ];
-  [ "Q" ];
-  [ "W" ];
-  [ "E" ];
-  [ "R" ];
-  [ "T" ];
-  [ "Y" ];
-  [ "U" ];
-  [ "I" ];
-]
+    [ "Z" ];
+    [ "X" ];
+    [ "C" ];
+    [ "V" ];
+    [ "B" ];
+    [ "N" ];
+    [ "M" ];
+    [ "Q" ];
+    [ "W" ];
+    [ "E" ];
+    [ "R" ];
+    [ "T" ];
+    [ "Y" ];
+    [ "U" ];
+    [ "I" ];
+  ]
 
 let black_key_codes =
   let open Raylib.Key in
@@ -207,7 +208,8 @@ let init_keyboard init_octave rect instrument =
         let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
         let key_string = List.nth white_key_code_strings i in
-        Button.create ~draw_text:true ~opt_color:color note key_code key_string
+        Button.create ~draw_text:true ~opt_color:color note key_code
+          key_string
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
              (float_of_int width) (float_of_int height))
           instrument)
@@ -244,7 +246,8 @@ let init_keyboard init_octave rect instrument =
           in
           let color = Raylib.Color.black in
           let key_string = List.nth black_key_code_strings i in
-          Button.create ~draw_text:true ~opt_color:color note key_code key_string
+          Button.create ~draw_text:true ~opt_color:color note key_code
+            key_string
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
                (float_of_int width) (float_of_int height))
             instrument)
