@@ -154,7 +154,7 @@ let setup () =
   init_audio_device ();
 
   let metronome = Metronome.start 60. in
-  let volume_control = Volume.start 5. in
+  let volume_control = Volume.start 10. in
 
   (* Initialize volume control with default volume level *)
   let keys =
@@ -167,10 +167,7 @@ let setup () =
          "piano")
   in
   let octave_keys =
-    [
-      Keyboard.init_decrease_octave_key;
-      Keyboard.init_increase_octave_key;
-    ]
+    [ Octave.init_decrease_button; Octave.init_increase_button ]
   in
   set_target_fps 60;
   (metronome, !keys, octave_keys, volume_control)
