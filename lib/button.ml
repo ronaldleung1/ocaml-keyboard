@@ -5,9 +5,11 @@ let create
     ?(opt_color = Color.white)
     note
     key_list
-    rect 
+    rect
     (instrument : string) =
-  let sound = load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3") in
+  let sound =
+    load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
+  in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 
@@ -51,15 +53,14 @@ let create
         set_sound_volume sound current_volume;
         Unix.sleepf step_delay;
         fade_out (current_volume -. volume_step)
-      end else begin
+      end
+      else begin
         stop_sound sound;
-        set_sound_volume sound 1.0; (* Reset volume for next play *)
+        set_sound_volume sound 1.0 (* Reset volume for next play *)
       end
     in
 
-    let domain_fade_out () =
-      fade_out 1.0
-    in
+    let domain_fade_out () = fade_out 1.0 in
 
     let _ = Domain.spawn domain_fade_out in
     ()
@@ -90,8 +91,8 @@ let create
           if is_key_pressed key then begin
             play_note ()
           end;
-          if is_key_released key then begin 
-            stop_note () 
+          if is_key_released key then begin
+            stop_note ()
           end;
           if is_key_down key then begin
             color := Color.green;
