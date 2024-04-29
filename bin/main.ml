@@ -145,6 +145,7 @@ let list_view_scroll_index = ref 0
 let list_view_active = ref 0
 let list_view_ex_focus = ref 0 
 let current_instrument = ref "piano"
+let volume_slider = ref 5.0
 
 let setup () =
   let open Raylib in
@@ -168,7 +169,7 @@ let setup () =
   set_target_fps 60;
   (metronome, !keys, volume_control)
 
-let rec loop metronome keys volume_control =
+let rec loop metronome keys (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then Raylib.close_window ()
   else
     let open Raylib in
@@ -180,9 +181,22 @@ let rec loop metronome keys volume_control =
       275 12 18 Color.gold;
     (List.iter (fun key -> key ())) keys;
     metronome ();
-    volume_control ();
+    let volume = volume_control () in
+    volume_slider := !volume;
     (* Adjust volume as needed *)
     
+    Raygui.(set_style (Slider `Text_color_normal) (Raylib.color_to_int Raylib.Color.gold));    
+    let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
+      let volume_slider_val =
+        Raygui.slider rect "VOLUME"
+          (Printf.sprintf "%1.1f" !volume_slider)
+          !volume_slider ~min:(0.0) ~max:10.0
+      in
+      volume_slider := volume_slider_val;
+      let () = set_master_volume (!volume_slider /. 10.)
+    in
+    let volume_control = Volume.start !volume_slider in
+
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
       Raygui.list_view_ex rect (List.map fst instruments) !list_view_ex_focus !list_view_scroll_index
