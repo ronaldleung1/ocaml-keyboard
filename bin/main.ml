@@ -154,7 +154,7 @@ let setup () =
   init_audio_device ();
 
   let metronome = Metronome.start 60. in
-  let volume_control = Volume.start 5. in
+  let volume_control = Volume.start 10. in
 
   (* Initialize volume control with default volume level *)
   let keys =
@@ -195,6 +195,7 @@ let rec loop
            100.)
         !current_instrument
     in
+
     draw_text
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;

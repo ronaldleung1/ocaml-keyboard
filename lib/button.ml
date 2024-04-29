@@ -94,7 +94,7 @@ let create
     (instrument : string) =
   button_stack := rect :: !button_stack;
 
-let sound =
+  let sound =
     load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
   in
   let color = ref opt_color in
