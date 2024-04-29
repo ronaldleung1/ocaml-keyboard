@@ -139,6 +139,8 @@ let black_key_codes =
     [ Seven ];
   ]
 
+let curr_octave = ref 0
+
 let black_key_code_strings =
   [
     [ "S" ];
@@ -169,8 +171,8 @@ let map2i f l1 l2 =
     (List.init (List.length l1) Fun.id)
     (combine_lists l1 l2)
 
-let init_keyboard init_octave rect instrument =
-  let curr_octave = ref init_octave in
+let init_keyboard (init_octave : int) rect instrument =
+  curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
   let curr_notes =
@@ -256,3 +258,43 @@ let init_keyboard init_octave rect instrument =
     black_keys
   in
   white_keys @ black_keys
+
+let init_decrease_octave_key =
+  let decrease_octave_key = Raylib.Key.Minus in
+  (* let increase_octave_key = Raylib.Key.Equal in *)
+  let x_pos_top_left = 0 in
+  let y_pos_top_left = 50 in
+  let width = 30 in
+  let height = 30 in
+  let color = Raylib.Color.lightgray in
+  let text = "-" in
+  Button.create_general_with_key_binding ~draw_text:true
+    ~opt_color:color ~opt_text:text decrease_octave_key x_pos_top_left
+    y_pos_top_left width height (fun () ->
+      if !curr_octave > 1 then curr_octave := !curr_octave - 1)
+
+let init_increase_octave_key =
+  let increase_octave_key = Raylib.Key.Equal in
+  let x_pos_top_left = 100 in
+  let y_pos_top_left = 50 in
+  let width = 30 in
+  let height = 30 in
+  let color = Raylib.Color.lightgray in
+  let text = "+" in
+  Button.create_general_with_key_binding ~draw_text:true
+    ~opt_color:color ~opt_text:text increase_octave_key x_pos_top_left
+    y_pos_top_left width height (fun () ->
+      if !curr_octave < 5 then curr_octave := !curr_octave + 1)
+
+(* last_octave and keyboard is needed to make sure that refresh only
+   recreates the keyboard when octave is different. Otherwise it would
+   redraw in every loop, canceling the block animation *)
+let last_octave = ref (-1)
+let keyboard = ref []
+
+let refresh rect =
+  if !curr_octave <> !last_octave then begin
+    keyboard := init_keyboard !curr_octave rect;
+    last_octave := !curr_octave
+  end;
+  !keyboard
