@@ -175,7 +175,11 @@ let setup () =
   set_target_fps 60;
   (metronome, !keys, octave_keys, volume_control)
 
-let rec loop metronome keys octave_keys (volume_control : unit -> float ref) =
+let rec loop
+    metronome
+    keys
+    octave_keys
+    (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then Raylib.close_window ()
   else
     let open Raylib in
@@ -189,6 +193,7 @@ let rec loop metronome keys octave_keys (volume_control : unit -> float ref) =
            (float_of_int (Raylib.get_screen_height ()) -. 100.)
            (float_of_int (Raylib.get_screen_width ()))
            100.)
+        !current_instrument
     in
     draw_text
       ("Current Instrument: " ^ !current_instrument)
@@ -238,7 +243,7 @@ let rec loop metronome keys octave_keys (volume_control : unit -> float ref) =
           !current_instrument
       in
       end_drawing ();
-      loop metronome keys volume_control
+      loop metronome keys octave_keys volume_control
     end
     else end_drawing ();
     loop metronome keys octave_keys volume_control

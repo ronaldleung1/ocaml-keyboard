@@ -262,8 +262,8 @@ let init_keyboard (init_octave : int) rect instrument =
 let init_decrease_octave_key =
   let decrease_octave_key = Raylib.Key.Minus in
   (* let increase_octave_key = Raylib.Key.Equal in *)
-  let x_pos_top_left = 0 in
-  let y_pos_top_left = 50 in
+  let x_pos_top_left = 700 in
+  let y_pos_top_left = 100 in
   let width = 30 in
   let height = 30 in
   let color = Raylib.Color.lightgray in
@@ -275,8 +275,8 @@ let init_decrease_octave_key =
 
 let init_increase_octave_key =
   let increase_octave_key = Raylib.Key.Equal in
-  let x_pos_top_left = 100 in
-  let y_pos_top_left = 50 in
+  let x_pos_top_left = 750 in
+  let y_pos_top_left = 100 in
   let width = 30 in
   let height = 30 in
   let color = Raylib.Color.lightgray in
@@ -292,9 +292,9 @@ let init_increase_octave_key =
 let last_octave = ref (-1)
 let keyboard = ref []
 
-let refresh rect =
+let refresh rect instrument =
   if !curr_octave <> !last_octave then begin
-    keyboard := init_keyboard !curr_octave rect;
+    keyboard := init_keyboard !curr_octave rect instrument;
     last_octave := !curr_octave
   end;
   !keyboard
