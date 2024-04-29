@@ -292,9 +292,9 @@ let init_increase_octave_key =
 let last_octave = ref (-1)
 let keyboard = ref []
 
-let refresh rect =
+let refresh rect instrument =
   if !curr_octave <> !last_octave then begin
-    keyboard := init_keyboard !curr_octave rect;
+    keyboard := init_keyboard !curr_octave rect instrument;
     last_octave := !curr_octave
   end;
   !keyboard
