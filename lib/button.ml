@@ -5,8 +5,9 @@ let create
     ?(opt_color = Color.white)
     note
     key_list
-    rect =
-  let sound = load_sound ("assets/notes/" ^ note ^ ".mp3") in
+    rect 
+    (instrument : string) =
+  let sound = load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3") in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
 

@@ -136,7 +136,7 @@ let map2i f l1 l2 =
     (List.init (List.length l1) Fun.id)
     (combine_lists l1 l2)
 
-let init_keyboard init_octave rect =
+let init_keyboard init_octave rect instrument =
   let curr_octave = ref init_octave in
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -144,7 +144,7 @@ let init_keyboard init_octave rect =
     List.filter
       (fun note ->
         let octave_ascii = !curr_octave + 48 in
-        String.contains note (char_of_int octave_ascii) 
+        String.contains note (char_of_int octave_ascii)
         || String.contains note (char_of_int octave_ascii)
         || String.contains note (char_of_int (octave_ascii + 1))
         || String.contains note 'C'
@@ -176,7 +176,8 @@ let init_keyboard init_octave rect =
         let color = Raylib.Color.white in
         Button.create ~draw_text:true ~opt_color:color note key_code
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-             (float_of_int width) (float_of_int height)))
+             (float_of_int width) (float_of_int height))
+          instrument)
       white_notes white_key_codes
   in
 
@@ -211,7 +212,8 @@ let init_keyboard init_octave rect =
           let color = Raylib.Color.black in
           Button.create ~draw_text:true ~opt_color:color note key_code
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-               (float_of_int width) (float_of_int height)))
+               (float_of_int width) (float_of_int height))
+            instrument)
         black_notes black_key_codes
     in
     black_keys

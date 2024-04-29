@@ -8,6 +8,7 @@ let argv : string list = Array.to_list Sys.argv
 (*user can pick instrument*)
 let instruments =
   [
+    ("Piano", create_instrument "Piano");
     ("Guitar", create_instrument "Guitar");
     ("Brass", create_instrument "Brass");
     ("Drumkit", create_instrument "Drumkit");
@@ -17,10 +18,11 @@ let instruments =
 let instrument_names = String.concat ";" (List.map fst instruments)
 let instrument_index = ref 0
 let dropdown_active = ref false
+let current_instrument = ref "piano"
 
 let setup () =
   let open Raylib in
-  set_config_flags([Window_resizable]);
+  set_config_flags [ Window_resizable ];
   init_window screenWidth screenHeight "OCaml Keyboard";
   init_audio_device ();
 
@@ -34,7 +36,8 @@ let setup () =
          (Rectangle.create 0.
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
-            100.))
+            100.)
+         "piano")
   in
   set_target_fps 60;
   (metronome, !keys, volume_control)
@@ -74,10 +77,21 @@ let rec loop metronome keys volume_control =
           ()
     in
     let selected_instrument =
-      List.nth instruments !instrument_index |> snd
+      List.nth instruments !instrument_index |> fst
     in
-
-    end_drawing ();
+    if selected_instrument <> !current_instrument then (
+      current_instrument := selected_instrument;
+      let keys =
+        Keyboard.init_keyboard 5
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument
+      in
+      end_drawing ();
+      loop metronome keys volume_control)
+    else end_drawing ();
     loop metronome keys volume_control
 
 let print_blue text =

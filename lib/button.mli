@@ -4,5 +4,6 @@ val create :
   string ->
   Raylib.Key.t list ->
   Raylib.Rectangle.t ->
+  string ->
   unit ->
   unit
