@@ -20,6 +20,7 @@ let dropdown_active = ref false
 
 let setup () =
   let open Raylib in
+  set_config_flags([Window_resizable]);
   init_window screenWidth screenHeight "OCaml Keyboard";
   init_audio_device ();
 
