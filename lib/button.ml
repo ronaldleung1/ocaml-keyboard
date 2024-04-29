@@ -5,6 +5,7 @@ let create
     ?(opt_color = Color.white)
     note
     key_list
+    string_key_list
     rect
     (instrument : string) =
   let sound =
@@ -141,5 +142,11 @@ let create
       let text_color =
         if !color = Color.black then Color.white else Color.black
       in
-      Raylib.(draw_text text text_x text_y 16 text_color)
+      let key_text_color = Color.gold in
+      Raylib.(draw_text text text_x text_y 16 text_color);
+    let key_code_text = String.concat ", " string_key_list in
+    let key_code_text_x = int_of_float (Rectangle.x rect +. 3.) in
+    let key_code_text_y = int_of_float (Rectangle.y rect +. Rectangle.height rect -. 14.) in
+    Raylib.draw_text key_code_text key_code_text_x key_code_text_y 14 key_text_color;
+
     else ()

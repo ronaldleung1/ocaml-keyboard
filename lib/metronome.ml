@@ -1,7 +1,7 @@
 open Raylib
 
 let start (start_bpm : float) =
-  let tick = load_sound "assets/metronome-trimmed.wav" in
+  let tick = load_sound "assets/metronome.mp3" in
   set_sound_volume tick 0.5;
   let bpm = ref start_bpm in
   let next_time = ref (Unix.gettimeofday ()) in
