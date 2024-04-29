@@ -126,7 +126,7 @@ let create
 
     (* draws the text of 'note' in the middle of the rectangle when
        optional 'draw_text' is true *)
-    if draw_text then
+    if draw_text then (
       let text = note in
       let text_width = measure_text text 20 in
       let text_x =
@@ -144,9 +144,11 @@ let create
       in
       let key_text_color = Color.gold in
       Raylib.(draw_text text text_x text_y 16 text_color);
-    let key_code_text = String.concat ", " string_key_list in
-    let key_code_text_x = int_of_float (Rectangle.x rect +. 3.) in
-    let key_code_text_y = int_of_float (Rectangle.y rect +. Rectangle.height rect -. 14.) in
-    Raylib.draw_text key_code_text key_code_text_x key_code_text_y 14 key_text_color;
-
+      let key_code_text = String.concat ", " string_key_list in
+      let key_code_text_x = int_of_float (Rectangle.x rect +. 3.) in
+      let key_code_text_y =
+        int_of_float (Rectangle.y rect +. Rectangle.height rect -. 14.)
+      in
+      Raylib.draw_text key_code_text key_code_text_x key_code_text_y 14
+        key_text_color)
     else ()
