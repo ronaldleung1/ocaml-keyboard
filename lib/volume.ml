@@ -12,5 +12,4 @@ let start (start_volume : float) =
     let display_volume = Printf.sprintf "Volume: %.1f" !volume in
     draw_text display_volume 700 30 16 Raylib.Color.gold;
 
-    set_master_volume !volume
-
+    set_master_volume (!volume /. 10.)
