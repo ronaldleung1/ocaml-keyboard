@@ -151,6 +151,8 @@ let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let show_text_input_box = ref false
 
+let last_filter = ref ""
+
 let setup () =
   let open Raylib in
   set_config_flags [ Window_resizable ];
@@ -189,8 +191,6 @@ let rec loop
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
     draw_text "Search below" 175 40 18 Color.lightgray;
-
-    
     Raygui.(
       set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
     Raygui.(
@@ -216,6 +216,8 @@ let rec loop
             vl
         | vl, false -> vl
     in
+    if !text_box_edit_mode then
+      last_filter := !text_box_text;
 
     let trim_null_chars s =
       try
@@ -295,7 +297,8 @@ let rec loop
     let filtered_instrument_list = 
       if !text_box_edit_mode then 
         List.filter (fun name -> String.starts_with ~prefix:(trim_null_chars !text_box_text) name) valid_instrument_names
-      else valid_instrument_names in
+      else  List.filter (fun name -> String.starts_with ~prefix:(trim_null_chars !last_filter) name) valid_instrument_names 
+    in
 
     Raygui.(
       set_style (ListView `Border_color_normal)
@@ -327,7 +330,9 @@ let rec loop
       else
         !current_instrument  (* Fallback to the current instrument if the index is out of bounds *)
     in
+    
     if selected_instrument <> !current_instrument && not !text_box_edit_mode then begin
+      last_filter := "";
       previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
       text_box_text := !current_instrument;
