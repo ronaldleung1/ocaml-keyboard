@@ -154,13 +154,11 @@ let create
         let current_time = Unix.gettimeofday () in
         set_sound_volume sound !note_volume;
         if current_time >= !next_time then begin
-          print_endline (string_of_float !note_volume);
           note_volume := !note_volume -. volume_step;
           next_time := current_time +. step_delay
         end
       end
       else begin
-        print_endline "stopping sound";
         fade_note := false;
         stop_sound sound;
         set_sound_volume sound 1.0;
