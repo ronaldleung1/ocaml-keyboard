@@ -290,6 +290,11 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    let filtered_instrument_list = 
+      if !text_box_edit_mode then 
+        List.filter (fun name -> String.starts_with ~prefix:(trim_null_chars !text_box_text) name) valid_instrument_names
+      else valid_instrument_names in
+
     Raygui.(
       set_style (ListView `Border_color_normal)
         (Raylib.color_to_int Color.black));
@@ -305,7 +310,7 @@ let rec loop
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
       Raygui.list_view_ex rect
-        (List.map fst instruments)
+        filtered_instrument_list
         !list_view_ex_focus !list_view_scroll_index !list_view_active
     in
     list_view_active := new_list_view_active;
@@ -313,9 +318,34 @@ let rec loop
     list_view_ex_focus := new_focus;
     if !list_view_active == -1 then list_view_active := 0;
     let selected_instrument =
-      List.nth instruments !list_view_active |> fst
+      if List.length filtered_instrument_list = 0 then
+        !current_instrument
+      else if !list_view_active < List.length filtered_instrument_list then
+        List.nth filtered_instrument_list !list_view_active
+      else
+        !current_instrument  (* Fallback to the current instrument if the index is out of bounds *)
     in
-    if selected_instrument <> !current_instrument then begin
+
+    let instrument_idx =
+      match
+        List.find_index
+          (fun name -> name = selected_instrument)
+          valid_instrument_names
+      with
+      | Some x -> x
+      | None -> failwith "Instrument not found"
+    in
+    if selected_instrument <> !current_instrument && !text_box_edit_mode then begin
+      previous_instrument := !current_instrument;
+      list_view_active := instrument_idx;
+      if selected_instrument <> !current_instrument && !text_box_edit_mode then begin
+      if List.length valid_instrument_names - instrument_idx <= 8
+      then list_view_scroll_index := instrument_idx - 8
+      else list_view_scroll_index := instrument_idx; 
+    end;
+  end;
+
+    if selected_instrument <> !current_instrument && not !text_box_edit_mode then begin
       previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
       text_box_text := !current_instrument;
