@@ -34,6 +34,7 @@ val create_general_with_key_binding :
 val create :
   ?draw_text:bool ->
   ?opt_color:Raylib.Color.t ->
+  ?view_only:bool ->
   string ->
   Raylib.Key.t list ->
   string list ->

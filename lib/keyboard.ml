@@ -171,7 +171,8 @@ let map2i f l1 l2 =
     (List.init (List.length l1) Fun.id)
     (combine_lists l1 l2)
 
-let init_keyboard (init_octave : int) rect instrument =
+
+let init_keyboard (init_octave : int) rect instrument view_only=
   Octave.curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -210,11 +211,17 @@ let init_keyboard (init_octave : int) rect instrument =
         let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
         let key_string = List.nth white_key_code_strings i in
-        Button.create ~draw_text:true ~opt_color:color note key_code
+        if view_only then
+        Button.create ~draw_text:true ~opt_color:color ~view_only:true note key_code
           key_string
           (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
              (float_of_int width) (float_of_int height))
-          instrument)
+          instrument
+        else Button.create ~draw_text:true ~opt_color:color note key_code
+        key_string
+        (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+           (float_of_int width) (float_of_int height))
+        instrument)
       white_notes white_key_codes
   in
 
@@ -248,7 +255,13 @@ let init_keyboard (init_octave : int) rect instrument =
           in
           let color = Raylib.Color.black in
           let key_string = List.nth black_key_code_strings i in
-          Button.create ~draw_text:true ~opt_color:color note key_code
+          if view_only then
+            Button.create ~draw_text:true ~opt_color:color ~view_only:true note key_code
+              key_string
+              (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+                 (float_of_int width) (float_of_int height))
+              instrument
+            else Button.create ~draw_text:true ~opt_color:color note key_code
             key_string
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
                (float_of_int width) (float_of_int height))
@@ -265,9 +278,10 @@ let init_keyboard (init_octave : int) rect instrument =
 let last_octave = ref (-1)
 let keyboard = ref []
 
-let refresh rect instrument changed_instrument =
-  if !Octave.curr_octave <> !last_octave || changed_instrument then begin
-    keyboard := init_keyboard !Octave.curr_octave rect instrument;
+
+let refresh rect instrument changed_instrument changed_view view_only =
+  if !Octave.curr_octave <> !last_octave || changed_instrument || changed_view then begin
+    keyboard := init_keyboard !Octave.curr_octave rect instrument view_only;
     last_octave := !Octave.curr_octave
   end;
   !keyboard

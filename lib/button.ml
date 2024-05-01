@@ -87,6 +87,7 @@ let create_general_with_key_binding
 let create
     ?(draw_text = false)
     ?(opt_color = Color.white)
+    ?(view_only = false)
     note
     key_list
     string_key_list
@@ -192,13 +193,13 @@ let create
     List.iter
       (fun key ->
         begin
-          if is_key_pressed key then begin
+          if is_key_pressed key && not view_only then begin
             play_note ()
           end;
           if is_key_released key then begin
             stop_note ()
           end;
-          if is_key_down key then begin
+          if is_key_down key && not view_only then begin
             color := Color.green;
             match !note_blocks with
             | [] -> ()
