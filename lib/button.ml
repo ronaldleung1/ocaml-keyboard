@@ -94,7 +94,7 @@ let create
     (instrument : string) =
   button_stack := rect :: !button_stack;
 
-let sound =
+  let sound =
     load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
   in
   let color = ref opt_color in
@@ -112,7 +112,6 @@ let sound =
     | _ -> Color.white
   in
 
-  (* may be best to move to main.ml *)
   let note_blocks = ref [] in
   (* (y, height) array *)
   let draw_note_block (pos, length) =
@@ -129,34 +128,42 @@ let sound =
   in
 
   let stop_note () =
+    print_endline "stop_note";
+    (* Fade out sound *)
     let fade_duration = 0.25 in
     (* duration in seconds *)
     let steps = 10 in
     let step_delay = fade_duration /. float_of_int steps in
     let volume_step = 1.0 /. float_of_int steps in
+    let next_time = ref (Unix.gettimeofday ()) in
 
-    let rec fade_out current_volume =
-      if current_volume > 0.0 then begin
-        set_sound_volume sound current_volume;
-        Unix.sleepf step_delay;
-        fade_out (current_volume -. volume_step)
+    let fade_out init_volume () =
+      let volume = ref init_volume in
+      let volume_reached_zero = ref false in
+      if !volume > 0.0 then begin
+        let current_time = Unix.gettimeofday () in
+        volume := !volume -. volume_step;
+        set_sound_volume sound !volume;
+        if current_time >= !next_time then begin
+          next_time := current_time +. step_delay
+        end
       end
-      else begin
+      else if not !volume_reached_zero then begin
+        (* Reset volume only once for next play *)
+        volume_reached_zero := true;
         stop_sound sound;
-        set_sound_volume sound 1.0 (* Reset volume for next play *)
+        set_sound_volume sound 1.0
       end
     in
 
-    let domain_fade_out () = fade_out 1.0 in
-
-    let _ = Domain.spawn domain_fade_out in
-    ()
+    fade_out 1.0 ()
   in
 
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
 
+    (* mouse input *)
     if check_collision !mouse_point rect !button_stack then begin
       if is_mouse_button_pressed MouseButton.Left then begin
         play_note ()
@@ -172,6 +179,7 @@ let sound =
       end
     end;
 
+    (* keyboard input *)
     List.iter
       (fun key ->
         begin
