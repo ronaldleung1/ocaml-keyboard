@@ -150,7 +150,6 @@ let text_box_text = ref ""
 let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let show_text_input_box = ref false
-
 let last_filter = ref ""
 
 let setup () =
@@ -216,8 +215,7 @@ let rec loop
             vl
         | vl, false -> vl
     in
-    if !text_box_edit_mode then
-      last_filter := !text_box_text;
+    if !text_box_edit_mode then last_filter := !text_box_text;
 
     let trim_null_chars s =
       try
@@ -294,10 +292,21 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
-    let filtered_instrument_list = 
-      if !text_box_edit_mode then 
-        List.filter (fun name -> String.starts_with ~prefix:(trim_null_chars !text_box_text) name) valid_instrument_names
-      else  List.filter (fun name -> String.starts_with ~prefix:(trim_null_chars !last_filter) name) valid_instrument_names 
+    let filtered_instrument_list =
+      if !text_box_edit_mode then
+        List.filter
+          (fun name ->
+            String.starts_with
+              ~prefix:(trim_null_chars !text_box_text)
+              name)
+          valid_instrument_names
+      else
+        List.filter
+          (fun name ->
+            String.starts_with
+              ~prefix:(trim_null_chars !last_filter)
+              name)
+          valid_instrument_names
     in
 
     Raygui.(
@@ -314,8 +323,7 @@ let rec loop
         (Raylib.color_to_int Color.darkgreen));
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
-      Raygui.list_view_ex rect
-        filtered_instrument_list
+      Raygui.list_view_ex rect filtered_instrument_list
         !list_view_ex_focus !list_view_scroll_index !list_view_active
     in
     list_view_active := new_list_view_active;
@@ -325,17 +333,39 @@ let rec loop
     let selected_instrument =
       if List.length filtered_instrument_list = 0 then
         !current_instrument
-      else if !list_view_active < List.length filtered_instrument_list then
-        List.nth filtered_instrument_list !list_view_active
-      else
-        !current_instrument  (* Fallback to the current instrument if the index is out of bounds *)
+      else if !list_view_active < List.length filtered_instrument_list
+      then List.nth filtered_instrument_list !list_view_active
+      else !current_instrument
+      (* Fallback to the current instrument if the index is out of
+         bounds *)
     in
-    
-    if selected_instrument <> !current_instrument && not !text_box_edit_mode then begin
-      last_filter := "";
+
+    if
+      selected_instrument <> !current_instrument
+      && not !text_box_edit_mode
+    then begin
       previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
       text_box_text := !current_instrument;
+
+      list_view_scroll_index :=
+        if !last_filter <> "" then
+          let instr_idx =
+            match
+              List.find_index
+                (fun name -> name = selected_instrument)
+                valid_instrument_names
+            with
+            | Some x -> x
+            | None -> failwith "Cant find isntrument"
+          in
+          if List.length valid_instrument_names - instr_idx <= 8 then
+            instr_idx - 8
+          else instr_idx
+        else !list_view_scroll_index;
+
+      last_filter := "";
+
       let keys =
         Keyboard.refresh
           (Rectangle.create 0.
