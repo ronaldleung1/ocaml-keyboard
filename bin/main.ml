@@ -138,7 +138,6 @@ let instruments =
     ("xylophone", create_instrument "xylophone");
   ]
 
-let instrument_names = String.concat ";" (List.map fst instruments)
 let valid_instrument_names = List.map fst instruments
 let list_view_scroll_index = ref 0
 let list_view_active = ref 0
@@ -149,7 +148,6 @@ let volume_slider = ref 5.0
 let text_box_text = ref ""
 let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
-let show_text_input_box = ref false
 let last_filter = ref ""
 
 let setup () =
