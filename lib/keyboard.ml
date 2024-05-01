@@ -266,8 +266,8 @@ let last_octave = ref (-1)
 let keyboard = ref []
 
 let refresh rect instrument changed_instrument =
-  if !curr_octave <> !last_octave || changed_instrument then begin
-    keyboard := init_keyboard !curr_octave rect instrument;
-    last_octave := !curr_octave
+  if !Octave.curr_octave <> !last_octave || changed_instrument then begin
+    keyboard := init_keyboard !Octave.curr_octave rect instrument;
+    last_octave := !Octave.curr_octave
   end;
   !keyboard
