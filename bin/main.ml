@@ -227,6 +227,7 @@ let rec loop
     if not !text_box_edit_mode then begin
       if List.mem cleaned_text_box_text valid_instrument_names then begin
         current_instrument := cleaned_text_box_text;
+        last_filter := "";
         let instrument_idx =
           match
             List.find_index
@@ -355,7 +356,7 @@ let rec loop
                 valid_instrument_names
             with
             | Some x -> x
-            | None -> failwith "Cant find isntrument"
+            | None -> failwith "Cant find instrument"
           in
           if List.length valid_instrument_names - instr_idx <= 8 then
             instr_idx - 8
