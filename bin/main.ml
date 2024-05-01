@@ -189,6 +189,8 @@ let rec loop
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
     draw_text "Search below" 175 40 18 Color.lightgray;
+
+    
     Raygui.(
       set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
     Raygui.(
@@ -325,26 +327,6 @@ let rec loop
       else
         !current_instrument  (* Fallback to the current instrument if the index is out of bounds *)
     in
-
-    let instrument_idx =
-      match
-        List.find_index
-          (fun name -> name = selected_instrument)
-          valid_instrument_names
-      with
-      | Some x -> x
-      | None -> failwith "Instrument not found"
-    in
-    if selected_instrument <> !current_instrument && !text_box_edit_mode then begin
-      previous_instrument := !current_instrument;
-      list_view_active := instrument_idx;
-      if selected_instrument <> !current_instrument && !text_box_edit_mode then begin
-      if List.length valid_instrument_names - instrument_idx <= 8
-      then list_view_scroll_index := instrument_idx - 8
-      else list_view_scroll_index := instrument_idx; 
-    end;
-  end;
-
     if selected_instrument <> !current_instrument && not !text_box_edit_mode then begin
       previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
