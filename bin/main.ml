@@ -185,10 +185,10 @@ let rec loop
   else
     let open Raylib in
     begin_drawing ();
-    clear_background Color.gray;
+    clear_background Color.darkgray;
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
-    draw_text "Search below" 175 40 18 Color.gold;
+    draw_text "Search below" 175 40 18 Color.lightgray;
     Raygui.(
       set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
     Raygui.(
@@ -196,10 +196,10 @@ let rec loop
         (Raylib.color_to_int Color.black));
     Raygui.(
       set_style (TextBox `Text_color_normal)
-        (Raylib.color_to_int Color.green));
+        (Raylib.color_to_int Color.white));
     Raygui.(
       set_style (TextBox `Text_color_focused)
-        (Raylib.color_to_int Color.green));
+        (Raylib.color_to_int Color.white));
     Raygui.(
       set_style (TextBox `Text_color_pressed)
         (Raylib.color_to_int Color.red));
@@ -296,10 +296,10 @@ let rec loop
         (Raylib.color_to_int Color.black));
     Raygui.(
       set_style (ListView `Text_color_focused)
-        (Raylib.color_to_int Color.gold));
+        (Raylib.color_to_int Color.red));
     Raygui.(
       set_style (ListView `Text_color_pressed)
-        (Raylib.color_to_int Color.green));
+        (Raylib.color_to_int Color.darkgreen));
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
       Raygui.list_view_ex rect
