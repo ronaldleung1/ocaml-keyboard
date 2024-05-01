@@ -224,7 +224,7 @@ let rec loop
     (* Use the function to clean text_box_text before comparison or
        other operations *)
     let cleaned_text_box_text = trim_null_chars !text_box_text in
-    if not !text_box_edit_mode then
+    if not !text_box_edit_mode then begin
       if List.mem cleaned_text_box_text valid_instrument_names then begin
         current_instrument := cleaned_text_box_text;
         let instrument_idx =
@@ -237,12 +237,14 @@ let rec loop
           | None -> failwith "Instrument not found"
         in
         list_view_active := instrument_idx;
-        if !previous_instrument <> !current_instrument then
+        if !previous_instrument <> !current_instrument then begin
+          previous_instrument := !current_instrument;
           if List.length valid_instrument_names - instrument_idx <= 8
           then list_view_scroll_index := instrument_idx - 8
           else list_view_scroll_index := instrument_idx
-      end;
-
+        end
+      end
+    end;
     let keys =
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
         Keyboard.refresh
