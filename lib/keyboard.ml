@@ -153,7 +153,12 @@ let black_key_code_strings =
     [ "7" ];
   ]
 
-let init_keyboard (init_octave : int) rect instrument view_only =
+let init_keyboard
+    (init_octave : int)
+    rect
+    instrument
+    ?(view_only = false)
+    () =
   Octave.curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -193,7 +198,7 @@ let init_keyboard (init_octave : int) rect instrument view_only =
         let color = Raylib.Color.white in
         let key_string = List.nth white_key_code_strings i in
         if view_only then
-          Button.create ~draw_text:true ~opt_color:color ~view_only:true
+          Button.create ~view_only:true ~draw_text:true ~opt_color:color
             note key_code key_string
             (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
                (float_of_int width) (float_of_int height))
@@ -267,7 +272,7 @@ let refresh rect instrument changed_instrument changed_view view_only =
     || changed_instrument || changed_view
   then begin
     keyboard :=
-      init_keyboard !Octave.curr_octave rect instrument view_only;
+      init_keyboard !Octave.curr_octave rect instrument ~view_only ();
     last_octave := !Octave.curr_octave
   end;
   !keyboard

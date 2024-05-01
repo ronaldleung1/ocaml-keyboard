@@ -168,7 +168,7 @@ let setup () =
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
             100.)
-         "piano" false)
+         "piano" ())
   in
   let octave_keys =
     [ Octave.init_decrease_button; Octave.init_increase_button ]
