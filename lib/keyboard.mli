@@ -3,7 +3,7 @@ val curr_octave : int ref
     must be in [0,7] *)
 
 val init_keyboard :
-  int -> Raylib.Rectangle.t -> string -> (unit -> unit) list
+  int -> Raylib.Rectangle.t -> string -> bool -> (unit -> unit) list 
 (** [init_keyboard init_octave rect instrument] draws the keyboard
     forand creates the corresponding keyboard buttons for the specific
     instrument. The keyboard is limited to keys in the init_octave.
@@ -17,7 +17,7 @@ val init_decrease_octave_key : unit -> unit
 (** [init_decrease_octave_key ()] creates the decrease octave button. *)
 
 val refresh :
-  Raylib.Rectangle.t -> string -> bool -> (unit -> unit) list
+  Raylib.Rectangle.t -> string -> bool -> bool -> bool -> (unit -> unit) list
 (** [refresh rect instrument changed_instrument] redraws the keyboard if
     the octave or the instrument has changed. Draws with dimensions
     provided by rect, the instrument, and whether the input instrument

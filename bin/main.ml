@@ -5,7 +5,6 @@ let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
 
-(*user can pick instrument*)
 let instruments =
   [
     ("piano", create_instrument "piano");
@@ -140,12 +139,17 @@ let instruments =
   ]
 
 let instrument_names = String.concat ";" (List.map fst instruments)
-let () = print_endline instrument_names
+let valid_instrument_names = List.map fst instruments
 let list_view_scroll_index = ref 0
 let list_view_active = ref 0
 let list_view_ex_focus = ref 0
+let previous_instrument = ref "piano"
 let current_instrument = ref "piano"
 let volume_slider = ref 5.0
+let text_box_text = ref ""
+let text_box_edit_mode = ref false
+let prev_text_box_edit_mode = ref false
+let show_text_input_box = ref false
 
 let setup () =
   let open Raylib in
@@ -164,7 +168,7 @@ let setup () =
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
             100.)
-         "piano")
+         "piano" false)
   in
   let octave_keys =
     [
@@ -187,20 +191,85 @@ let rec loop
     clear_background Color.gray;
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
-    let keys =
-      Keyboard.refresh
-        (Rectangle.create 0.
-           (float_of_int (Raylib.get_screen_height ()) -. 100.)
-           (float_of_int (Raylib.get_screen_width ()))
-           100.)
-        !current_instrument false
+    draw_text "Search below" 175 40 18 Color.gold;
+    Raygui.(
+      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
+    Raygui.(
+      set_style (TextBox `Border_color_normal)
+        (Raylib.color_to_int Color.black));
+    Raygui.(
+      set_style (TextBox `Text_color_normal)
+        (Raylib.color_to_int Color.green));
+    Raygui.(
+      set_style (TextBox `Text_color_focused)
+        (Raylib.color_to_int Color.green));
+    Raygui.(
+      set_style (TextBox `Text_color_pressed)
+        (Raylib.color_to_int Color.red));
+    let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
+    let () =
+      text_box_text :=
+        match
+          Raygui.text_box rect !text_box_text !text_box_edit_mode
+        with
+        | vl, true ->
+            text_box_edit_mode := not !text_box_edit_mode;
+            vl
+        | vl, false -> vl
     in
+
+    let trim_null_chars s =
+      try
+        let index = String.index s '\000' in
+        String.sub s 0 index
+      with Not_found -> s
+    in
+    (* Use the function to clean text_box_text before comparison or
+       other operations *)
+    let cleaned_text_box_text = trim_null_chars !text_box_text in
+    if not !text_box_edit_mode then
+      if List.mem cleaned_text_box_text valid_instrument_names then begin
+        current_instrument := cleaned_text_box_text;
+        let instrument_idx =
+          match
+            List.find_index
+              (fun name -> name = cleaned_text_box_text)
+              valid_instrument_names
+          with
+          | Some x -> x
+          | None -> failwith "Instrument not found"
+        in
+        list_view_active := instrument_idx;
+        if !previous_instrument <> !current_instrument then
+          if List.length valid_instrument_names - instrument_idx <= 8
+          then list_view_scroll_index := instrument_idx - 8
+          else list_view_scroll_index := instrument_idx
+      end;
+
+    let keys =
+      if !prev_text_box_edit_mode <> !text_box_edit_mode then
+        Keyboard.refresh
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument false true !text_box_edit_mode
+      else
+        Keyboard.refresh
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument false false !text_box_edit_mode
+    in
+    prev_text_box_edit_mode := !text_box_edit_mode;
+
+    (List.iter (fun key -> key ())) keys;
+    (List.iter (fun key -> key ())) octave_keys;
 
     draw_text
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
-    (List.iter (fun key -> key ())) keys;
-    (List.iter (fun key -> key ())) octave_keys;
     metronome ();
     let volume = volume_control () in
     volume_slider := !volume;
@@ -209,6 +278,9 @@ let rec loop
     Raygui.(
       set_style (Slider `Text_color_normal)
         (Raylib.color_to_int Raylib.Color.gold));
+    Raygui.(
+      set_style (Slider `Border_color_normal)
+        (Raylib.color_to_int Color.black));
     let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
     let volume_slider_val =
       Raygui.slider rect "VOLUME"
@@ -219,6 +291,18 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    Raygui.(
+      set_style (ListView `Border_color_normal)
+        (Raylib.color_to_int Color.black));
+    Raygui.(
+      set_style (ListView `Text_color_normal)
+        (Raylib.color_to_int Color.black));
+    Raygui.(
+      set_style (ListView `Text_color_focused)
+        (Raylib.color_to_int Color.gold));
+    Raygui.(
+      set_style (ListView `Text_color_pressed)
+        (Raylib.color_to_int Color.green));
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
       Raygui.list_view_ex rect
@@ -233,15 +317,16 @@ let rec loop
       List.nth instruments !list_view_active |> fst
     in
     if selected_instrument <> !current_instrument then begin
+      previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
-
+      text_box_text := !current_instrument;
       let keys =
         Keyboard.refresh
           (Rectangle.create 0.
              (float_of_int (Raylib.get_screen_height ()) -. 100.)
              (float_of_int (Raylib.get_screen_width ()))
              100.)
-          !current_instrument true
+          !current_instrument true false !text_box_edit_mode
       in
       end_drawing ();
       loop metronome keys octave_keys volume_control
