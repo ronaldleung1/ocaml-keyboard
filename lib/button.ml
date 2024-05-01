@@ -113,7 +113,6 @@ let create
     | _ -> Color.white
   in
 
-  (* may be best to move to main.ml *)
   let note_blocks = ref [] in
   (* (y, height) array *)
   let draw_note_block (pos, length) =
@@ -124,40 +123,57 @@ let create
       length block_color
   in
 
+  let note_volume = ref 1.0 in
+  let fade_note = ref false in
+
   let play_note () =
+    (* plays the sound and stores it in an instance, so its volume can
+       be manipulated later *)
+    fade_note := false;
+    set_sound_volume sound 1.0;
+    note_volume := 1.0;
     play_sound sound;
     note_blocks := (0, 0) :: !note_blocks
   in
 
   let stop_note () =
-    let fade_duration = 0.25 in
-    (* duration in seconds *)
-    let steps = 10 in
-    let step_delay = fade_duration /. float_of_int steps in
-    let volume_step = 1.0 /. float_of_int steps in
+    (* begin reducing volume of note *)
+    fade_note := true
+  in
 
-    let rec fade_out current_volume =
-      if current_volume > 0.0 then begin
-        set_sound_volume sound current_volume;
-        Unix.sleepf step_delay;
-        fade_out (current_volume -. volume_step)
+  let fade_duration = 0.25 in
+  (* duration in seconds *)
+  let steps = 10 in
+  let step_delay = fade_duration /. float_of_int steps in
+  let next_time = ref (Unix.gettimeofday ()) in
+
+  let fade_out_note () =
+    if !fade_note then begin
+      let volume_step = 1.0 /. float_of_int steps in
+      if !note_volume > 0.0 then begin
+        let current_time = Unix.gettimeofday () in
+        set_sound_volume sound !note_volume;
+        if current_time >= !next_time then begin
+          print_endline (string_of_float !note_volume);
+          note_volume := !note_volume -. volume_step;
+          next_time := current_time +. step_delay
+        end
       end
       else begin
+        print_endline "stopping sound";
+        fade_note := false;
         stop_sound sound;
-        set_sound_volume sound 1.0 (* Reset volume for next play *)
+        set_sound_volume sound 1.0;
+        note_volume := 1.0
       end
-    in
-
-    let domain_fade_out () = fade_out 1.0 in
-
-    let _ = Domain.spawn domain_fade_out in
-    ()
+    end
   in
 
   fun () ->
     color := opt_color;
     mouse_point := get_mouse_position ();
 
+    (* mouse input *)
     if check_collision !mouse_point rect !button_stack then begin
       if is_mouse_button_pressed MouseButton.Left then begin
         play_note ()
@@ -173,6 +189,7 @@ let create
       end
     end;
 
+    (* keyboard input *)
     List.iter
       (fun key ->
         begin
@@ -192,10 +209,14 @@ let create
         end)
       key_list;
 
-    (* remove notes that are off the screen *)
+    (* reduce volume of notes not being played *)
+    fade_out_note ();
+
+    (* move note blocks up screen *)
     note_blocks :=
       List.map (fun (pos, length) -> (pos + 1, length)) !note_blocks;
 
+    (* remove notes that are off the screen *)
     note_blocks :=
       List.filter
         (fun (pos, length) ->
