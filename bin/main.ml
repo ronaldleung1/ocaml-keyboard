@@ -5,6 +5,28 @@ let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
 
+(* Function to save the contents of an array to a file *)
+let save_array_to_file filename arr =
+  let oc = open_out filename in
+  Array.iter (fun x -> output_string oc (x ^ "\n")) arr;
+  close_out oc
+
+(* Function to load the contents of an array from a file *)
+let load_array_from_file filename =
+  try
+    let ic = open_in filename in
+    let rec read_lines acc =
+      try
+        let line = input_line ic in
+        read_lines (line :: acc)
+      with End_of_file -> List.rev acc
+    in
+    let lines = read_lines [] in
+    close_in ic;
+    Array.of_list lines
+  with
+  | Sys_error _ -> [||] (* Default value if the file doesn't exist *)
+    
 (*user can pick instrument*)
 let instruments =
   [
@@ -147,6 +169,8 @@ let list_view_ex_focus = ref 0
 let current_instrument = ref "piano"
 let volume_slider = ref 5.0
 
+let saved : (float * float * string) array ref = ref [|(60., 10., "piano")|]
+
 let setup () =
   let open Raylib in
   set_config_flags [ Window_resizable ];
@@ -180,7 +204,9 @@ let rec loop
     keys
     octave_keys
     (volume_control : unit -> float ref) =
-  if Raylib.window_should_close () then Raylib.close_window ()
+  if Raylib.window_should_close () then 
+
+    Raylib.close_window ()
   else
     let open Raylib in
     begin_drawing ();
