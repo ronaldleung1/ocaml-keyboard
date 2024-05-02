@@ -154,7 +154,6 @@ let rec loop
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
     let current_bpm = metronome () in
-    let () = print_endline (string_of_float current_bpm);
     let volume = volume_control () in
     volume_slider := !volume;
 
@@ -261,7 +260,7 @@ let rec loop
       loop metronome keys octave_keys volume_control
     end
     else end_drawing ();
-    loop metronome keys octave_keys volume_control in ()
+    loop metronome keys octave_keys volume_control
 
 let print_blue text =
   print_endline
