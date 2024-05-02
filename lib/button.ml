@@ -193,25 +193,10 @@ let create
     List.iter
       (fun key ->
         begin
-          let keep_playing = ref false in
           if is_key_pressed key && not view_only then begin
             play_note ();
-            if is_key_down Key.Tab then
-              print_endline "Sustain";
-              keep_playing := true
           end;
           if is_key_released key then begin
-            let () = print_endline (string_of_bool !keep_playing) in
-            if !keep_playing then begin
-              let rec loop_note () = 
-                print_endline "Looping";
-                play_note ();
-                if is_key_released Key.Tab then ()
-                else
-                loop_note ()
-              in
-                loop_note ();
-            end;
             stop_note ()
           end;
           if is_key_down key && not view_only then begin
