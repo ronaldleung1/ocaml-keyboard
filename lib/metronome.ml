@@ -22,4 +22,5 @@ let start (start_bpm : float) =
       String.sub (string_of_float !bpm) 0
         (String.length (string_of_float !bpm) - 1)
     in
-    draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold
+    draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold;
+    !bpm  (* Return the current bpm *)

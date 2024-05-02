@@ -13,8 +13,7 @@ let load_instruments_from_csv file_path =
       let instrument = String.trim line in
       if instrument <> "" then
         read_lines ((instrument, create_instrument instrument) :: acc)
-      else
-        acc
+      else acc
     with End_of_file ->
       close_in ic;
       List.rev acc
@@ -22,7 +21,6 @@ let load_instruments_from_csv file_path =
   read_lines []
 
 let instruments = load_instruments_from_csv "assets/instruments.csv"
-
 let valid_instrument_names = List.map fst instruments
 let list_view_scroll_index = ref 0
 let list_view_active = ref 0
@@ -155,7 +153,8 @@ let rec loop
     draw_text
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
-    metronome ();
+    let current_bpm = metronome () in
+    let () = print_endline (string_of_float current_bpm);
     let volume = volume_control () in
     volume_slider := !volume;
 
@@ -262,7 +261,7 @@ let rec loop
       loop metronome keys octave_keys volume_control
     end
     else end_drawing ();
-    loop metronome keys octave_keys volume_control
+    loop metronome keys octave_keys volume_control in ()
 
 let print_blue text =
   print_endline
