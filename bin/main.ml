@@ -4,28 +4,6 @@ open Instrument
 let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
-
-(* Function to save the contents of an array to a file *)
-let save_array_to_file filename arr =
-  let oc = open_out filename in
-  Array.iter (fun x -> output_string oc (x ^ "\n")) arr;
-  close_out oc
-
-(* Function to load the contents of an array from a file *)
-let load_array_from_file filename =
-  try
-    let ic = open_in filename in
-    let rec read_lines acc =
-      try
-        let line = input_line ic in
-        read_lines (line :: acc)
-      with End_of_file -> List.rev acc
-    in
-    let lines = read_lines [] in
-    close_in ic;
-    Array.of_list lines
-  with
-  | Sys_error _ -> [||] (* Default value if the file doesn't exist *)
     
 (*user can pick instrument*)
 let instruments =
@@ -169,7 +147,87 @@ let list_view_ex_focus = ref 0
 let current_instrument = ref "piano"
 let volume_slider = ref 5.0
 
-let saved : (float * float * string) array ref = ref [|(60., 10., "piano")|]
+(* Function to save the contents of an array to a file *)
+let save_array_to_file filename arr =
+  let oc = open_out filename in
+  Array.iter (fun x -> output_string oc (x ^ "\n")) arr;
+  close_out oc
+
+(*prints string to filename
+   for saving saved to saved.txt after converting it to string*)
+let print_string_to_file filename str =
+  let out_channel = open_out filename in
+  output_string out_channel str;
+  close_out out_channel
+
+(* Function to load the contents of an array from a file *)
+let load_array_from_file filename =
+  try
+    let ic = open_in filename in
+    let rec read_lines acc =
+      try
+        let line = input_line ic in
+        let parts = String.split_on_char ',' line in
+        match parts with
+        | x :: y :: z :: _ ->
+            let float_x = float_of_string x in
+            let float_y = float_of_string y in
+            let str_z = z in
+            (* let () = print_endline (string_of_float float_x) in
+            let () = print_endline (string_of_float float_y) in
+            let () = print_endline str_z in *)
+            read_lines ((float_x, float_y, str_z) :: acc)
+        | _ -> read_lines acc (* Ignore malformed lines *)
+      with
+      | End_of_file -> List.rev acc
+    in
+    let lines = read_lines [] in
+    close_in ic;
+    ref (Array.of_list lines)
+  with
+  | Sys_error _ -> ref [||] (* Default value if the file doesn't exist *)
+
+(*converts tuple to string, mainly to allow program to easily convert string in file back to original array*)
+let tuple_to_string (x, y, z) = string_of_float x ^ "," ^ string_of_float y ^ "," ^ z ^ "\n"
+
+(*converts array to string, for storing saved in file *)
+let array_to_string arr = 
+  let str = ref "" in 
+  for i=0 to Array.length arr-1 do 
+    str := !str ^ tuple_to_string arr.(i)
+  done;
+  !str
+
+(*converting string back to tuples*)
+let string_to_tuple str =
+  let len = String.length str in
+  let x_start = 1 in
+  let y_start = String.index_from str x_start ',' + 1 in
+  let z_end = len - 1 in
+  let x = float_of_string (String.sub str x_start (y_start - x_start - 1)) in
+  let y = float_of_string (String.sub str y_start (z_end - y_start - 1)) in
+  let z = String.sub str (y_start + 1) (z_end - y_start - 1) in
+  (x, y, z)
+
+(*converting string produced by array_to_string back to the original array*)
+let string_to_array str =
+  let rec parse_string str idx len acc =
+    if idx >= len then
+      acc
+    else
+      let next_tuple_end = String.index_from str idx ')' in
+      let tuple_str = String.sub str idx (next_tuple_end - idx + 1) in
+      let tuple = string_to_tuple tuple_str in
+      parse_string str (next_tuple_end + 1) len (tuple :: acc)
+  in
+  let len = String.length str in
+  let tuples = parse_string str 0 len [] in
+  ref (Array.of_list (List.rev tuples))
+
+
+let saved : (float * float * string) array ref = load_array_from_file "saved.txt"
+  (* ref [|(60., 10., "piano"); (70., 10., "gunshot")|]   *)
+let () = print_string_to_file ("saved.txt") (array_to_string !saved)
 
 let setup () =
   let open Raylib in
@@ -205,7 +263,8 @@ let rec loop
     octave_keys
     (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then 
-
+    let () = print_string ("test: " ^ !current_instrument) in 
+    (* let () = print_string_to_file "saved.txt" (tuple_to_string ( bpm, !volume_slider, !current_instrument)) in *)
     Raylib.close_window ()
   else
     let open Raylib in
@@ -256,11 +315,12 @@ let rec loop
     list_view_ex_focus := new_focus;
     if !list_view_active == -1 then list_view_active := 0;
     let selected_instrument =
-      List.nth instruments !list_view_active |> fst
+      List.nth instruments !list_view_active |> fst 
     in
     if selected_instrument <> !current_instrument then begin
+      let () = print_string selected_instrument in
       current_instrument := selected_instrument;
-
+      let () = print_string ("test: " ^ !current_instrument) in 
       let keys =
         Keyboard.refresh
           (Rectangle.create 0.
