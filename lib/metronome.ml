@@ -2,21 +2,17 @@ open Raylib
 
 let start (start_bpm : float) =
   let tick = load_sound "assets/metronome.mp3" in
-  set_sound_volume tick 0.5;
+  set_sound_volume tick 0.1;
   let bpm = ref start_bpm in
   let next_time = ref (Unix.gettimeofday ()) in
   let running = ref true in
   fun () ->
     if !running then (
-      if is_key_down Key.Up then( bpm := !bpm +. 1.0;
-        (* Unix.sleep 1;
-        while is_key_down Key.Up do 
-          bpm := !bpm +. 1.0
-        done *)
-      )
+      let current_time = Unix.gettimeofday () in
+      if is_key_down Key.Up then bpm := !bpm +. 1.0
       else if is_key_down Key.Down then bpm := !bpm -. 1.0
       else if is_key_pressed Key.Space then running := false
-      else if Unix.gettimeofday () >= !next_time then (
+      else if current_time >= !next_time then (
         play_sound tick;
         next_time := Unix.gettimeofday () +. (60. /. !bpm)))
     else if is_key_pressed Key.Space then running := true;
