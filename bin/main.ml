@@ -154,8 +154,8 @@ let rec loop
     (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then
     (* let () = print_string (!current_instrument) in *)
-    (* let () = print_string_to_file "saved.txt" (tuple_to_string *)
-       (* (current_bpm, !volume_slider, !current_instrument)) in *)
+    (* let () = print_string_to_file "saved.txt" (tuple_to_string 
+        (current_bpm, !volume_slider, !current_instrument)) in *)
     Raylib.close_window ()
   else
     let open Raylib in
