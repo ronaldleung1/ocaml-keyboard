@@ -154,13 +154,13 @@ let rec loop
     (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then
     (* let () = print_string (!current_instrument) in *)
-    let () = print_string_to_file "saved.txt" (tuple_to_string
-       (current_bpm, !volume_slider, !current_instrument)) in
+    (* let () = print_string_to_file "saved.txt" (tuple_to_string *)
+       (* (current_bpm, !volume_slider, !current_instrument)) in *)
     Raylib.close_window ()
   else
     let open Raylib in
     begin_drawing ();
-    clear_background Color.gray;
+    clear_background Color.darkgray;
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
     let sustain_button_rect = Rectangle.create 175.0 100.0 125.0 30.0 in
@@ -258,12 +258,14 @@ let rec loop
           !current_instrument false false !text_box_edit_mode false
           !sustain_on
     in
+    prev_text_box_edit_mode := !text_box_edit_mode;
+
+    (List.iter (fun key -> key ())) keys;
+    (List.iter (fun key -> key ())) octave_keys;
 
     draw_text
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
-    (List.iter (fun key -> key ())) keys;
-    (List.iter (fun key -> key ())) octave_keys;
     let current_bpm = metronome () in
     let volume = volume_control () in
     volume_slider := !volume;
@@ -272,6 +274,9 @@ let rec loop
     Raygui.(
       set_style (Slider `Text_color_normal)
         (Raylib.color_to_int Raylib.Color.gold));
+    Raygui.(
+      set_style (Slider `Border_color_normal)
+        (Raylib.color_to_int Color.black));
     let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
     let volume_slider_val =
       Raygui.slider rect "VOLUME"
@@ -282,10 +287,38 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    let filtered_instrument_list =
+      if !text_box_edit_mode then
+        List.filter
+          (fun name ->
+            String.starts_with
+              ~prefix:(trim_null_chars !text_box_text)
+              name)
+          valid_instrument_names
+      else
+        List.filter
+          (fun name ->
+            String.starts_with
+              ~prefix:(trim_null_chars !last_filter)
+              name)
+          valid_instrument_names
+    in
+
+    Raygui.(
+      set_style (ListView `Border_color_normal)
+        (Raylib.color_to_int Color.black));
+    Raygui.(
+      set_style (ListView `Text_color_normal)
+        (Raylib.color_to_int Color.black));
+    Raygui.(
+      set_style (ListView `Text_color_focused)
+        (Raylib.color_to_int Color.red));
+    Raygui.(
+      set_style (ListView `Text_color_pressed)
+        (Raylib.color_to_int Color.darkgreen));
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
-      Raygui.list_view_ex rect
-        (List.map fst instruments)
+      Raygui.list_view_ex rect filtered_instrument_list
         !list_view_ex_focus !list_view_scroll_index !list_view_active
     in
     list_view_active := new_list_view_active;
@@ -293,11 +326,40 @@ let rec loop
     list_view_ex_focus := new_focus;
     if !list_view_active == -1 then list_view_active := 0;
     let selected_instrument =
-      List.nth instruments !list_view_active |> fst
+      if List.length filtered_instrument_list = 0 then
+        !current_instrument
+      else if !list_view_active < List.length filtered_instrument_list
+      then List.nth filtered_instrument_list !list_view_active
+      else !current_instrument
+      (* Fallback to the current instrument if the index is out of
+         bounds *)
     in
-    (* let () = print_string selected_instrument in *)
-    if selected_instrument <> !current_instrument then begin
+
+    if
+      selected_instrument <> !current_instrument
+      && not !text_box_edit_mode
+    then begin
+      previous_instrument := selected_instrument;
       current_instrument := selected_instrument;
+      text_box_text := !current_instrument;
+
+      list_view_scroll_index :=
+        if !last_filter <> "" then
+          let instr_idx =
+            match
+              List.find_index
+                (fun name -> name = selected_instrument)
+                valid_instrument_names
+            with
+            | Some x -> x
+            | None -> failwith "Cant find instrument"
+          in
+          if List.length valid_instrument_names - instr_idx <= 8 then
+            instr_idx - 8
+          else instr_idx
+        else !list_view_scroll_index;
+
+      last_filter := "";
 
       let keys =
         Keyboard.refresh
