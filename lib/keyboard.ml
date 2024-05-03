@@ -139,8 +139,6 @@ let black_key_codes =
     [ Seven ];
   ]
 
-(* let curr_octave = ref 0 *)
-
 let black_key_code_strings =
   [
     [ "S" ];
@@ -155,28 +153,13 @@ let black_key_code_strings =
     [ "7" ];
   ]
 
-(* TODO test this *)
-(* combine two lists l1 and l2 into an association list *)
-let rec combine_lists l1 l2 =
-  match (l1, l2) with
-  | [], [] -> []
-  | [], _ | _, [] -> failwith "Lists have different lengths"
-  | x :: xs, y :: ys -> (x, y) :: combine_lists xs ys
-
-(* map a function f over two lists l1 and l2, with the index of the
-   element as the first argument to f *)
-let map2i f l1 l2 =
-  List.map2
-    (fun i (x, y) -> f i x y)
-    (List.init (List.length l1) Fun.id)
-    (combine_lists l1 l2)
-
 let init_keyboard
     (init_octave : int)
     rect
     instrument
-    view_only
-    sustain_on =
+    ?(view_only = false)
+    sustain_on
+    () =
   Octave.curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -205,7 +188,7 @@ let init_keyboard
         (fun note -> not (String.contains note 'b'))
         curr_notes
     in
-    map2i
+    Utils.map2i
       (fun i note key_code ->
         let x =
           (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
@@ -247,7 +230,7 @@ let init_keyboard
     (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
-      map2i
+      Utils.map2i
         (fun i note key_code ->
           let x =
             (List.nth black_indices (i mod 5) + (i / 5 * 12))
@@ -297,8 +280,8 @@ let refresh
     || changed_instrument || changed_view || changed_sustain
   then begin
     keyboard :=
-      init_keyboard !Octave.curr_octave rect instrument view_only
-        sustain_on;
+      init_keyboard !Octave.curr_octave rect instrument ~view_only
+        sustain_on ();
     last_octave := !Octave.curr_octave
   end;
   !keyboard

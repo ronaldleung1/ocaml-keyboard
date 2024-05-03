@@ -2,8 +2,9 @@ val init_keyboard :
   int ->
   Raylib.Rectangle.t ->
   string ->
+  ?view_only:bool ->
   bool ->
-  bool ->
+  unit ->
   (unit -> unit) list
 (** [init_keyboard init_octave rect instrument] draws the keyboard
     forand creates the corresponding keyboard buttons for the specific
