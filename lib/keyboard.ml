@@ -96,8 +96,8 @@ let white_key_codes =
     [ N ];
     [ M ];
     [ Q; Comma ];
-    [ W ];
-    [ E ];
+    [ W; Period ];
+    [ E; Slash ];
     [ R ];
     [ T ];
     [ Y ];
@@ -132,8 +132,8 @@ let black_key_codes =
     [ G ];
     [ H ];
     [ J ];
-    [ Two ];
-    [ Three ];
+    [ Two; L ];
+    [ Three; Semicolon ];
     [ Five ];
     [ Six ];
     [ Seven ];
@@ -267,8 +267,8 @@ let init_keyboard
                  (float_of_int width) (float_of_int height))
               instrument
           else
-            Button.create ~draw_text:true ~opt_color:color ~sustain_on note key_code  
-              key_string
+            Button.create ~draw_text:true ~opt_color:color ~sustain_on
+              note key_code key_string
               (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
                  (float_of_int width) (float_of_int height))
               instrument)
