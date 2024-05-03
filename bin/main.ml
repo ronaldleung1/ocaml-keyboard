@@ -32,6 +32,7 @@ let text_box_text = ref ""
 let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let last_filter = ref ""
+let sustain_on = ref false
 
 let setup () =
   let open Raylib in
@@ -50,7 +51,7 @@ let setup () =
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
             100.)
-         "piano" false)
+         "piano" false !sustain_on)
   in
   let octave_keys =
     [ Octave.init_decrease_button; Octave.init_increase_button ]
@@ -69,6 +70,24 @@ let rec loop
     begin_drawing ();
     clear_background Color.darkgray;
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
+
+    let sustain_button_rect = Rectangle.create 175.0 100.0 125.0 30.0 in
+    let sustain_button_text =
+      if !sustain_on then "Sustain: ON" else "Sustain: OFF"
+    in
+    let toggle_sustain () = sustain_on := not !sustain_on in
+    let _ =
+      if Raygui.button sustain_button_rect sustain_button_text then (
+        toggle_sustain ();
+        Keyboard.refresh
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument true false !text_box_edit_mode true
+          !sustain_on)
+      else keys
+    in
 
     draw_text "Search below" 175 40 18 Color.lightgray;
     Raygui.(
@@ -136,14 +155,16 @@ let rec loop
              (float_of_int (Raylib.get_screen_height ()) -. 100.)
              (float_of_int (Raylib.get_screen_width ()))
              100.)
-          !current_instrument false true !text_box_edit_mode
+          !current_instrument false true !text_box_edit_mode false
+          !sustain_on
       else
         Keyboard.refresh
           (Rectangle.create 0.
              (float_of_int (Raylib.get_screen_height ()) -. 100.)
              (float_of_int (Raylib.get_screen_width ()))
              100.)
-          !current_instrument false false !text_box_edit_mode
+          !current_instrument false false !text_box_edit_mode false
+          !sustain_on
     in
     prev_text_box_edit_mode := !text_box_edit_mode;
 
@@ -254,7 +275,8 @@ let rec loop
              (float_of_int (Raylib.get_screen_height ()) -. 100.)
              (float_of_int (Raylib.get_screen_width ()))
              100.)
-          !current_instrument true false !text_box_edit_mode
+          !current_instrument true false !text_box_edit_mode false
+          !sustain_on
       in
       end_drawing ();
       loop metronome keys octave_keys volume_control
