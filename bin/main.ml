@@ -1,5 +1,4 @@
 open Music
-open Instrument
 
 let screenWidth = 800
 let screenHeight = 450
@@ -12,7 +11,7 @@ let load_instruments_from_csv file_path =
       let line = input_line ic in
       let instrument = String.trim line in
       if instrument <> "" then
-        read_lines ((instrument, create_instrument instrument) :: acc)
+        read_lines ((instrument, Instrument.create instrument) :: acc)
       else acc
     with End_of_file ->
       close_in ic;
