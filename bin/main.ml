@@ -139,7 +139,7 @@ let setup () =
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
             100.)
-         "piano" false !sustain_on)
+         "piano" false (!sustain_on))
   in
   let octave_keys =
     [ Octave.init_decrease_button; Octave.init_increase_button ]
@@ -154,8 +154,8 @@ let rec loop
     (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then
     (* let () = print_string (!current_instrument) in *)
-    (* let () = print_string_to_file "saved.txt" (tuple_to_string
-       (metronome.bpm, !volume_slider, !current_instrument)) in *)
+    let () = print_string_to_file "saved.txt" (tuple_to_string
+       (current_bpm, !volume_slider, !current_instrument)) in
     Raylib.close_window ()
   else
     let open Raylib in
