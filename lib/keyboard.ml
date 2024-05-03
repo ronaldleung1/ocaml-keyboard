@@ -1,3 +1,8 @@
+type t = {
+  keys : (unit -> unit) list;
+  octave : int;
+}
+
 let notes =
   [
     "A0";
@@ -259,12 +264,14 @@ let init_keyboard
     in
     black_keys
   in
-  white_keys @ black_keys
+  { keys = white_keys @ black_keys; octave = init_octave }
 
 (* last_octave and keyboard is needed to make sure that refresh only
    recreates the keyboard when octave is different. Otherwise it would
    redraw in every loop, canceling the block animation *)
 let last_octave = ref (-1)
+
+(* TODO fix *)
 let keyboard = ref []
 
 let refresh
