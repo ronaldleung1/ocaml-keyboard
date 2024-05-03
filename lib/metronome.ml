@@ -6,7 +6,7 @@ let start (start_bpm : float) =
   let bpm = ref start_bpm in
   let next_time = ref (Unix.gettimeofday ()) in
   let running = ref true in
-  
+
   fun () ->
     if !running then (
       let current_time = Unix.gettimeofday () in
@@ -23,4 +23,4 @@ let start (start_bpm : float) =
         (String.length (string_of_float !bpm) - 1)
     in
     draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold;
-
+    !bpm (* Return the current bpm *)

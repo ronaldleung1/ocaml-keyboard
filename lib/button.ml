@@ -88,6 +88,7 @@ let create
     ?(draw_text = false)
     ?(opt_color = Color.white)
     ?(view_only = false)
+    ?(sustain_on = false)
     note
     key_list
     string_key_list
@@ -140,8 +141,7 @@ let create
     (* begin reducing volume of note *)
     fade_note := true
   in
-
-  let fade_duration = 0.25 in
+  let fade_duration = if sustain_on then 5.0 else 0.25 in
   (* duration in seconds *)
   let steps = 10 in
   let step_delay = fade_duration /. float_of_int steps in

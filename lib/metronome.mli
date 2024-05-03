@@ -1,2 +1,1 @@
-val start : float -> (unit -> unit)
-val bpmin : float ref
+val start : float -> unit -> float
