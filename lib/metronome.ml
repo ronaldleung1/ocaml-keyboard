@@ -24,3 +24,4 @@ let start (start_bpm : float) =
     in
     draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold;
     !bpm (* Return the current bpm *)
+  

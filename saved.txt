@@ -1,1 +1,6 @@
 60.,10.,piano
+40.,3.12592673302,acoustic_guitar_steel
+43.,2.37037038803,shakuhachi
+60.,10.,piano
+60.,10.,piano
+60.,10.,piano

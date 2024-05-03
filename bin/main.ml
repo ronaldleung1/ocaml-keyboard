@@ -42,10 +42,22 @@ let save_array_to_file filename arr =
 
 (*prints string to filename for saving saved to saved.txt after
   converting it to string*)
-let print_string_to_file filename str =
+(* let print_string_to_file filename str =
   let out_channel = open_out filename in
   output_string out_channel str;
+  close_out out_channel *)
+let print_string_to_file filename str =
+  let out_channel = open_out_gen [Open_append; Open_creat] 0o666 filename in
+  output_string out_channel str;
   close_out out_channel
+  (* let load_float_from_file filename =
+    try
+      let ic = open_in filename in
+      let line = input_line ic in
+      close_in ic;
+      Some (float_of_string line)
+    with
+    | Sys_error _ | End_of_file -> None *)
 
 (* Function to load the contents of an array from a file *)
 let load_array_from_file filename =
@@ -120,7 +132,7 @@ let saved : (float * float * string) array ref =
   load_array_from_file "saved.txt"
 (* ref [|(60., 10., "piano"); (70., 10., "gunshot")|] *)
 
-let () = print_string_to_file "saved.txt" (array_to_string !saved)
+(* let () = print_string_to_file "saved.txt" (array_to_string !saved) *)
 
 let setup () =
   let open Raylib in
@@ -152,10 +164,12 @@ let rec loop
     keys
     octave_keys
     (volume_control : unit -> float ref) =
+  (* print_string_to_file "bpm.txt" "60."; *)
   if Raylib.window_should_close () then
     (* let () = print_string (!current_instrument) in *)
-    (* let () = print_string_to_file "saved.txt" (tuple_to_string 
-        (current_bpm, !volume_slider, !current_instrument)) in *)
+    let bpm = metronome () in 
+    let () = print_string_to_file "saved.txt" (tuple_to_string 
+        (bpm, !volume_slider, !current_instrument)) in
     Raylib.close_window ()
   else
     let open Raylib in
@@ -267,8 +281,10 @@ let rec loop
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
     let current_bpm = metronome () in
+    (*let () = print_string_to_file "bpm.txt" (string_of_float current_bpm) in*)
     let volume = volume_control () in
-    volume_slider := !volume;
+    volume_slider := !volume 
+    ;
 
     (* Adjust volume as needed *)
     Raygui.(
