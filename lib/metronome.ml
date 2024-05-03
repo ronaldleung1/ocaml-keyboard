@@ -2,7 +2,7 @@ open Raylib
 
 let start (start_bpm : float) =
   let tick = load_sound "assets/metronome.mp3" in
-  set_sound_volume tick 0.5;
+  set_sound_volume tick 0.1;
   let bpm = ref start_bpm in
   let next_time = ref (Unix.gettimeofday ()) in
   let running = ref true in
@@ -22,4 +22,5 @@ let start (start_bpm : float) =
       String.sub (string_of_float !bpm) 0
         (String.length (string_of_float !bpm) - 1)
     in
-    draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold
+    draw_text ("BPM: " ^ trunc_bpm) 700 10 16 Raylib.Color.gold;
+    !bpm  (* Return the current bpm *)

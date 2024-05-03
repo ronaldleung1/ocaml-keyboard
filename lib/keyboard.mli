@@ -3,6 +3,7 @@ val init_keyboard :
   Raylib.Rectangle.t ->
   string ->
   ?view_only:bool ->
+  bool ->
   unit ->
   (unit -> unit) list
 (** [init_keyboard init_octave rect instrument] draws the keyboard
@@ -14,6 +15,8 @@ val init_keyboard :
 val refresh :
   Raylib.Rectangle.t ->
   string ->
+  bool ->
+  bool ->
   bool ->
   bool ->
   bool ->
