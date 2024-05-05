@@ -68,14 +68,15 @@ let load_array_from_file filename =
         let line = input_line ic in
         let parts = String.split_on_char ',' line in
         match parts with
-        | x :: y :: z :: _ ->
+        | w :: x :: y :: z :: _ ->
+            let str_w = w in
             let float_x = float_of_string x in
             let float_y = float_of_string y in
             let str_z = z in
             (* let () = print_endline (string_of_float float_x) in let
                () = print_endline (string_of_float float_y) in let () =
                print_endline str_z in *)
-            read_lines ((float_x, float_y, str_z) :: acc)
+            read_lines ((str_w, (float_x, float_y, str_z)) :: acc)
         | _ -> read_lines acc (* Ignore malformed lines *)
       with End_of_file -> List.rev acc
     in
@@ -90,11 +91,13 @@ let load_array_from_file filename =
 let tuple_to_string (x, y, z) =
   string_of_float x ^ "," ^ string_of_float y ^ "," ^ z ^ "\n"
 
+let ass_to_string (w, (x, y, z)) = w ^ "," ^ tuple_to_string (x, y, z)
+
 (*converts array to string, for storing saved in file *)
 let array_to_string arr =
   let str = ref "" in
   for i = 0 to Array.length arr - 1 do
-    str := !str ^ tuple_to_string arr.(i)
+    str := !str ^ ass_to_string arr.(i)
   done;
   !str
 
@@ -128,20 +131,20 @@ let string_to_array str =
   let tuples = parse_string str 0 len [] in
   ref (Array.of_list (List.rev tuples))
 
-let saved : (float * float * string) array ref =
+let saved : (string * (float * float * string)) array ref =
   load_array_from_file "saved.txt"
 (* ref [|(60., 10., "piano"); (70., 10., "gunshot")|] *)
 
 (* let () = print_string_to_file "saved.txt" (array_to_string !saved) *)
 
-let setup () =
+let setup bpm volume instrument =
   let open Raylib in
   set_config_flags [ Window_resizable ];
   init_window screenWidth screenHeight "OCaml Keyboard";
   init_audio_device ();
 
-  let metronome = Metronome.start 60. in
-  let volume_control = Volume.start 10. in
+  let metronome = Metronome.start bpm in
+  let volume_control = Volume.start volume in
 
   (* Initialize volume control with default volume level *)
   let keys =
@@ -151,7 +154,7 @@ let setup () =
             (float_of_int (Raylib.get_screen_height ()) -. 100.)
             (float_of_int (Raylib.get_screen_width ()))
             100.)
-         "piano" false (!sustain_on))
+      instrument false (!sustain_on))
   in
   let octave_keys =
     [ Octave.init_decrease_button; Octave.init_increase_button ]
@@ -166,11 +169,41 @@ let rec loop
     (volume_control : unit -> float ref) =
   (* print_string_to_file "bpm.txt" "60."; *)
   if Raylib.window_should_close () then
-    (* let () = print_string (!current_instrument) in *)
+    (* let open Raylib in 
+    Keyboard.refresh(
+      (Rectangle.create 0.
+        (float_of_int (Raylib.get_screen_height ()) -. 100.)
+          (float_of_int (Raylib.get_screen_width ()))
+          100.)
+        !current_instrument true false !text_box_edit_mode true
+        !sustain_on)*)
     let bpm = metronome () in 
-    let () = print_string_to_file "saved.txt" (tuple_to_string 
-        (bpm, !volume_slider, !current_instrument)) in
-    Raylib.close_window ()
+    let () = print_endline "Wanna save? (yes/no)" in 
+    let input = read_line () in 
+    if input="yes" then 
+      let () = print_endline "Name?" in 
+      let name = read_line () in
+      let () = print_string_to_file "saved.txt" (ass_to_string 
+      (name, (bpm, !volume_slider, !current_instrument))) in
+      Raylib.close_window () 
+    else 
+      Raylib.close_window ()
+
+    (* let () = print_string (!current_instrument) in *)
+    (* let () = print_endline ("string") in
+    let open Raylib in 
+    draw_text "do you want to save?" 175 40 18 Color.lightgray;
+    let sustain_button_yes = Rectangle.create 150.0 100.0 100.0 30.0 in 
+    let sustain_button_no = Rectangle.create 200.0 100.0 150.0 30.0 in 
+    let () = print_endline ("string") in
+    (* let texts = [||"yes";"no"|] in *)
+    if Raygui.button (sustain_button_yes) "yes" then 
+      let bpm = metronome () in 
+      let () = print_string_to_file "saved.txt" (ass_to_string 
+        ("untitled", (bpm, !volume_slider, !current_instrument))) in
+      Raylib.close_window ();
+    if Raygui.button (sustain_button_no) "no" then  *)
+
   else
     let open Raylib in
     begin_drawing ();
@@ -281,10 +314,9 @@ let rec loop
       ("Current Instrument: " ^ !current_instrument)
       275 12 18 Color.gold;
     let current_bpm = metronome () in
-    (*let () = print_string_to_file "bpm.txt" (string_of_float current_bpm) in*)
+    (* let () = print_string_to_file "bpm.txt" (string_of_float current_bpm) in *)
     let volume = volume_control () in
-    volume_slider := !volume 
-    ;
+    volume_slider := !volume;
 
     (* Adjust volume as needed *)
     Raygui.(
@@ -482,9 +514,35 @@ let rec library_menu library =
       library_menu library
   | _ -> library_menu library
 
+(*print out names for saved files*)
+let print_names saved = 
+  for i=0 to Array.length !saved -1 do 
+    let (name, _) = !saved.(i) in 
+    print_endline (name ^ "\n")
+  done;;
+
+(*lookup saved file for name that user inputs, output corresponding bpm, volume, instrument*)
+let lookup saved name = 
+  let arr = Array.to_list !saved in
+  try 
+    if List.mem_assoc name arr then 
+      List.assoc name arr 
+    else raise Not_found
+  with Not_found ->
+    let () = print_endline "No name found";
+  
 let () =
   if List.mem "playlist" argv then library_menu Library.empty
   else begin
-    let metronome, keys, octave_keys, volume_control = setup () in
-    loop metronome keys octave_keys volume_control
+    let () = print_endline "Pick a file to work on: " in 
+    let () = print_names saved in 
+    let () = print_endline "Enter name: " in
+    let name = read_line () in
+    if name = "default" then 
+      let metronome, keys, octave_keys, volume_control = setup 60. 10. "piano" in
+      loop metronome keys octave_keys volume_control
+    else 
+      let x, y, z = lookup saved name in
+      let metronome, keys, octave_keys, volume_control = setup x y z in
+      loop metronome keys octave_keys volume_control
   end

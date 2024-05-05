@@ -11,7 +11,9 @@ let start (start_bpm : float) =
     if !running then (
       let current_time = Unix.gettimeofday () in
       if is_key_down Key.Up then bpm := !bpm +. 1.0
-      else if is_key_down Key.Down then bpm := !bpm -. 1.0
+      else if is_key_down Key.Down then 
+        if (!bpm>0.0) then 
+          bpm := !bpm -. 1.0
       else if is_key_pressed Key.Space then running := false
       else if current_time >= !next_time then (
         play_sound tick;

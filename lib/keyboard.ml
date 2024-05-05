@@ -176,7 +176,8 @@ let init_keyboard
     rect
     instrument
     view_only
-    sustain_on =
+    sustain_on 
+     =
   Octave.curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
@@ -243,7 +244,7 @@ let init_keyboard
 
     let black_notes =
       List.filter (fun note -> String.contains note 'b') curr_notes
-    in
+    in   
     (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
@@ -276,7 +277,16 @@ let init_keyboard
     in
     black_keys
   in
-  white_keys @ black_keys
+  (* if save_app then Button.create ~draw_text:true ~opt_color:color
+     ~sustain_on note key_code key_string (Raylib.Rectangle.create
+     (150.0 100.0 100.0 30.0)) instrument in *)
+  (* let saving = 
+    if saved then 
+      Button.create ~draw_text:true ~opt_color:color ~sustain_on
+    note key_code key_string
+    (Raylib.Rectangle.create (185.0) (185.0)
+       (185.0) (185.0))  in  *)
+  white_keys @ black_keys  
 
 (* last_octave and keyboard is needed to make sure that refresh only
    recreates the keyboard when octave is different. Otherwise it would
@@ -291,7 +301,7 @@ let refresh
     changed_view
     view_only
     changed_sustain
-    sustain_on =
+    sustain_on (* saved *) =
   if
     !Octave.curr_octave <> !last_octave
     || changed_instrument || changed_view || changed_sustain
