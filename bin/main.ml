@@ -377,11 +377,11 @@ let rec loop
                 ((float_of_int (get_screen_width ()) /. 2.0) -. 120.0)
                 ((float_of_int (get_screen_height ()) /. 2.0) -. 60.0)
                 240.0 140.0)
-              "Save this Preset!" "Enter a name below" "Ok;Cancel"
+              "Save this preset!" "Enter a name below" "Ok;Cancel"
               !save_input_text
           in
           if res = 1 then
-            let () = print_endline "HERE" in
+            let () = text_box_edit_mode := false in
             let current_bpm = current_bpm in
             let current_volume = !volume in
             let preset_data = (trim_null_chars !save_input_text, (current_bpm, current_volume, !current_instrument)) in
@@ -389,14 +389,14 @@ let rec loop
             Presets.print_string_to_file "presets.txt" (preset_string);
             (text_input_text, false)
           else if res = 0 || res = 2 then (
+            text_box_edit_mode := false;
             (text_input_text, false)
-          ) else (text_input_text, !show_save_input_box)
+          ) else (text_box_edit_mode := true; (text_input_text, !show_save_input_box))
         ) else (!save_input_text, !show_save_input_box)
       in
       save_input_text := text_input_text;
       show_save_input_box := show_text_input_box;
 
-      text_box_edit_mode := true;
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
         Keyboard.refresh
           (Rectangle.create 0.
