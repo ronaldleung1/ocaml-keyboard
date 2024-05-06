@@ -4,7 +4,7 @@ open Raylib
 
 (* TESTS FOR SONG MODULE *)
 
-let test_create _ =
+let test_create_song _ =
   let song = Song.create "song1" "artist1" 240 in
   assert_equal "song1" (Song.title song);
   assert_equal "artist1" (Song.artist song);
@@ -60,7 +60,7 @@ let test_curr_octave _ =
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      "piano" false
+      "piano" ~view_only:false false ()
   in
   assert_equal octave_before !Octave.curr_octave
 
@@ -73,7 +73,7 @@ let test_curr_octave2 _ =
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      "piano" false
+      "piano" ~view_only:false false ()
   in
   let octave_before = !Octave.curr_octave in
   let _ =
@@ -82,7 +82,7 @@ let test_curr_octave2 _ =
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      "piano" false true true
+      "piano" false false false false false
   in
   let octave_after = !Octave.curr_octave in
   assert_equal octave_before octave_after
@@ -93,18 +93,20 @@ let test_init_keyboard _ =
   let _ =
     Keyboard.init_keyboard octave
       (Rectangle.create 0. 0. 0. 0.)
-      "piano" false
+      "piano" ~view_only:false false ()
   in
   let octave_changed = 6 in
   assert_raises (Failure "Lists have different lengths") (fun () ->
       Keyboard.init_keyboard octave_changed
         (Rectangle.create 0. 0. 0. 0.)
-        "cello" false)
+        "cello" ~view_only:false false ())
 
 (* refresh_keyboard cannot be called before init_keyboard *)
 let test_refresh_keyboard _ =
   assert_raises (Failure "Lists have different lengths") (fun () ->
-      Keyboard.refresh (Rectangle.create 0. 0. 0. 0.) "piano" false)
+      Keyboard.refresh
+        (Rectangle.create 0. 0. 0. 0.)
+        "piano" false false false false false)
 
 (* refresh_keyboard should not change the number of keys on the
    keyboard *)
@@ -115,7 +117,7 @@ let test_refresh_keyboard2 _ =
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      "piano" true
+      "piano" ~view_only:false true ()
   in
   let refresh_keyboard =
     Keyboard.refresh
@@ -123,7 +125,7 @@ let test_refresh_keyboard2 _ =
          (float_of_int (Raylib.get_screen_height ()) -. 100.)
          (float_of_int (Raylib.get_screen_width ()))
          100.)
-      "cello" true true true
+      "cello" true true true true true
   in
   assert_equal
     (List.length init_keyboard)
@@ -133,7 +135,9 @@ let test_refresh_keyboard2 _ =
    increased *)
 let test_increase_octave _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano" true
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false true ()
   in
   let octave = !Octave.curr_octave in
   let _ = Octave.init_increase_button in
@@ -143,7 +147,9 @@ let test_increase_octave _ =
    decreased *)
 let test_decrease_octave _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano" true
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false true ()
   in
   let octave = !Octave.curr_octave in
   let _ = Octave.init_decrease_button in
@@ -153,110 +159,124 @@ let test_decrease_octave _ =
    octave *)
 let test_decrease_octave2 _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false true ()
   in
-  let octave = !Keyboard.curr_octave in
+  let octave = !Octave.curr_octave in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
-  let current_octave = !Keyboard.curr_octave in
+  let current_octave = !Octave.curr_octave in
   assert_equal true (current_octave <= octave)
 
 (* test decrease octave key functionality: cannot go beyond 0 on
    curr_octave - 0 on keyboard scale *)
 let test_decrease_octave3 _ =
   let _ =
-    Keyboard.init_keyboard 1 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 1
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false true ()
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
-  assert_equal true (!Keyboard.curr_octave >= 0)
+  assert_equal true (!Octave.curr_octave >= 0)
 
 (* test increase octave key functionality: must not decrease the
    octave *)
 let test_increase_octave2 _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false true ()
   in
-  let octave = !Keyboard.curr_octave in
-  let _ = Keyboard.init_decrease_octave_key in
-  assert_equal octave !Keyboard.curr_octave
+  let octave = !Octave.curr_octave in
+  let _ = Octave.init_decrease_button in
+  assert_equal octave !Octave.curr_octave
 
 (* test decrease octave key functionality: must not increase the
    octave *)
 let test_decrease_octave2 _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false false ()
   in
-  let octave = !Keyboard.curr_octave in
+  let octave = !Octave.curr_octave in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
-  let current_octave = !Keyboard.curr_octave in
+  let current_octave = !Octave.curr_octave in
   assert_equal true (current_octave <= octave)
 
 (* test decrease octave key functionality: cannot go beyond 0 on
    curr_octave - 0 on keyboard scale *)
 let test_decrease_octave3 _ =
   let _ =
-    Keyboard.init_keyboard 1 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 1
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false false ()
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave > 1 then
-      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+    if !Octave.curr_octave > 1 then
+      Octave.curr_octave := !Octave.curr_octave - 1
   in
-  assert_equal true (!Keyboard.curr_octave >= 0)
+  assert_equal true (!Octave.curr_octave >= 0)
 
 (* test increase octave key functionality: must not decrease the
    octave *)
 let test_increase_octave2 _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false false ()
   in
-  let octave = !Keyboard.curr_octave in
+  let octave = !Octave.curr_octave in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave < 5 then
-      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+    if !Octave.curr_octave < 5 then
+      Octave.curr_octave := !Octave.curr_octave + 1
   in
-  let current_octave = !Keyboard.curr_octave in
+  let current_octave = !Octave.curr_octave in
   assert_equal true (current_octave >= octave)
 
 (* test increase octave key functionality: cannot go beyond 5 on
    curr_octave - 6 on keyboard scale *)
 let test_increase_octave3 _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false false ()
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave < 5 then
-      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+    if !Octave.curr_octave < 5 then
+      Octave.curr_octave := !Octave.curr_octave + 1
   in
   let _ =
    fun _ ->
-    if !Keyboard.curr_octave < 5 then
-      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+    if !Octave.curr_octave < 5 then
+      Octave.curr_octave := !Octave.curr_octave + 1
   in
-  assert_equal true (!Keyboard.curr_octave <= 5)
+  assert_equal true (!Octave.curr_octave <= 5)
 
 (* TESTS FOR BUTTON MODULE *)
 
@@ -265,7 +285,9 @@ let test_increase_octave3 _ =
    the third, and two octave keys *)
 let test_button_stack_invariant _ =
   let _ =
-    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0. 0. 0. 0.)
+      "piano" ~view_only:false false ()
   in
   assert_equal 27 (List.length !Button.button_stack)
 
