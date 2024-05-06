@@ -69,13 +69,36 @@ let rec loop
     begin_drawing ();
     clear_background Color.darkgray;
 
+    let keys =
+      if !prev_text_box_edit_mode <> !text_box_edit_mode then
+        Keyboard.refresh
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument false true !text_box_edit_mode false
+          !sustain_on
+      else
+        Keyboard.refresh
+          (Rectangle.create 0.
+             (float_of_int (Raylib.get_screen_height ()) -. 100.)
+             (float_of_int (Raylib.get_screen_width ()))
+             100.)
+          !current_instrument false false !text_box_edit_mode false
+          !sustain_on
+    in
+    prev_text_box_edit_mode := !text_box_edit_mode;
+
+    (List.iter (fun key -> key ())) keys;
+    (List.iter (fun key -> key ())) octave_keys;
+
     draw_rectangle_rec
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
       Color.raywhite;
 
     draw_text "OCaml Keyboard" 10 10 20 Color.gray;
 
-    let sustain_button_rect = Rectangle.create 500. 10. 100. 20. in
+    let sustain_button_rect = Rectangle.create 450. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
     in
@@ -152,32 +175,10 @@ let rec loop
         end
       end
     end;
-    let keys =
-      if !prev_text_box_edit_mode <> !text_box_edit_mode then
-        Keyboard.refresh
-          (Rectangle.create 0.
-             (float_of_int (Raylib.get_screen_height ()) -. 100.)
-             (float_of_int (Raylib.get_screen_width ()))
-             100.)
-          !current_instrument false true !text_box_edit_mode false
-          !sustain_on
-      else
-        Keyboard.refresh
-          (Rectangle.create 0.
-             (float_of_int (Raylib.get_screen_height ()) -. 100.)
-             (float_of_int (Raylib.get_screen_width ()))
-             100.)
-          !current_instrument false false !text_box_edit_mode false
-          !sustain_on
-    in
-    prev_text_box_edit_mode := !text_box_edit_mode;
-
-    (List.iter (fun key -> key ())) keys;
-    (List.iter (fun key -> key ())) octave_keys;
 
     draw_text
-      ("Current Instrument: " ^ !current_instrument)
-      275 10 18 Color.gold;
+      ("Instrument: " ^ !current_instrument)
+      200 10 18 Color.gold;
     let current_bpm = metronome () in
     let volume = volume_control () in
     volume_slider := !volume;
