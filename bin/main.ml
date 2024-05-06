@@ -32,6 +32,12 @@ let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let last_filter = ref ""
 let sustain_on = ref false
+let preset_list_scroll_index = ref 0
+let preset_list_active = ref 0
+let preset_list_focus = ref 0
+
+let presets : (string * (float * float * string)) array ref =
+  Presets.load_array_from_file "presets.txt"
 
 let setup () =
   let open Raylib in
@@ -94,9 +100,18 @@ let rec loop
 
     draw_rectangle_rec
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
-      Color.raywhite;
+      Color.black;
 
-    draw_text "OCaml Keyboard" 10 10 20 Color.gray;
+    draw_text "OCaml Keyboard" 10 10 20 Color.white;
+
+
+    let presets_list = Array.to_list !presets in
+    let preset_names = String.concat ";" (List.map fst presets_list) in
+    draw_text "Presets" 175 90 15 Color.lightgray;
+    let list_view_rect = Rectangle.create 175. 105. 125. 100. in
+    let selected_preset_index, selected_preset = Raygui.list_view list_view_rect preset_names !preset_list_active !preset_list_scroll_index in
+    preset_list_active := selected_preset;
+    preset_list_scroll_index := selected_preset_index;
 
     let sustain_button_rect = Rectangle.create 450. 10. 100. 20. in
     let sustain_button_text =
