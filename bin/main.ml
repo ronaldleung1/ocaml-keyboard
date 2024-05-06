@@ -33,6 +33,40 @@ let prev_text_box_edit_mode = ref false
 let last_filter = ref ""
 let sustain_on = ref false
 
+let apply_styles () =
+  let open Raylib in
+  (* Text box *)
+  Raygui.(
+    set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
+  Raygui.(
+    set_style (TextBox `Border_color_normal) (color_to_int Color.black));
+  Raygui.(
+    set_style (TextBox `Text_color_normal) (color_to_int Color.white));
+  Raygui.(
+    set_style (TextBox `Text_color_focused) (color_to_int Color.white));
+  Raygui.(
+    set_style (TextBox `Text_color_pressed) (color_to_int Color.red));
+  (* Slider *)
+  Raygui.(
+    set_style (Slider `Text_color_normal)
+      (Raylib.color_to_int Raylib.Color.gold));
+  Raygui.(
+    set_style (Slider `Border_color_normal)
+      (Raylib.color_to_int Color.black));
+  (* List View *)
+  Raygui.(
+    set_style (ListView `Border_color_normal)
+      (Raylib.color_to_int Color.black));
+  Raygui.(
+    set_style (ListView `Text_color_normal)
+      (Raylib.color_to_int Color.black));
+  Raygui.(
+    set_style (ListView `Text_color_focused)
+      (Raylib.color_to_int Color.red));
+  Raygui.(
+    set_style (ListView `Text_color_pressed)
+      (Raylib.color_to_int Color.darkgreen))
+
 let setup () =
   let open Raylib in
   set_config_flags [ Window_resizable ];
@@ -68,6 +102,7 @@ let rec loop
     let open Raylib in
     begin_drawing ();
     clear_background Color.darkgray;
+    apply_styles ();
 
     let keys =
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
@@ -98,7 +133,7 @@ let rec loop
 
     draw_text "OCaml Keyboard" 10 10 20 Color.gray;
 
-    let sustain_button_rect = Rectangle.create 450. 10. 100. 20. in
+    let sustain_button_rect = Rectangle.create 475. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
     in
@@ -116,21 +151,14 @@ let rec loop
       else keys
     in
 
+    if
+      Raygui.button
+        (Rectangle.create 300. 10. 150. 20.)
+        !current_instrument
+    then ();
+
     draw_text "Search below" 175 40 18 Color.lightgray;
-    Raygui.(
-      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
-    Raygui.(
-      set_style (TextBox `Border_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (TextBox `Text_color_normal)
-        (Raylib.color_to_int Color.white));
-    Raygui.(
-      set_style (TextBox `Text_color_focused)
-        (Raylib.color_to_int Color.white));
-    Raygui.(
-      set_style (TextBox `Text_color_pressed)
-        (Raylib.color_to_int Color.red));
+
     let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
     let () =
       text_box_text :=
@@ -176,20 +204,13 @@ let rec loop
       end
     end;
 
-    draw_text
-      ("Instrument: " ^ !current_instrument)
-      200 10 18 Color.gold;
+    draw_text "Instrument: " 200 10 18 Color.gold;
+
     let current_bpm = metronome () in
     let volume = volume_control () in
     volume_slider := !volume;
 
     (* Adjust volume as needed *)
-    Raygui.(
-      set_style (Slider `Text_color_normal)
-        (Raylib.color_to_int Raylib.Color.gold));
-    Raygui.(
-      set_style (Slider `Border_color_normal)
-        (Raylib.color_to_int Color.black));
     let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
     let volume_slider_val =
       Raygui.slider rect "VOLUME"
@@ -217,18 +238,6 @@ let rec loop
           valid_instrument_names
     in
 
-    Raygui.(
-      set_style (ListView `Border_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (ListView `Text_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (ListView `Text_color_focused)
-        (Raylib.color_to_int Color.red));
-    Raygui.(
-      set_style (ListView `Text_color_pressed)
-        (Raylib.color_to_int Color.darkgreen));
     let rect = Rectangle.create 10. 40. 150. 300. in
     let new_list_view_active, new_focus, new_list_view_scroll_index =
       Raygui.list_view_ex rect filtered_instrument_list
