@@ -3,3 +3,4 @@ val curr_octave : int ref
 
 val init_increase_button : unit -> unit
 val init_decrease_button : unit -> unit
+val draw_octave_text : unit -> unit

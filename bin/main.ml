@@ -74,7 +74,7 @@ let rec loop
     let open Raylib in
     begin_drawing ();
     clear_background Color.darkgray;
-
+    Octave.draw_octave_text ();
     let presets = Presets.load_array_from_file "presets.txt" in
 
     if !show_save_input_box then Raygui.lock ();
