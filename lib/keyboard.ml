@@ -95,9 +95,9 @@ let white_key_codes =
     [ B ];
     [ N ];
     [ M ];
-    [ Q ];
-    [ W ];
-    [ E ];
+    [ Q; Comma ];
+    [ W; Period ];
+    [ E; Slash ];
     [ R ];
     [ T ];
     [ Y ];
@@ -132,14 +132,12 @@ let black_key_codes =
     [ G ];
     [ H ];
     [ J ];
-    [ Two ];
-    [ Three ];
+    [ Two; L ];
+    [ Three; Semicolon ];
     [ Five ];
     [ Six ];
     [ Seven ];
   ]
-
-let curr_octave = ref 0
 
 let black_key_code_strings =
   [
@@ -155,30 +153,20 @@ let black_key_code_strings =
     [ "7" ];
   ]
 
-(* TODO test this *)
-(* combine two lists l1 and l2 into an association list *)
-let rec combine_lists l1 l2 =
-  match (l1, l2) with
-  | [], [] -> []
-  | [], _ | _, [] -> failwith "Lists have different lengths"
-  | x :: xs, y :: ys -> (x, y) :: combine_lists xs ys
-
-(* map a function f over two lists l1 and l2, with the index of the
-   element as the first argument to f *)
-let map2i f l1 l2 =
-  List.map2
-    (fun i (x, y) -> f i x y)
-    (List.init (List.length l1) Fun.id)
-    (combine_lists l1 l2)
-
-let init_keyboard (init_octave : int) rect instrument =
-  curr_octave := init_octave;
+let init_keyboard
+    (init_octave : int)
+    rect
+    instrument
+    ?(view_only = false)
+    sustain_on
+    () =
+  Octave.curr_octave := init_octave;
   (* get keys of a 2-octave keyboard, from C[k] to C[k+2], where [k] is
      the octave *)
   let curr_notes =
     List.filter
       (fun note ->
-        let octave_ascii = !curr_octave + 48 in
+        let octave_ascii = !Octave.curr_octave + 48 in
         String.contains note (char_of_int octave_ascii)
         || String.contains note (char_of_int octave_ascii)
         || String.contains note (char_of_int (octave_ascii + 1))
@@ -200,7 +188,7 @@ let init_keyboard (init_octave : int) rect instrument =
         (fun note -> not (String.contains note 'b'))
         curr_notes
     in
-    map2i
+    Utils.map2i
       (fun i note key_code ->
         let x =
           (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
@@ -210,11 +198,18 @@ let init_keyboard (init_octave : int) rect instrument =
         let height = int_of_float (Raylib.Rectangle.height rect) in
         let color = Raylib.Color.white in
         let key_string = List.nth white_key_code_strings i in
-        Button.create ~draw_text:true ~opt_color:color note key_code
-          key_string
-          (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-             (float_of_int width) (float_of_int height))
-          instrument)
+        if view_only then
+          Button.create ~draw_text:true ~opt_color:color ~view_only:true
+            note key_code key_string
+            (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+               (float_of_int width) (float_of_int height))
+            instrument
+        else
+          Button.create ~draw_text:true ~opt_color:color ~sustain_on
+            note key_code key_string
+            (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+               (float_of_int width) (float_of_int height))
+            instrument)
       white_notes white_key_codes
   in
 
@@ -235,7 +230,7 @@ let init_keyboard (init_octave : int) rect instrument =
     (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
-      map2i
+      Utils.map2i
         (fun i note key_code ->
           let x =
             (List.nth black_indices (i mod 5) + (i / 5 * 12))
@@ -248,43 +243,23 @@ let init_keyboard (init_octave : int) rect instrument =
           in
           let color = Raylib.Color.black in
           let key_string = List.nth black_key_code_strings i in
-          Button.create ~draw_text:true ~opt_color:color note key_code
-            key_string
-            (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-               (float_of_int width) (float_of_int height))
-            instrument)
+          if view_only then
+            Button.create ~draw_text:true ~opt_color:color
+              ~view_only:true note key_code key_string
+              (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+                 (float_of_int width) (float_of_int height))
+              instrument
+          else
+            Button.create ~draw_text:true ~opt_color:color ~sustain_on
+              note key_code key_string
+              (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
+                 (float_of_int width) (float_of_int height))
+              instrument)
         black_notes black_key_codes
     in
     black_keys
   in
   white_keys @ black_keys
-
-let init_decrease_octave_key =
-  let decrease_octave_key = Raylib.Key.Minus in
-  (* let increase_octave_key = Raylib.Key.Equal in *)
-  let x_pos_top_left = 700 in
-  let y_pos_top_left = 100 in
-  let width = 30 in
-  let height = 30 in
-  let color = Raylib.Color.lightgray in
-  let text = "-" in
-  Button.create_general_with_key_binding ~draw_text:true
-    ~opt_color:color ~opt_text:text decrease_octave_key x_pos_top_left
-    y_pos_top_left width height (fun () ->
-      if !curr_octave > 1 then curr_octave := !curr_octave - 1)
-
-let init_increase_octave_key =
-  let increase_octave_key = Raylib.Key.Equal in
-  let x_pos_top_left = 750 in
-  let y_pos_top_left = 100 in
-  let width = 30 in
-  let height = 30 in
-  let color = Raylib.Color.lightgray in
-  let text = "+" in
-  Button.create_general_with_key_binding ~draw_text:true
-    ~opt_color:color ~opt_text:text increase_octave_key x_pos_top_left
-    y_pos_top_left width height (fun () ->
-      if !curr_octave < 5 then curr_octave := !curr_octave + 1)
 
 (* last_octave and keyboard is needed to make sure that refresh only
    recreates the keyboard when octave is different. Otherwise it would
@@ -292,9 +267,21 @@ let init_increase_octave_key =
 let last_octave = ref (-1)
 let keyboard = ref []
 
-let refresh rect instrument changed_instrument =
-  if !curr_octave <> !last_octave || changed_instrument then begin
-    keyboard := init_keyboard !curr_octave rect instrument;
-    last_octave := !curr_octave
+let refresh
+    rect
+    instrument
+    changed_instrument
+    changed_view
+    view_only
+    changed_sustain
+    sustain_on =
+  if
+    !Octave.curr_octave <> !last_octave
+    || changed_instrument || changed_view || changed_sustain
+  then begin
+    keyboard :=
+      init_keyboard !Octave.curr_octave rect instrument ~view_only
+        sustain_on ();
+    last_octave := !Octave.curr_octave
   end;
   !keyboard

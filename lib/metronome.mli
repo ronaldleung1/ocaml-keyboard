@@ -1,1 +1,1 @@
-val start : float -> (unit -> unit)
+val start : float -> (unit -> float)
