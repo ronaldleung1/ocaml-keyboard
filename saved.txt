@@ -7,3 +7,9 @@ untitled,60.,10.,piano
 untitled,60.,10.,piano
 hello,51.,6.74074077606,alto_sax
 hello2,0.,3.62962961197,tango_accordion
+file1,60.,10.,piano
+hello1,60.,3.33333325386,acoustic_guitar_steel
+hello3,60.,0.,piano
+hello2,0.,3.62962961197,piano
+hello2,0.,3.62962961197,piano
+hell,60.,10.,piano

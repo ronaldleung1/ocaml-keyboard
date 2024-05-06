@@ -183,6 +183,12 @@ let rec loop
     if input="yes" then 
       let () = print_endline "Name?" in 
       let name = read_line () in
+      (* if (Array.mem (name, (bpm, !volume_slider, !current_instrument)) !saved) = false && 
+        (bpm=60. && !volume_slider=10.0 && !current_instrument="piano") = false then  *)
+      (* let mem = Array.mem (name, (bpm, !volume_slider, !current_instrument)) !saved in 
+      let () = print_endline (string_of_bool mem) in *)
+      (* let x, y = !saved.(13) in *)
+      (* let () = print_endline ("(" ^ x ^ ", " ^ tuple_to_string y ^ ")") in *)
       let () = print_string_to_file "saved.txt" (ass_to_string 
       (name, (bpm, !volume_slider, !current_instrument))) in
       Raylib.close_window () 
@@ -514,14 +520,7 @@ let rec library_menu library =
       library_menu library
   | _ -> library_menu library
 
-(*print out names for saved files*)
-let print_names saved = 
-  for i=0 to Array.length !saved -1 do 
-    let (name, _) = !saved.(i) in 
-    print_endline (name ^ "\n")
-  done;;
-
-(*lookup saved file for name that user inputs, output corresponding bpm, volume, instrument*)
+(* lookup saved file for name that user inputs, output corresponding bpm, volume, instrument *)
 let lookup saved name = 
   let arr = Array.to_list !saved in
   try 
@@ -529,20 +528,39 @@ let lookup saved name =
       List.assoc name arr 
     else raise Not_found
   with Not_found ->
-    let () = print_endline "No name found";
-  
+    print_endline "No name found"; 
+
+(*print out names for saved files*)
+let print_names saved = 
+  for i=0 to Array.length !saved -1 do 
+    let (name, _) = !saved.(i) in 
+    print_endline (name ^ "\n")
+  done;
+
 let () =
   if List.mem "playlist" argv then library_menu Library.empty
   else begin
     let () = print_endline "Pick a file to work on: " in 
-    let () = print_names saved in 
+    let () = 
+      for i=0 to Array.length !saved -1 do 
+        let (name, _) = !saved.(i) in 
+        print_endline (name ^ "\n")
+      done in
     let () = print_endline "Enter name: " in
     let name = read_line () in
-    if name = "default" then 
+    match name with 
+    | "default" ->
       let metronome, keys, octave_keys, volume_control = setup 60. 10. "piano" in
       loop metronome keys octave_keys volume_control
-    else 
-      let x, y, z = lookup saved name in
-      let metronome, keys, octave_keys, volume_control = setup x y z in
-      loop metronome keys octave_keys volume_control
+    |_->    
+      let () = 
+        let arr = Array.to_list !saved in
+        try 
+          if List.mem_assoc name arr then 
+            List.assoc name arr 
+          else raise Not_found
+        with Not_found ->
+          print_endline "No name found"in 
+      let metronome, keys, octave_keys, volume_control = setup 60. 10. "piano" in
+      loop metronome keys octave_keys volume_control 
   end
