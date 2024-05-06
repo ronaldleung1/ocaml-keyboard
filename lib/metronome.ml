@@ -4,8 +4,11 @@ let start (start_bpm : float) =
   let tick = load_sound "assets/metronome.mp3" in
   set_sound_volume tick 0.1;
   let bpm = ref start_bpm in
+  let min = 1 in
+  let max = 300 in
   let next_time = ref (Unix.gettimeofday ()) in
   let running = ref false in
+  let editable = ref true in
   fun () ->
     if !running then (
       let current_time = Unix.gettimeofday () in
@@ -15,8 +18,10 @@ let start (start_bpm : float) =
         next_time := Unix.gettimeofday () +. (60. /. !bpm)))
     else if is_key_pressed Key.Space then running := true;
 
-    if is_key_down Key.Up then bpm := !bpm +. 1.0
-    else if is_key_down Key.Down then bpm := !bpm -. 1.0;
+    if is_key_down Key.Up && !bpm < float_of_int max then
+      bpm := !bpm +. 1.0
+    else if is_key_down Key.Down && !bpm > float_of_int min then
+      bpm := !bpm -. 1.0;
 
     (* removes the extra period after the bpm's float value *)
     let trunc_bpm =
@@ -30,9 +35,12 @@ let start (start_bpm : float) =
             (Rectangle.create 700. 10. 100. 20.)
             "BPM"
             (int_of_string trunc_bpm)
-            ~min:1 ~max:300 true
+            ~min ~max !editable
         with
-        | vl, _ -> float_of_int vl
+        | vl, true ->
+            editable := not !editable;
+            float_of_int vl
+        | vl, false -> float_of_int vl
     in
 
     !bpm (* Return the current bpm *)
