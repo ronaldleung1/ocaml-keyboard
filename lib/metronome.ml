@@ -8,7 +8,7 @@ let start (start_bpm : float) =
   let max = 300 in
   let next_time = ref (Unix.gettimeofday ()) in
   let running = ref false in
-  let editable = ref true in
+  let editable = ref false in
   fun () ->
     if !running then (
       let current_time = Unix.gettimeofday () in
@@ -29,11 +29,17 @@ let start (start_bpm : float) =
         (String.length (string_of_float !bpm) - 1)
     in
     let () =
+      draw_text "METRONOME" 600 15 10 Color.gray;
+      if
+        Raygui.button
+          (Rectangle.create 670. 10. 25. 20.)
+          (if !running then "| |" else "|>")
+      then running := not !running;
       bpm :=
         match
           Raygui.spinner
             (Rectangle.create 700. 10. 100. 20.)
-            "BPM"
+            ""
             (int_of_string trunc_bpm)
             ~min ~max !editable
         with

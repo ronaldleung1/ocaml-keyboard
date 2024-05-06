@@ -68,9 +68,14 @@ let rec loop
     let open Raylib in
     begin_drawing ();
     clear_background Color.darkgray;
-    draw_text "OCaml Keyboard" 10 10 20 Color.white;
 
-    let sustain_button_rect = Rectangle.create 175.0 100.0 125.0 30.0 in
+    draw_rectangle_rec
+      (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
+      Color.raywhite;
+
+    draw_text "OCaml Keyboard" 10 10 20 Color.gray;
+
+    let sustain_button_rect = Rectangle.create 500. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
     in
@@ -172,7 +177,7 @@ let rec loop
 
     draw_text
       ("Current Instrument: " ^ !current_instrument)
-      275 12 18 Color.gold;
+      275 10 18 Color.gold;
     let current_bpm = metronome () in
     let volume = volume_control () in
     volume_slider := !volume;
