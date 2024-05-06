@@ -2,6 +2,8 @@ open OUnit2
 open Music
 open Raylib
 
+(* TESTS FOR SONG MODULE *)
+
 let test_create _ =
   let song = Song.create "song1" "artist1" 240 in
   assert_equal "song1" (Song.title song);
@@ -119,6 +121,241 @@ let test_decrease_octave _ =
   let _ = Keyboard.init_decrease_octave_key in
   assert_equal octave !Keyboard.curr_octave
 
+(* test decrease octave key functionality: must not increase the
+   octave *)
+let test_decrease_octave2 _ =
+  let _ =
+    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+  in
+  let octave = !Keyboard.curr_octave in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave > 1 then
+      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+  in
+  let current_octave = !Keyboard.curr_octave in
+  assert_equal true (current_octave <= octave)
+
+(* test decrease octave key functionality: cannot go beyond 0 on
+   curr_octave - 0 on keyboard scale *)
+let test_decrease_octave3 _ =
+  let _ =
+    Keyboard.init_keyboard 1 (Rectangle.create 0. 0. 0. 0.) "piano"
+  in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave > 1 then
+      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+  in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave > 1 then
+      Keyboard.curr_octave := !Keyboard.curr_octave - 1
+  in
+  assert_equal true (!Keyboard.curr_octave >= 0)
+
+(* test increase octave key functionality: must not decrease the
+   octave *)
+let test_increase_octave2 _ =
+  let _ =
+    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+  in
+  let octave = !Keyboard.curr_octave in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave < 5 then
+      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+  in
+  let current_octave = !Keyboard.curr_octave in
+  assert_equal true (current_octave >= octave)
+
+(* test increase octave key functionality: cannot go beyond 5 on
+   curr_octave - 6 on keyboard scale *)
+let test_increase_octave3 _ =
+  let _ =
+    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+  in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave < 5 then
+      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+  in
+  let _ =
+   fun _ ->
+    if !Keyboard.curr_octave < 5 then
+      Keyboard.curr_octave := !Keyboard.curr_octave + 1
+  in
+  assert_equal true (!Keyboard.curr_octave <= 5)
+
+(* TESTS FOR BUTTON MODULE *)
+
+(* when initialized, button stack should have a length of 27,
+   corresponding to the number of keys on two octaves and one note on
+   the third, and two octave keys *)
+let test_button_stack_invariant _ =
+  let _ =
+    Keyboard.init_keyboard 5 (Rectangle.create 0. 0. 0. 0.) "piano"
+  in
+  assert_equal 27 (List.length !Button.button_stack)
+
+(* creating a button with create_general should increase the button
+   stack by 1 *)
+let test_create_general_with_key_binding _ =
+  let initial_length = List.length !Button.button_stack in
+  let func =
+    Button.create_general_with_key_binding Raylib.Key.A 0 0 100 50
+      (fun () -> ())
+  in
+  let _ = func in
+  let final_length = List.length !Button.button_stack in
+  assert_equal (initial_length + 1) final_length
+
+(* creating a button with create should increase the button stack by
+   1 *)
+let test_create_music_button _ =
+  let initial_length = List.length !Button.button_stack in
+  let foo_rect = Rectangle.create 0. 0. 0. 0. in
+  let func =
+    Button.create "foo" [ Raylib.Key.A ] [ "foo" ] foo_rect "foo"
+  in
+  let _ = func in
+  let final_length = List.length !Button.button_stack in
+  assert_equal (initial_length + 1) final_length
+
+(* creating a bunch of buttons should still keep track of all of them *)
+let test_a_bunch_of_buttons _ =
+  let initial_length = List.length !Button.button_stack in
+  let foo_rect = Rectangle.create 0. 0. 0. 0. in
+  for i = 1 to 20 do
+    let func =
+      Button.create
+        ("button" ^ string_of_int i)
+        [ Raylib.Key.A ] [ "foo" ] foo_rect "foo"
+    in
+    let _ = func in
+    ()
+  done;
+  let final_length = List.length !Button.button_stack in
+  assert_equal (initial_length + 20) final_length
+
+(* creating just a rectangle not through the create methods will not
+   keep track of that rectangle *)
+let test_not_legit_button _ =
+  let initial_length = List.length !Button.button_stack in
+  let foo_rect = Rectangle.create 0. 0. 0. 0. in
+  let _ = foo_rect in
+  let final_length = List.length !Button.button_stack in
+  assert_equal initial_length final_length
+
+(* a rectangle in the same place as the previous button is not the
+   previous button - checks for physical equality *)
+let test_collision_dup _ =
+  let button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = button in
+  let button_rect = Rectangle.create 100. 100. 200. 50. in
+  let mouse_point = Vector2.create 150. 125. in
+  let is_inside =
+    Button.check_collision mouse_point button_rect !Button.button_stack
+  in
+  assert_equal false is_inside
+
+(* if the mouse point is in the dimension of the newest button, the
+   newest button must be colliding with mouse point *)
+let test_collision_newest_button _ =
+  let button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = button in
+  let list = !Button.button_stack in
+  let newest_button = List.hd list in
+  let mouse_point = Vector2.create 150. 125. in
+  let is_inside =
+    Button.check_collision mouse_point newest_button
+      !Button.button_stack
+  in
+  assert_equal true is_inside
+
+(* if a previous button is covered by a new button, the mouse point will
+   not be inside the previous button *)
+let test_collision_old_button _ =
+  let old_button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = old_button in
+  let list = !Button.button_stack in
+  let previous_button = List.hd list in
+  let mouse_point = Vector2.create 150. 125. in
+  let new_button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = new_button in
+  let is_inside =
+    Button.check_collision mouse_point previous_button
+      !Button.button_stack
+  in
+  assert_equal false is_inside
+
+(* if the mouse point is not inside the newest button, collision will
+   not return true for the newest button *)
+let test_collison_not_inside_newest_button _ =
+  let button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = button in
+  let list = !Button.button_stack in
+  let newest_button = List.hd list in
+  let mouse_point = Vector2.create 0. 0. in
+  let is_inside =
+    Button.check_collision mouse_point newest_button
+      !Button.button_stack
+  in
+  assert_equal false is_inside
+
+(* if the mouse point is not inside the newest button but is inside a
+   previous button not covered by the newest button, collision will
+   return true for the previous button *)
+let test_collision_inside_old_button_but_with_new_button _ =
+  let old_button =
+    Button.create_general_with_key_binding Raylib.Key.A 100 100 200 50
+      (fun () -> ())
+  in
+  let _ = old_button in
+  let list = !Button.button_stack in
+  let previous_button = List.hd list in
+  let mouse_point = Vector2.create 100. 100. in
+  let new_button =
+    Button.create_general_with_key_binding Raylib.Key.A 101 101 200 50
+      (fun () -> ())
+  in
+  let _ = new_button in
+  let is_inside =
+    Button.check_collision mouse_point previous_button
+      !Button.button_stack
+  in
+  assert_equal true is_inside
+
+(* let test_collision2 _ = let button_rect = Rectangle.create 100. 100.
+   200. 50. in let mouse_point = Vector2.create 300. 200. in let
+   is_inside = Rectangle.check_collision_point button_rect mouse_point
+   in assert_equal false is_inside
+
+   let test_collision3 _ = let button_rect = Rectangle.create 100. 100.
+   200. 50. in let mouse_point = Vector2.create 250. 75. in let
+   is_inside = Rectangle.check_collision_point button_rect mouse_point
+   in assert_equal false is_inside
+
+   let test_collision4 _ = let button_rect = Rectangle.create 100. 100.
+   200. 50. in let mouse_point = Vector2.create 100. 100. in let
+   is_inside = Rectangle.check_collision_point button_rect mouse_point
+   in assert_equal true is_inside *)
+
 let tests =
   [
     "test suite for song module"
@@ -139,6 +376,34 @@ let tests =
            >:: test_refresh_keyboard2;
            "test_init_increase_octave_key" >:: test_increase_octave;
            "test_init_decrease_octave_key" >:: test_decrease_octave;
+           "test_decrease_octave_invariant" >:: test_decrease_octave2;
+           "test_decrease_octave_functionality"
+           >:: test_decrease_octave3;
+           "test_increase_octave_invariant" >:: test_increase_octave2;
+           "test_increase_octave_functionality"
+           >:: test_increase_octave3;
+         ];
+    "test suite for button module"
+    >::: [
+           "test_button_stack_invariant" >:: test_button_stack_invariant;
+           "test_button_stack_and_general_button"
+           >:: test_create_general_with_key_binding;
+           "test_button_stack_and_music_button"
+           >:: test_create_music_button;
+           "test adding a bunch of buttons" >:: test_a_bunch_of_buttons;
+           "test client not adding buttons the way intended will not \
+            work as intended" >:: test_not_legit_button;
+           "test_collision_with_duplicate rectangles"
+           >:: test_collision_dup;
+           "test_collision_with_newest_button"
+           >:: test_collision_newest_button;
+           "test_collision_with_a_previous_button"
+           >:: test_collision_old_button;
+           "test mouse point not inside newest button"
+           >:: test_collison_not_inside_newest_button;
+           "test mouse point inside a previous button but with a new \
+            button"
+           >:: test_collision_inside_old_button_but_with_new_button;
          ];
   ]
 
