@@ -74,7 +74,6 @@ let rec loop
     let open Raylib in
     begin_drawing ();
     clear_background Color.darkgray;
-    Octave.draw_octave_text ();
     let presets = Presets.load_array_from_file "presets.txt" in
 
     if !show_save_input_box then Raygui.lock ();
@@ -107,6 +106,7 @@ let rec loop
       Color.black;
 
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
+    Octave.draw_octave_text ();
 
     let sustain_button_rect = Rectangle.create 450. 10. 100. 20. in
     let sustain_button_text =
@@ -126,7 +126,7 @@ let rec loop
       else keys
     in
 
-    draw_text "Search below" 175 40 18 Color.lightgray;
+    draw_text "Search below" 175 42 18 Color.lightgray;
     Raygui.(
       set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
     Raygui.(
@@ -141,7 +141,7 @@ let rec loop
     Raygui.(
       set_style (TextBox `Text_color_pressed)
         (Raylib.color_to_int Color.red));
-    let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
+    let rect = Rectangle.create 175.0 62.0 125.0 30.0 in
     let () =
       text_box_text :=
         match
@@ -200,7 +200,7 @@ let rec loop
     Raygui.(
       set_style (Slider `Border_color_normal)
         (Raylib.color_to_int Color.black));
-    let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
+    let rect = Rectangle.create 625.0 62.0 150.0 20.0 in
     let volume_slider_val =
       Raygui.slider rect "VOLUME"
         (Printf.sprintf "%1.1f" !volume_slider)
@@ -242,8 +242,8 @@ let rec loop
 
     let presets_list = Array.to_list !presets in
     let preset_names = List.map fst presets_list in
-    draw_text "Presets" 175 90 15 Color.lightgray;
-    let list_view_rect = Rectangle.create 175. 105. 125. 100. in
+    draw_text "Presets" 175 95 15 Color.lightgray;
+    let list_view_rect = Rectangle.create 175. 110. 125. 100. in
     let selected_preset, focus_preset_index, selected_preset_index =
       Raygui.list_view_ex list_view_rect preset_names !preset_list_focus
         !preset_list_scroll_index
@@ -357,7 +357,7 @@ let rec loop
     else 
     
     (* Check if save button is pressed *)
-      let rect = Rectangle.create 175.0 210.0 125.0 30.0 in
+      let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
     show_save_input_box :=
       if Raygui.button rect "Save Preset" then (
         true
