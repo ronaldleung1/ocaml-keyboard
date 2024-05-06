@@ -44,3 +44,5 @@ let display playlist =
       (List.map
          (fun song -> Song.to_string_detailed song)
          playlist.songs)
+
+let get_songs playlist = playlist.songs

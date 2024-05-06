@@ -22,3 +22,5 @@ let display library =
 
 let find_playlist name library =
   List.find_opt (fun p -> Playlist.get_name p = name) library.playlists
+
+let get_playlists library = library.playlists
