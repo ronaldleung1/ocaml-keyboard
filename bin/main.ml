@@ -418,6 +418,33 @@ let rec loop
       else !show_save_input_box;
     if not !show_save_input_box then Raygui.unlock ();
 
+    let presets_list = Array.to_list !presets in
+    let preset_names = List.map fst presets_list in
+    draw_text "Presets" 175 95 15 Color.lightgray;
+    let list_view_rect = Rectangle.create 175. 110. 125. 100. in
+    let selected_preset, focus_preset_index, selected_preset_index =
+      Raygui.list_view_ex list_view_rect preset_names !preset_list_focus
+        !preset_list_scroll_index
+        !preset_list_active
+    in
+    preset_list_active := selected_preset;
+    preset_list_scroll_index := selected_preset_index;
+    preset_list_focus := focus_preset_index;
+    let () =
+      if !preset_list_active == -1 || List.length presets_list = 0 then (
+        current_instrument := !previous_instrument;
+        prev_preset := -1)
+      else if
+        !preset_list_active < List.length presets_list
+        && !prev_preset <> !preset_list_active
+      then (
+        let bpm, vol, instr =
+          snd (List.nth presets_list !preset_list_active)
+        in
+        current_instrument := instr;
+        previous_instrument := instr)
+    in
+
     (* INSTRUMENT MENU *)
     let toggle_instrument_menu () =
       instrument_menu_open := not !instrument_menu_open
@@ -515,6 +542,7 @@ let rec loop
         previous_instrument := selected_instrument;
         current_instrument := selected_instrument;
         text_box_text := !current_instrument;
+        prev_preset := !preset_list_active;
 
         list_view_scroll_index :=
           if !last_filter <> "" then

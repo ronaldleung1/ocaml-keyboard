@@ -6,3 +6,4 @@ preset5,60.,3.33333325386,acoustic_guitar_steel
 preset6,40.,10.,trumpet
 bro,60.,10.,piano
 test,60.,10.,celesta
+default,60.,10.,piano
