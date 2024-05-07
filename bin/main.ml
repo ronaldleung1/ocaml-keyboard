@@ -46,7 +46,6 @@ let preset_list_focus = ref 0
 let prev_preset = ref (-1)
 let show_save_input_box = ref false
 let save_input_text = ref ""
-
 let curr_library = ref Library.empty
 let selected_playlist_index = ref 0
 let scroll_playlist_index = ref 0
@@ -54,13 +53,13 @@ let focus_playlist_index = ref 0
 let selected_song_index = ref 0
 let scroll_song_index = ref 0
 let focus_song_index = ref 0
-let text_box_playlist_name = ref "" 
-let text_box_playlist_edit = ref false 
-let text_box_song_title = ref "" 
+let text_box_playlist_name = ref ""
+let text_box_playlist_edit = ref false
+let text_box_song_title = ref ""
 let text_box_song_edit = ref false
-let text_box_song_artist = ref "" 
-let text_box_song_artist_edit = ref false 
-let text_box_song_duration = ref "" 
+let text_box_song_artist = ref ""
+let text_box_song_artist_edit = ref false
+let text_box_song_duration = ref ""
 let text_box_song_duration_edit = ref false
 
 let setup () =
@@ -103,8 +102,8 @@ let rec library_loop () =
 
       let playlist_rect = Rectangle.create 15.0 105.0 150.0 330.0 in
       let song_rect = Rectangle.create 180.0 105.0 150.0 330.0 in
-      draw_text "Playlists" 15 80 20 Color.orange;
-      draw_text "Songs" 180 80 20 Color.orange;
+      draw_text "Playlists" 15 80 20 Color.gold;
+      draw_text "Songs" 180 80 20 Color.gold;
 
       let ( list_active_playlist,
             list_focus_playlist,
@@ -147,44 +146,67 @@ let rec library_loop () =
         then
           let song = List.nth songs !selected_song_index in
           let details = Song.to_string_detailed song in
-          draw_text details 350 80 20 Color.gold
+          draw_text details 350 80 22 Color.yellow
         else ()
       else ();
 
-      draw_text "Playlist Name:" 500 130 20 Color.orange;
-      let () = text_box_playlist_name := 
-        match Raygui.text_box (Rectangle.create 500.0 150.0 180.0 30.0) !text_box_playlist_name !text_box_playlist_edit
-        with 
-        | vl, true ->
-          text_box_playlist_edit := not !text_box_playlist_edit;
-          vl
-        | vl, false -> vl
-        in
-      draw_text "Song Title:" 500 200 20 Color.orange;
-      let () = text_box_song_title := 
-      match Raygui.text_box (Rectangle.create 500.0 220.0 180.0 30.0) !text_box_song_title !text_box_song_edit with
-       | vl, true ->
-        text_box_song_edit := not !text_box_song_edit;
-        vl
-        | vl, false -> vl
-       in
-      draw_text "Song Artist:" 500 260 20 Color.orange;
-      let () = text_box_song_artist := 
-        match Raygui.text_box (Rectangle.create 500.0 280.0 180.0 30.0) !text_box_song_artist !text_box_song_artist_edit with
-        | vl, true ->
-          text_box_song_artist_edit := not !text_box_song_artist_edit;
-          vl
-        | vl, false -> vl
-        in
+      draw_text "Playlist Name:" 500 130 20 Color.gold;
+      let () =
+        text_box_playlist_name :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 150.0 180.0 30.0)
+              !text_box_playlist_name !text_box_playlist_edit
+          with
+          | vl, true ->
+              text_box_playlist_edit := not !text_box_playlist_edit;
+              vl
+          | vl, false -> vl
+      in
+      draw_text "Song Title:" 500 200 20 Color.gold;
+      let () =
+        text_box_song_title :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 220.0 180.0 30.0)
+              !text_box_song_title !text_box_song_edit
+          with
+          | vl, true ->
+              text_box_song_edit := not !text_box_song_edit;
+              vl
+          | vl, false -> vl
+      in
+      draw_text "Song Artist:" 500 260 20 Color.gold;
+      let () =
+        text_box_song_artist :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 280.0 180.0 30.0)
+              !text_box_song_artist
+              !text_box_song_artist_edit
+          with
+          | vl, true ->
+              text_box_song_artist_edit :=
+                not !text_box_song_artist_edit;
+              vl
+          | vl, false -> vl
+      in
 
-      draw_text "Song Duration (sec):" 500 320 20 Color.orange;
-      let () = text_box_song_duration := 
-        match Raygui.text_box (Rectangle.create 500.0 340.0 180.0 30.0) !text_box_song_duration !text_box_song_duration_edit with
-        | vl, true ->
-          text_box_song_duration_edit := not !text_box_song_duration_edit;
-          vl
-        | vl, false -> vl
-        in
+      draw_text "Song Duration (sec):" 500 320 20 Color.gold;
+      let () =
+        text_box_song_duration :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 340.0 180.0 30.0)
+              !text_box_song_duration
+              !text_box_song_duration_edit
+          with
+          | vl, true ->
+              text_box_song_duration_edit :=
+                not !text_box_song_duration_edit;
+              vl
+          | vl, false -> vl
+      in
 
       let button_add_playlist_rect =
         Rectangle.create 350.0 130.0 100.0 30.0
@@ -217,17 +239,25 @@ let rec library_loop () =
 
       if Raygui.button button_add_song_rect "Add Song" then
         match !selected_playlist_index with
-        | index when index >= 0 && index < List.length playlists ->
+        | index when index >= 0 && index < List.length playlists -> (
             let playlist = List.nth playlists index in
             let duration_result =
-              try Some (int_of_string (trim_null_chars !text_box_song_duration))
+              try
+                Some
+                  (int_of_string
+                     (trim_null_chars !text_box_song_duration))
               with Failure _ -> None
             in
-            (match duration_result with
-             | Some duration ->
-               let new_song = Song.create (trim_null_chars !text_box_song_title) (trim_null_chars !text_box_song_artist) duration in
-               Playlist.add_song playlist new_song
-             | None -> ())
+            match duration_result with
+            | Some duration ->
+                let new_song =
+                  Song.create
+                    (trim_null_chars !text_box_song_title)
+                    (trim_null_chars !text_box_song_artist)
+                    duration
+                in
+                Playlist.add_song playlist new_song
+            | None -> ())
         | _ -> ()
       else ();
 
