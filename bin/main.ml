@@ -313,7 +313,7 @@ let rec library_loop () =
       if
         not
           (Raygui.button
-             (Rectangle.create 330.0 42.0 125.0 30.0)
+             (Rectangle.create 50.0 45.0 125.0 30.0)
              "Exit Library Menu")
       then library_loop () (* Continue the inner loop *)
       else ()
@@ -356,17 +356,19 @@ let rec loop
     prev_text_box_edit_mode := !text_box_edit_mode;
 
     (List.iter (fun key -> key ())) keys;
+
+    (* OCTAVE CONTROL *)
+    Octave.draw_octave_text ();
     (List.iter (fun key -> key ())) octave_keys;
 
+    (* MENU BAR *)
     draw_rectangle_rec
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
       Color.black;
 
-    (* MENU BAR *)
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
-    Octave.draw_octave_text ();
 
-    let library_button_rect = Rectangle.create 330.0 42.0 125.0 30.0 in
+    let library_button_rect = Rectangle.create 50.0 45.0 125.0 30.0 in
     let library_button_text = "Library Menu" in
     if Raygui.button library_button_rect library_button_text then
       library_loop ();
@@ -538,7 +540,7 @@ let rec loop
     end;
 
     (* Check if save button is pressed *)
-    let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
+    let rect = Rectangle.create 200.0 45.0 125.0 30.0 in
     show_save_input_box :=
       if Raygui.button rect "Save Preset" then true
       else !show_save_input_box;
