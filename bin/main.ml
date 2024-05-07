@@ -1,6 +1,7 @@
 open Music
 
 exception Break
+
 let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
@@ -20,6 +21,12 @@ let load_instruments_from_csv file_path =
   in
   read_lines []
 
+let trim_null_chars s =
+  try
+    let index = String.index s '\000' in
+    String.sub s 0 index
+  with Not_found -> s
+
 let instruments = load_instruments_from_csv "assets/instruments.csv"
 let valid_instrument_names = List.map fst instruments
 let list_view_scroll_index = ref 0
@@ -33,18 +40,21 @@ let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let last_filter = ref ""
 let sustain_on = ref false
-
-let curr_library = ref Library.empty 
-let playlist1 = Playlist.create "First"
-let () = Playlist.add_song playlist1 (Song.create "A" "B" 10)
-let () = Library.add_new_playlist playlist1 !curr_library
+let curr_library = ref Library.empty
 let selected_playlist_index = ref 0
 let scroll_playlist_index = ref 0
-let focus_playlist_index = ref 0 
-let selected_song_index = ref 0 
+let focus_playlist_index = ref 0
+let selected_song_index = ref 0
 let scroll_song_index = ref 0
-let focus_song_index = ref 0 
-
+let focus_song_index = ref 0
+let text_box_playlist_name = ref "" 
+let text_box_playlist_edit = ref false 
+let text_box_song_title = ref "" 
+let text_box_song_edit = ref false
+let text_box_song_artist = ref "" 
+let text_box_song_artist_edit = ref false 
+let text_box_song_duration = ref "" 
+let text_box_song_duration_edit = ref false
 
 let print_blue text =
   print_endline
@@ -162,92 +172,168 @@ let setup () =
   (metronome, !keys, octave_keys, volume_control)
 
 let rec library_loop () =
-  try 
-    if Raylib.window_should_close () then
-      Raylib.close_window ()
+  try
+    if Raylib.window_should_close () then Raylib.close_window ()
     else
       let open Raylib in
       begin_drawing ();
-      clear_background Color.lightgray;
-      draw_text "Library Management" 10 10 20 Color.black;
+      clear_background Color.gray;
+      draw_text "Library Management" 10 10 20 Color.white;
 
-      let playlists = List.map Playlist.get_name (Library.get_playlists !curr_library) in
+      let playlists =
+        List.map Playlist.get_name (Library.get_playlists !curr_library)
+      in
 
-      let playlist_rect = Rectangle.create 15.0 100.0 150.0 330.0 in
-      let song_rect = Rectangle.create 180.0 100.0 150.0 330.0 in
-      draw_text "Playlists" 15 80 20 Color.black;
-      draw_text "Songs" 180 80 20 Color.black;
+      let playlist_rect = Rectangle.create 15.0 105.0 150.0 330.0 in
+      let song_rect = Rectangle.create 180.0 105.0 150.0 330.0 in
+      draw_text "Playlists" 15 80 20 Color.orange;
+      draw_text "Songs" 180 80 20 Color.orange;
 
-      let list_active_playlist, list_focus_playlist, list_scroll_playlist = Raygui.list_view_ex playlist_rect playlists !focus_playlist_index !scroll_playlist_index !selected_playlist_index in
+      let ( list_active_playlist,
+            list_focus_playlist,
+            list_scroll_playlist ) =
+        Raygui.list_view_ex playlist_rect playlists
+          !focus_playlist_index !scroll_playlist_index
+          !selected_playlist_index
+      in
       scroll_playlist_index := list_scroll_playlist;
       selected_playlist_index := list_active_playlist;
       focus_playlist_index := list_focus_playlist;
-      let songs = match !selected_playlist_index with
+      let songs =
+        match !selected_playlist_index with
         | -1 -> []
-        | index when index >= 0 && index < List.length playlists -> 
-          let playlist = List.nth (Library.get_playlists !curr_library) index in
-          (List.map Song.title (Playlist.get_songs playlist))
+        | index when index >= 0 && index < List.length playlists ->
+            let playlist =
+              List.nth (Library.get_playlists !curr_library) index
+            in
+            List.map Song.title (Playlist.get_songs playlist)
         | _ -> []
       in
-      let list_active_song, list_focus_song, list_scroll_song = Raygui.list_view_ex song_rect songs !focus_playlist_index !scroll_song_index !selected_song_index in
+      let list_active_song, list_focus_song, list_scroll_song =
+        Raygui.list_view_ex song_rect songs !focus_playlist_index
+          !scroll_song_index !selected_song_index
+      in
       scroll_song_index := list_scroll_song;
       selected_song_index := list_active_song;
       focus_song_index := list_focus_song;
 
       let playlists = Library.get_playlists !curr_library in
-      if !selected_playlist_index >= 0 && !selected_playlist_index < List.length playlists then 
+      if
+        !selected_playlist_index >= 0
+        && !selected_playlist_index < List.length playlists
+      then
         let playlist = List.nth playlists !selected_playlist_index in
         let songs = Playlist.get_songs playlist in
-        if !selected_song_index >= 0 && !selected_song_index < List.length songs then 
+        if
+          !selected_song_index >= 0
+          && !selected_song_index < List.length songs
+        then
           let song = List.nth songs !selected_song_index in
-          let details = (Song.to_string_detailed song) in
-          draw_text details 350 100 20 Color.black
-        else
-          ();
-      else
-        ();
-
-      let button_add_playlist_rect = Rectangle.create 350.0 150.0 100.0 30.0 in
-      let button_remove_playlist_rect = Rectangle.create 350.0 190.0 100.0 30.0 in
-      let button_add_song_rect = Rectangle.create 350.0 230.0 100.0 30.0 in
-      let button_remove_song_rect = Rectangle.create 350.0 270.0 100.0 30.0 in
-
-      if Raygui.button button_add_playlist_rect "Add Playlist" then
-        let new_playlist = Playlist.create "New Playlist" in
-        Library.add_new_playlist new_playlist !curr_library;
+          let details = Song.to_string_detailed song in
+          draw_text details 350 80 20 Color.gold
+        else ()
       else ();
 
-      if Raygui.button button_remove_playlist_rect "Remove Playlist" then
+      draw_text "Playlist Name:" 500 130 20 Color.orange;
+      let () = text_box_playlist_name := 
+        match Raygui.text_box (Rectangle.create 500.0 150.0 180.0 30.0) !text_box_playlist_name !text_box_playlist_edit
+        with 
+        | vl, true ->
+          text_box_playlist_edit := not !text_box_playlist_edit;
+          vl
+        | vl, false -> vl
+        in
+      draw_text "Song Title:" 500 200 20 Color.orange;
+      let () = text_box_song_title := 
+      match Raygui.text_box (Rectangle.create 500.0 220.0 180.0 30.0) !text_box_song_title !text_box_song_edit with
+       | vl, true ->
+        text_box_song_edit := not !text_box_song_edit;
+        vl
+        | vl, false -> vl
+       in
+      draw_text "Song Artist:" 500 260 20 Color.orange;
+      let () = text_box_song_artist := 
+        match Raygui.text_box (Rectangle.create 500.0 280.0 180.0 30.0) !text_box_song_artist !text_box_song_artist_edit with
+        | vl, true ->
+          text_box_song_artist_edit := not !text_box_song_artist_edit;
+          vl
+        | vl, false -> vl
+        in
+
+      draw_text "Song Duration (sec):" 500 320 20 Color.orange;
+      let () = text_box_song_duration := 
+        match Raygui.text_box (Rectangle.create 500.0 340.0 180.0 30.0) !text_box_song_duration !text_box_song_duration_edit with
+        | vl, true ->
+          text_box_song_duration_edit := not !text_box_song_duration_edit;
+          vl
+        | vl, false -> vl
+        in
+
+      let button_add_playlist_rect =
+        Rectangle.create 350.0 130.0 100.0 30.0
+      in
+      let button_remove_playlist_rect =
+        Rectangle.create 350.0 180.0 100.0 30.0
+      in
+      let button_add_song_rect =
+        Rectangle.create 350.0 250.0 100.0 30.0
+      in
+      let button_remove_song_rect =
+        Rectangle.create 350.0 300.0 100.0 30.0
+      in
+
+      if Raygui.button button_add_playlist_rect "Add Playlist" then
+        let new_playlist = Playlist.create !text_box_playlist_name in
+        Library.add_new_playlist new_playlist !curr_library
+      else ();
+
+      if Raygui.button button_remove_playlist_rect "Remove Playlist"
+      then
         match !selected_playlist_index with
         | index when index >= 0 && index < List.length playlists ->
-          let playlist = List.nth playlists index in
-          Library.remove_playlist (Playlist.get_name playlist) !curr_library
-        | _ -> ();
-        else ();
+            let playlist = List.nth playlists index in
+            Library.remove_playlist
+              (Playlist.get_name playlist)
+              !curr_library
+        | _ -> ()
+      else ();
 
       if Raygui.button button_add_song_rect "Add Song" then
         match !selected_playlist_index with
         | index when index >= 0 && index < List.length playlists ->
-          let playlist = List.nth playlists index in
-          let new_song = Song.create "New Song" "Unknown Artist" 180 in
-          Playlist.add_song playlist new_song
-        | _ -> ();
-        else ();
+            let playlist = List.nth playlists index in
+            let duration_result =
+              try Some (int_of_string (trim_null_chars !text_box_song_duration))
+              with Failure _ -> None
+            in
+            (match duration_result with
+             | Some duration ->
+               let new_song = Song.create (trim_null_chars !text_box_song_title) (trim_null_chars !text_box_song_artist) duration in
+               Playlist.add_song playlist new_song
+             | None -> ())
+        | _ -> ()
+      else ();
 
       if Raygui.button button_remove_song_rect "Remove Song" then
-        match !selected_playlist_index, !selected_song_index with
-        | playlist_index, song_index when
-            playlist_index >= 0 && playlist_index < List.length playlists &&
-            song_index >= 0 && song_index < List.length songs ->
-          let playlist = List.nth playlists playlist_index in
-          let song = List.nth songs song_index in
-          Playlist.remove_song playlist (song) 
-        | _ -> ();
-         else ();
-      
+        match (!selected_playlist_index, !selected_song_index) with
+        | playlist_index, song_index
+          when playlist_index >= 0
+               && playlist_index < List.length playlists
+               && song_index >= 0
+               && song_index < List.length songs ->
+            let playlist = List.nth playlists playlist_index in
+            let song = List.nth songs song_index in
+            Playlist.remove_song playlist song
+        | _ -> ()
+      else ();
+
       end_drawing ();
-      if not (Raygui.button (Rectangle.create 330.0 42.0 125.0 30.0) "Exit Library Menu") then
-        library_loop ()  (* Continue the inner loop *)
+      if
+        not
+          (Raygui.button
+             (Rectangle.create 330.0 42.0 125.0 30.0)
+             "Exit Library Menu")
+      then library_loop () (* Continue the inner loop *)
       else ()
   with Break -> ()
 
@@ -314,12 +400,6 @@ let rec loop
     in
     if !text_box_edit_mode then last_filter := !text_box_text;
 
-    let trim_null_chars s =
-      try
-        let index = String.index s '\000' in
-        String.sub s 0 index
-      with Not_found -> s
-    in
     (* Use the function to clean text_box_text before comparison or
        other operations *)
     let cleaned_text_box_text = trim_null_chars !text_box_text in
@@ -481,7 +561,6 @@ let rec loop
     else end_drawing ();
     loop metronome keys octave_keys volume_control
 
-
 let () =
-    let metronome, keys, octave_keys, volume_control = setup () in
-    loop metronome keys octave_keys volume_control
+  let metronome, keys, octave_keys, volume_control = setup () in
+  loop metronome keys octave_keys volume_control
