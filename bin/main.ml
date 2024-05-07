@@ -29,6 +29,7 @@ let trim_null_chars s =
 
 let instruments = load_instruments_from_csv "assets/instruments.csv"
 let valid_instrument_names = List.map fst instruments
+let instrument_menu_open = ref false
 let list_view_scroll_index = ref 0
 let list_view_active = ref 0
 let list_view_ex_focus = ref 0
@@ -333,6 +334,7 @@ let rec loop
 
     if !show_save_input_box then Raygui.lock ();
 
+    (* KEYBOARD *)
     let keys =
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
         Keyboard.refresh
@@ -360,6 +362,7 @@ let rec loop
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
       Color.black;
 
+    (* MENU BAR *)
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
     Octave.draw_octave_text ();
 
@@ -368,6 +371,7 @@ let rec loop
     if Raygui.button library_button_rect library_button_text then
       library_loop ();
 
+    (* SUSTAIN BUTTON *)
     let sustain_button_rect = Rectangle.create 475. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
@@ -386,56 +390,65 @@ let rec loop
       else keys
     in
 
+    (* INSTRUMENT MENU *)
+    let toggle_instrument_menu () =
+      instrument_menu_open := not !instrument_menu_open
+    in
+    draw_text "Instrument: " 200 10 18 Color.gold;
+
     if
       Raygui.button
         (Rectangle.create 300. 10. 150. 20.)
         !current_instrument
-    then ();
+    then toggle_instrument_menu ();
 
-    draw_text "Search below" 175 40 18 Color.lightgray;
+    if !instrument_menu_open then begin
+      draw_text "Search below" 175 40 18 Color.lightgray;
 
-    let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
-    let () =
-      text_box_text :=
-        match
-          Raygui.text_box rect !text_box_text !text_box_edit_mode
-        with
-        | vl, true ->
-            text_box_edit_mode := not !text_box_edit_mode;
-            vl
-        | vl, false -> vl
-    in
-    if !text_box_edit_mode then last_filter := !text_box_text;
-
-    (* Use the function to clean text_box_text before comparison or
-       other operations *)
-    let cleaned_text_box_text = trim_null_chars !text_box_text in
-    if not !text_box_edit_mode then begin
-      if List.mem cleaned_text_box_text valid_instrument_names then begin
-        current_instrument := cleaned_text_box_text;
-        last_filter := "";
-        let instrument_idx =
+      let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
+      let () =
+        text_box_text :=
           match
-            List.find_index
-              (fun name -> name = cleaned_text_box_text)
-              valid_instrument_names
+            Raygui.text_box rect !text_box_text !text_box_edit_mode
           with
-          | Some x -> x
-          | None -> failwith "Instrument not found"
-        in
-        list_view_active := instrument_idx;
-        if !previous_instrument <> !current_instrument then begin
-          previous_instrument := !current_instrument;
-          if List.length valid_instrument_names - instrument_idx <= 8
-          then list_view_scroll_index := instrument_idx - 8
-          else list_view_scroll_index := instrument_idx
+          | vl, true ->
+              text_box_edit_mode := not !text_box_edit_mode;
+              vl
+          | vl, false -> vl
+      in
+      if !text_box_edit_mode then last_filter := !text_box_text;
+
+      (* Use the function to clean text_box_text before comparison or
+         other operations *)
+      let cleaned_text_box_text = trim_null_chars !text_box_text in
+      if not !text_box_edit_mode then begin
+        if List.mem cleaned_text_box_text valid_instrument_names then begin
+          current_instrument := cleaned_text_box_text;
+          last_filter := "";
+          let instrument_idx =
+            match
+              List.find_index
+                (fun name -> name = cleaned_text_box_text)
+                valid_instrument_names
+            with
+            | Some x -> x
+            | None -> failwith "Instrument not found"
+          in
+          list_view_active := instrument_idx;
+          if !previous_instrument <> !current_instrument then begin
+            previous_instrument := !current_instrument;
+            if List.length valid_instrument_names - instrument_idx <= 8
+            then list_view_scroll_index := instrument_idx - 8
+            else list_view_scroll_index := instrument_idx
+          end
         end
       end
     end;
 
-    draw_text "Instrument: " 200 10 18 Color.gold;
-
+    (* METRONOME *)
     let current_bpm = metronome () in
+
+    (* VOLUME CONTROL *)
     let volume = volume_control () in
     volume_slider := !volume;
 
