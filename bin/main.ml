@@ -577,7 +577,9 @@ let rec loop
       (* Check if save button is pressed *)
       let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
       show_save_input_box :=
-        if Raygui.button rect "Save Preset" then true
+        if Raygui.button rect "Save Preset" then 
+          let () = save_input_text := "" in
+          true
         else !show_save_input_box;
       if not !show_save_input_box then Raygui.unlock ();
 
@@ -642,7 +644,7 @@ let rec loop
               !sustain_on)
         else keys
       in
-      prev_text_box_edit_mode := !text_box_edit_mode;
+      (* prev_text_box_edit_mode := !text_box_edit_mode; *)
 
       end_drawing ();
       loop metronome keys octave_keys volume_control
