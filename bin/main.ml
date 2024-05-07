@@ -69,7 +69,7 @@ let apply_styles () =
   Raygui.(
     set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
   Raygui.(
-    set_style (TextBox `Border_color_normal) (color_to_int Color.black));
+    set_style (TextBox `Border_color_normal) (color_to_int Color.white));
   Raygui.(
     set_style (TextBox `Text_color_normal) (color_to_int Color.white));
   Raygui.(
@@ -410,6 +410,14 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    (* PRESET BUTTON *)
+    (* Check if save button is pressed *)
+    let rect = Rectangle.create 200.0 45.0 125.0 30.0 in
+    show_save_input_box :=
+      if Raygui.button rect "Save Preset" then true
+      else !show_save_input_box;
+    if not !show_save_input_box then Raygui.unlock ();
+
     (* INSTRUMENT MENU *)
     let toggle_instrument_menu () =
       instrument_menu_open := not !instrument_menu_open
@@ -423,9 +431,10 @@ let rec loop
     then toggle_instrument_menu ();
 
     if !instrument_menu_open then begin
-      draw_text "Search below" 175 40 18 Color.lightgray;
+      draw_rectangle 200 40 310 310 Color.black;
+      draw_text "Search below" 375 90 18 Color.lightgray;
 
-      let rect = Rectangle.create 175.0 60.0 125.0 30.0 in
+      let rect = Rectangle.create 375.0 110.0 125.0 30.0 in
       let () =
         text_box_text :=
           match
@@ -480,7 +489,7 @@ let rec loop
             valid_instrument_names
       in
 
-      let rect = Rectangle.create 10. 40. 150. 300. in
+      let rect = Rectangle.create 210. 90. 150. 250. in
       let new_list_view_active, new_focus, new_list_view_scroll_index =
         Raygui.list_view_ex rect filtered_instrument_list
           !list_view_ex_focus !list_view_scroll_index !list_view_active
@@ -539,13 +548,7 @@ let rec loop
       end
     end;
 
-    (* Check if save button is pressed *)
-    let rect = Rectangle.create 200.0 45.0 125.0 30.0 in
-    show_save_input_box :=
-      if Raygui.button rect "Save Preset" then true
-      else !show_save_input_box;
-    if not !show_save_input_box then Raygui.unlock ();
-
+    (* PRESET DIALOG *)
     let keys =
       if !show_save_input_box then (
         (* Handle save popup interaction *)
