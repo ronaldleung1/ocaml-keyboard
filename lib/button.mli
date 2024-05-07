@@ -1,5 +1,14 @@
 open Raylib
 
+val button_stack : Rectangle.t list ref
+(** [button_stack] keep track of all buttons created by the functions in
+    the button class. *)
+
+val check_collision :
+  Vector2.t -> Rectangle.t -> Rectangle.t list -> bool
+(** [check_collision mouse_point rect button_stack] checks if the mouse
+    point is within the rectangle. *)
+
 val create_general_with_key_binding :
   ?draw_text:bool ->
   ?opt_color:Color.t ->

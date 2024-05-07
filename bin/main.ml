@@ -1,5 +1,7 @@
 open Music
 
+exception Break
+
 let screenWidth = 800
 let screenHeight = 450
 let argv : string list = Array.to_list Sys.argv
@@ -19,6 +21,12 @@ let load_instruments_from_csv file_path =
   in
   read_lines []
 
+let trim_null_chars s =
+  try
+    let index = String.index s '\000' in
+    String.sub s 0 index
+  with Not_found -> s
+
 let instruments = load_instruments_from_csv "assets/instruments.csv"
 let valid_instrument_names = List.map fst instruments
 let list_view_scroll_index = ref 0
@@ -32,6 +40,27 @@ let text_box_edit_mode = ref false
 let prev_text_box_edit_mode = ref false
 let last_filter = ref ""
 let sustain_on = ref false
+let preset_list_scroll_index = ref 0
+let preset_list_active = ref (-1)
+let preset_list_focus = ref 0
+let prev_preset = ref (-1)
+let show_save_input_box = ref false
+let save_input_text = ref ""
+let curr_library = ref Library.empty
+let selected_playlist_index = ref 0
+let scroll_playlist_index = ref 0
+let focus_playlist_index = ref 0
+let selected_song_index = ref 0
+let scroll_song_index = ref 0
+let focus_song_index = ref 0
+let text_box_playlist_name = ref ""
+let text_box_playlist_edit = ref false
+let text_box_song_title = ref ""
+let text_box_song_edit = ref false
+let text_box_song_artist = ref ""
+let text_box_song_artist_edit = ref false
+let text_box_song_duration = ref ""
+let text_box_song_duration_edit = ref false
 
 let apply_styles () =
   let open Raylib in
@@ -92,6 +121,203 @@ let setup () =
   set_target_fps 60;
   (metronome, !keys, octave_keys, volume_control)
 
+let rec library_loop () =
+  try
+    if Raylib.window_should_close () then Raylib.close_window ()
+    else
+      let open Raylib in
+      begin_drawing ();
+      clear_background Color.gray;
+      draw_text "Library Management" 10 10 20 Color.white;
+
+      let playlists =
+        List.map Playlist.get_name (Library.get_playlists !curr_library)
+      in
+
+      let playlist_rect = Rectangle.create 15.0 105.0 150.0 330.0 in
+      let song_rect = Rectangle.create 180.0 105.0 150.0 330.0 in
+      draw_text "Playlists" 15 80 20 Color.gold;
+      draw_text "Songs" 180 80 20 Color.gold;
+
+      let ( list_active_playlist,
+            list_focus_playlist,
+            list_scroll_playlist ) =
+        Raygui.list_view_ex playlist_rect playlists
+          !focus_playlist_index !scroll_playlist_index
+          !selected_playlist_index
+      in
+      scroll_playlist_index := list_scroll_playlist;
+      selected_playlist_index := list_active_playlist;
+      focus_playlist_index := list_focus_playlist;
+      let songs =
+        match !selected_playlist_index with
+        | -1 -> []
+        | index when index >= 0 && index < List.length playlists ->
+            let playlist =
+              List.nth (Library.get_playlists !curr_library) index
+            in
+            List.map Song.title (Playlist.get_songs playlist)
+        | _ -> []
+      in
+      let list_active_song, list_focus_song, list_scroll_song =
+        Raygui.list_view_ex song_rect songs !focus_playlist_index
+          !scroll_song_index !selected_song_index
+      in
+      scroll_song_index := list_scroll_song;
+      selected_song_index := list_active_song;
+      focus_song_index := list_focus_song;
+
+      let playlists = Library.get_playlists !curr_library in
+      if
+        !selected_playlist_index >= 0
+        && !selected_playlist_index < List.length playlists
+      then
+        let playlist = List.nth playlists !selected_playlist_index in
+        let songs = Playlist.get_songs playlist in
+        if
+          !selected_song_index >= 0
+          && !selected_song_index < List.length songs
+        then
+          let song = List.nth songs !selected_song_index in
+          let details = Song.to_string_detailed song in
+          draw_text details 350 80 22 Color.yellow
+        else ()
+      else ();
+
+      draw_text "Playlist Name:" 500 130 20 Color.gold;
+      let () =
+        text_box_playlist_name :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 150.0 180.0 30.0)
+              !text_box_playlist_name !text_box_playlist_edit
+          with
+          | vl, true ->
+              text_box_playlist_edit := not !text_box_playlist_edit;
+              vl
+          | vl, false -> vl
+      in
+      draw_text "Song Title:" 500 200 20 Color.gold;
+      let () =
+        text_box_song_title :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 220.0 180.0 30.0)
+              !text_box_song_title !text_box_song_edit
+          with
+          | vl, true ->
+              text_box_song_edit := not !text_box_song_edit;
+              vl
+          | vl, false -> vl
+      in
+      draw_text "Song Artist:" 500 260 20 Color.gold;
+      let () =
+        text_box_song_artist :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 280.0 180.0 30.0)
+              !text_box_song_artist
+              !text_box_song_artist_edit
+          with
+          | vl, true ->
+              text_box_song_artist_edit :=
+                not !text_box_song_artist_edit;
+              vl
+          | vl, false -> vl
+      in
+
+      draw_text "Song Duration (sec):" 500 320 20 Color.gold;
+      let () =
+        text_box_song_duration :=
+          match
+            Raygui.text_box
+              (Rectangle.create 500.0 340.0 180.0 30.0)
+              !text_box_song_duration
+              !text_box_song_duration_edit
+          with
+          | vl, true ->
+              text_box_song_duration_edit :=
+                not !text_box_song_duration_edit;
+              vl
+          | vl, false -> vl
+      in
+
+      let button_add_playlist_rect =
+        Rectangle.create 350.0 130.0 100.0 30.0
+      in
+      let button_remove_playlist_rect =
+        Rectangle.create 350.0 180.0 100.0 30.0
+      in
+      let button_add_song_rect =
+        Rectangle.create 350.0 250.0 100.0 30.0
+      in
+      let button_remove_song_rect =
+        Rectangle.create 350.0 300.0 100.0 30.0
+      in
+
+      if Raygui.button button_add_playlist_rect "Add Playlist" then
+        let new_playlist = Playlist.create !text_box_playlist_name in
+        Library.add_new_playlist new_playlist !curr_library
+      else ();
+
+      if Raygui.button button_remove_playlist_rect "Remove Playlist"
+      then
+        match !selected_playlist_index with
+        | index when index >= 0 && index < List.length playlists ->
+            let playlist = List.nth playlists index in
+            Library.remove_playlist
+              (Playlist.get_name playlist)
+              !curr_library
+        | _ -> ()
+      else ();
+
+      if Raygui.button button_add_song_rect "Add Song" then
+        match !selected_playlist_index with
+        | index when index >= 0 && index < List.length playlists -> (
+            let playlist = List.nth playlists index in
+            let duration_result =
+              try
+                Some
+                  (int_of_string
+                     (trim_null_chars !text_box_song_duration))
+              with Failure _ -> None
+            in
+            match duration_result with
+            | Some duration ->
+                let new_song =
+                  Song.create
+                    (trim_null_chars !text_box_song_title)
+                    (trim_null_chars !text_box_song_artist)
+                    duration
+                in
+                Playlist.add_song playlist new_song
+            | None -> ())
+        | _ -> ()
+      else ();
+
+      if Raygui.button button_remove_song_rect "Remove Song" then
+        match (!selected_playlist_index, !selected_song_index) with
+        | playlist_index, song_index
+          when playlist_index >= 0
+               && playlist_index < List.length playlists
+               && song_index >= 0
+               && song_index < List.length songs ->
+            let playlist = List.nth playlists playlist_index in
+            let song = List.nth songs song_index in
+            Playlist.remove_song playlist song
+        | _ -> ()
+      else ();
+
+      end_drawing ();
+      if
+        not
+          (Raygui.button
+             (Rectangle.create 330.0 42.0 125.0 30.0)
+             "Exit Library Menu")
+      then library_loop () (* Continue the inner loop *)
+      else ()
+  with Break -> ()
+
 let rec loop
     metronome
     keys
@@ -103,6 +329,9 @@ let rec loop
     begin_drawing ();
     clear_background Color.darkgray;
     apply_styles ();
+    let presets = Presets.load_array_from_file "presets.txt" in
+
+    if !show_save_input_box then Raygui.lock ();
 
     let keys =
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
@@ -129,9 +358,15 @@ let rec loop
 
     draw_rectangle_rec
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
-      Color.raywhite;
+      Color.black;
 
-    draw_text "OCaml Keyboard" 10 10 20 Color.gray;
+    draw_text "OCaml Keyboard" 10 10 20 Color.white;
+    Octave.draw_octave_text ();
+
+    let library_button_rect = Rectangle.create 330.0 42.0 125.0 30.0 in
+    let library_button_text = "Library Menu" in
+    if Raygui.button library_button_rect library_button_text then
+      library_loop ();
 
     let sustain_button_rect = Rectangle.create 475. 10. 100. 20. in
     let sustain_button_text =
@@ -172,12 +407,6 @@ let rec loop
     in
     if !text_box_edit_mode then last_filter := !text_box_text;
 
-    let trim_null_chars s =
-      try
-        let index = String.index s '\000' in
-        String.sub s 0 index
-      with Not_found -> s
-    in
     (* Use the function to clean text_box_text before comparison or
        other operations *)
     let cleaned_text_box_text = trim_null_chars !text_box_text in
@@ -295,102 +524,80 @@ let rec loop
       end_drawing ();
       loop metronome keys octave_keys volume_control
     end
-    else end_drawing ();
-    loop metronome keys octave_keys volume_control
+    else
+      (* Check if save button is pressed *)
+      let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
+      show_save_input_box :=
+        if Raygui.button rect "Save Preset" then true
+        else !show_save_input_box;
+      if not !show_save_input_box then Raygui.unlock ();
 
-let print_blue text =
-  print_endline
-    (ANSITerminal.sprintf
-       [ ANSITerminal.Foreground ANSITerminal.Blue ]
-       "%s" text)
+      let keys =
+        if !show_save_input_box then (
+          (* Handle save popup interaction *)
+          let text_input_text, show_text_input_box =
+            if !show_save_input_box then (
+              draw_rectangle 0 0 (get_screen_width ())
+                (get_screen_height ())
+                (fade Color.raywhite 0.8);
+              Raygui.unlock ();
+              let text_input_text, res =
+                Raygui.text_input_box
+                  (Rectangle.create
+                     ((float_of_int (get_screen_width ()) /. 2.0)
+                     -. 120.0)
+                     ((float_of_int (get_screen_height ()) /. 2.0)
+                     -. 60.0)
+                     240.0 140.0)
+                  "Save this preset!" "Enter a name below" "Ok;Cancel"
+                  !save_input_text
+              in
+              if res = 1 then (
+                let () = text_box_edit_mode := false in
+                let current_bpm = current_bpm in
+                let current_volume = !volume in
+                let preset_data =
+                  ( trim_null_chars !save_input_text,
+                    (current_bpm, current_volume, !current_instrument)
+                  )
+                in
+                let preset_string = Presets.ass_to_string preset_data in
+                Presets.print_string_to_file "presets.txt" preset_string;
+                (text_input_text, false))
+              else if res = 0 || res = 2 then (
+                text_box_edit_mode := false;
+                (text_input_text, false))
+              else (
+                text_box_edit_mode := true;
+                (text_input_text, !show_save_input_box)))
+            else (!save_input_text, !show_save_input_box)
+          in
+          save_input_text := text_input_text;
+          show_save_input_box := show_text_input_box;
 
-let print_cyan text =
-  print_endline
-    (ANSITerminal.sprintf
-       [ ANSITerminal.Foreground ANSITerminal.Cyan ]
-       "%s" text)
+          if !prev_text_box_edit_mode <> !text_box_edit_mode then
+            Keyboard.refresh
+              (Rectangle.create 0.
+                 (float_of_int (Raylib.get_screen_height ()) -. 100.)
+                 (float_of_int (Raylib.get_screen_width ()))
+                 100.)
+              !current_instrument false true !text_box_edit_mode false
+              !sustain_on
+          else
+            Keyboard.refresh
+              (Rectangle.create 0.
+                 (float_of_int (Raylib.get_screen_height ()) -. 100.)
+                 (float_of_int (Raylib.get_screen_width ()))
+                 100.)
+              !current_instrument false false !text_box_edit_mode false
+              !sustain_on)
+        else keys
+      in
+      prev_text_box_edit_mode := !text_box_edit_mode;
 
-let rec playlist_menu my_playlist =
-  print_cyan "What do you want to do with the playlist?";
-  print_cyan "1. View playlist";
-  print_cyan "2. Add a song to a playlist";
-  print_cyan "3. Remove a song from a playlist";
-  print_cyan "4. Check if a playlist contains a song";
-  print_cyan "5. View total duration a playlist";
-  print_cyan "Type ' quit ' to return to playlist manager";
-  let choice = read_line () in
-  match choice with
-  | "quit" -> print_cyan "Returning to playlist manager."
-  | "1" ->
-      print_endline "Viewing playlist...";
-      print_endline (Playlist.display my_playlist);
-      playlist_menu my_playlist
-  | "2" ->
-      print_endline "What is the title of the song?";
-      let title = read_line () in
-      print_endline "Who is the artist of the song?";
-      let artist = read_line () in
-      print_endline "What is the duration of the song?";
-      let duration = read_line () in
-      let song = Song.create title artist (int_of_string duration) in
-      Playlist.add_song my_playlist song;
-      print_endline "Added song to playlist.";
-      playlist_menu my_playlist
-  | "3" ->
-      print_endline "What is the title of the song?";
-      let title = read_line () in
-      Playlist.remove_song my_playlist title;
-      playlist_menu my_playlist
-  | "4" ->
-      print_endline "What is the title of the song?";
-      let title = read_line () in
-      print_endline
-        (string_of_bool (Playlist.contains my_playlist title));
-      playlist_menu my_playlist
-  | "5" -> print_endline (Playlist.total_duration my_playlist)
-  | _ -> playlist_menu my_playlist
-
-let rec library_menu library =
-  print_blue "Select an option:";
-  print_blue "1. View all playlists";
-  print_blue "2. Add a new empty playlist";
-  print_blue "3. Remove a playlist";
-  print_blue "4. Manage a specific playlist";
-  print_blue "Type ' quit ' to exit.";
-  let choice = read_line () in
-  match choice with
-  | "quit" ->
-      print_blue "Exiting playlist manager.";
-      exit 0
-  | "1" ->
-      print_endline "Viewing library...";
-      print_endline (Library.display library);
-      library_menu library
-  | "2" ->
-      print_endline "What is the name of the playlist?";
-      let name = read_line () in
-      let playlist = Playlist.create name in
-      Library.add_new_playlist playlist library;
-      print_endline "Added new playlist to library.";
-      library_menu library
-  | "3" ->
-      print_endline "Enter the name of the playlist to remove:";
-      let name = read_line () in
-      Library.remove_playlist name library;
-      print_endline "Removed playlist from library.";
-      library_menu library
-  | "4" ->
-      print_endline "Enter the name of the playlist to manage:";
-      let name = read_line () in
-      (match Library.find_playlist name library with
-      | Some playlist -> playlist_menu playlist
-      | None -> print_endline "Playlist not found.");
-      library_menu library
-  | _ -> library_menu library
+      end_drawing ();
+      loop metronome keys octave_keys volume_control
 
 let () =
-  if List.mem "playlist" argv then library_menu Library.empty
-  else begin
-    let metronome, keys, octave_keys, volume_control = setup () in
-    loop metronome keys octave_keys volume_control
-  end
+  let metronome, keys, octave_keys, volume_control = setup () in
+  loop metronome keys octave_keys volume_control

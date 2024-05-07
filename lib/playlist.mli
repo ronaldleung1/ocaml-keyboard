@@ -8,3 +8,4 @@ val remove_song : t -> string -> unit
 val contains : t -> string -> bool
 val total_duration : t -> string
 val display : t -> string
+val get_songs : t -> Song.t list

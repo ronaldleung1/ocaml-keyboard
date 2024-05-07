@@ -141,7 +141,7 @@ let create
     (* begin reducing volume of note *)
     fade_note := true
   in
-  let fade_duration = if sustain_on then 5.0 else 0.25 in
+  let fade_duration = if sustain_on then 4.0 else 0.25 in
   (* duration in seconds *)
   let steps = 10 in
   let step_delay = fade_duration /. float_of_int steps in
