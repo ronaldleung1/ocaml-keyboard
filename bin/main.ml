@@ -303,7 +303,7 @@ let rec loop
     if Raygui.button library_button_rect library_button_text then
       library_loop ();
 
-    let sustain_button_rect = Rectangle.create 450. 10. 100. 20. in
+    let sustain_button_rect = Rectangle.create 490. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
     in
