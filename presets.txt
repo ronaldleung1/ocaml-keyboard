@@ -1,0 +1,6 @@
+preset1,60.,10.,piano
+preset2,46.,3.25925922394,alto_sax
+preset3,0.,10.,acoustic_bass
+preset4,60.,10.,xylophone
+preset5,60.,3.33333325386,acoustic_guitar_steel
+preset6,40.,10.,trumpet
