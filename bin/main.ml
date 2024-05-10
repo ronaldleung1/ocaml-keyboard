@@ -29,6 +29,7 @@ let trim_null_chars s =
 
 let instruments = load_instruments_from_csv "assets/instruments.csv"
 let valid_instrument_names = List.map fst instruments
+let instrument_menu_open = ref false
 let list_view_scroll_index = ref 0
 let list_view_active = ref 0
 let list_view_ex_focus = ref 0
@@ -61,6 +62,40 @@ let text_box_song_artist = ref ""
 let text_box_song_artist_edit = ref false
 let text_box_song_duration = ref ""
 let text_box_song_duration_edit = ref false
+
+let apply_styles () =
+  let open Raylib in
+  (* Text box *)
+  Raygui.(
+    set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
+  Raygui.(
+    set_style (TextBox `Border_color_normal) (color_to_int Color.white));
+  Raygui.(
+    set_style (TextBox `Text_color_normal) (color_to_int Color.white));
+  Raygui.(
+    set_style (TextBox `Text_color_focused) (color_to_int Color.white));
+  Raygui.(
+    set_style (TextBox `Text_color_pressed) (color_to_int Color.red));
+  (* Slider *)
+  Raygui.(
+    set_style (Slider `Text_color_normal)
+      (Raylib.color_to_int Raylib.Color.gold));
+  Raygui.(
+    set_style (Slider `Border_color_normal)
+      (Raylib.color_to_int Color.black));
+  (* List View *)
+  Raygui.(
+    set_style (ListView `Border_color_normal)
+      (Raylib.color_to_int Color.black));
+  Raygui.(
+    set_style (ListView `Text_color_normal)
+      (Raylib.color_to_int Color.black));
+  Raygui.(
+    set_style (ListView `Text_color_focused)
+      (Raylib.color_to_int Color.red));
+  Raygui.(
+    set_style (ListView `Text_color_pressed)
+      (Raylib.color_to_int Color.darkgreen))
 
 let setup () =
   let open Raylib in
@@ -278,7 +313,7 @@ let rec library_loop () =
       if
         not
           (Raygui.button
-             (Rectangle.create 330.0 42.0 125.0 30.0)
+             (Rectangle.create 50.0 45.0 125.0 30.0)
              "Exit Library Menu")
       then library_loop () (* Continue the inner loop *)
       else ()
@@ -294,10 +329,12 @@ let rec loop
     let open Raylib in
     begin_drawing ();
     clear_background Color.darkgray;
+    apply_styles ();
     let presets = Presets.load_array_from_file "presets.txt" in
 
     if !show_save_input_box then Raygui.lock ();
 
+    (* KEYBOARD *)
     let keys =
       if !prev_text_box_edit_mode <> !text_box_edit_mode then
         Keyboard.refresh
@@ -319,21 +356,25 @@ let rec loop
     prev_text_box_edit_mode := !text_box_edit_mode;
 
     (List.iter (fun key -> key ())) keys;
+
+    (* OCTAVE CONTROL *)
+    Octave.draw_octave_text ();
     (List.iter (fun key -> key ())) octave_keys;
 
+    (* MENU BAR *)
     draw_rectangle_rec
       (Rectangle.create 0. 0. (float_of_int screenWidth) 40.)
       Color.black;
 
     draw_text "OCaml Keyboard" 10 10 20 Color.white;
-    Octave.draw_octave_text ();
 
-    let library_button_rect = Rectangle.create 330.0 42.0 125.0 30.0 in
+    let library_button_rect = Rectangle.create 50.0 45.0 125.0 30.0 in
     let library_button_text = "Library Menu" in
     if Raygui.button library_button_rect library_button_text then
       library_loop ();
 
-    let sustain_button_rect = Rectangle.create 490. 10. 100. 20. in
+    (* SUSTAIN BUTTON *)
+    let sustain_button_rect = Rectangle.create 475. 10. 100. 20. in
     let sustain_button_text =
       if !sustain_on then "Sustain: ON" else "Sustain: OFF"
     in
@@ -351,75 +392,15 @@ let rec loop
       else keys
     in
 
-    draw_text "Search below" 175 42 18 Color.lightgray;
-    Raygui.(
-      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
-    Raygui.(
-      set_style (TextBox `Border_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (TextBox `Text_color_normal)
-        (Raylib.color_to_int Color.white));
-    Raygui.(
-      set_style (TextBox `Text_color_focused)
-        (Raylib.color_to_int Color.white));
-    Raygui.(
-      set_style (TextBox `Text_color_pressed)
-        (Raylib.color_to_int Color.red));
-    let rect = Rectangle.create 175.0 62.0 125.0 30.0 in
-    let () =
-      text_box_text :=
-        match
-          Raygui.text_box rect !text_box_text !text_box_edit_mode
-        with
-        | vl, true ->
-            text_box_edit_mode := not !text_box_edit_mode;
-            vl
-        | vl, false -> vl
-    in
-    if !text_box_edit_mode then last_filter := !text_box_text;
-
-    (* Use the function to clean text_box_text before comparison or
-       other operations *)
-    let cleaned_text_box_text = trim_null_chars !text_box_text in
-    if not !text_box_edit_mode then begin
-      if List.mem cleaned_text_box_text valid_instrument_names then begin
-        current_instrument := cleaned_text_box_text;
-        last_filter := "";
-        let instrument_idx =
-          match
-            List.find_index
-              (fun name -> name = cleaned_text_box_text)
-              valid_instrument_names
-          with
-          | Some x -> x
-          | None -> failwith "Instrument not found"
-        in
-        list_view_active := instrument_idx;
-        if !previous_instrument <> !current_instrument then begin
-          previous_instrument := !current_instrument;
-          if List.length valid_instrument_names - instrument_idx <= 8
-          then list_view_scroll_index := instrument_idx - 8
-          else list_view_scroll_index := instrument_idx
-        end
-      end
-    end;
-
-    draw_text
-      ("Instrument: " ^ !current_instrument)
-      200 10 18 Color.gold;
+    (* METRONOME *)
     let current_bpm = metronome () in
+
+    (* VOLUME CONTROL *)
     let volume = volume_control () in
     volume_slider := !volume;
 
     (* Adjust volume as needed *)
-    Raygui.(
-      set_style (Slider `Text_color_normal)
-        (Raylib.color_to_int Raylib.Color.gold));
-    Raygui.(
-      set_style (Slider `Border_color_normal)
-        (Raylib.color_to_int Color.black));
-    let rect = Rectangle.create 625.0 62.0 150.0 20.0 in
+    let rect = Rectangle.create 625.0 50.0 150.0 20.0 in
     let volume_slider_val =
       Raygui.slider rect "VOLUME"
         (Printf.sprintf "%1.1f" !volume_slider)
@@ -429,35 +410,13 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
-    let filtered_instrument_list =
-      if !text_box_edit_mode then
-        List.filter
-          (fun name ->
-            String.starts_with
-              ~prefix:(trim_null_chars !text_box_text)
-              name)
-          valid_instrument_names
-      else
-        List.filter
-          (fun name ->
-            String.starts_with
-              ~prefix:(trim_null_chars !last_filter)
-              name)
-          valid_instrument_names
-    in
-
-    Raygui.(
-      set_style (ListView `Border_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (ListView `Text_color_normal)
-        (Raylib.color_to_int Color.black));
-    Raygui.(
-      set_style (ListView `Text_color_focused)
-        (Raylib.color_to_int Color.red));
-    Raygui.(
-      set_style (ListView `Text_color_pressed)
-        (Raylib.color_to_int Color.darkgreen));
+    (* PRESET BUTTON *)
+    (* Check if save button is pressed *)
+    let rect = Rectangle.create 200.0 45.0 125.0 30.0 in
+    show_save_input_box :=
+      if Raygui.button rect "Save Preset" then true
+      else !show_save_input_box;
+    if not !show_save_input_box then Raygui.unlock ();
 
     let presets_list = Array.to_list !presets in
     let preset_names = List.map fst presets_list in
@@ -483,22 +442,123 @@ let rec loop
           snd (List.nth presets_list !preset_list_active)
         in
         current_instrument := instr;
-        previous_instrument := instr;
+        previous_instrument := instr)
+    in
+
+    (* INSTRUMENT MENU *)
+    let toggle_instrument_menu () =
+      instrument_menu_open := not !instrument_menu_open
+    in
+    draw_text "Instrument: " 200 10 18 Color.gold;
+
+    if
+      Raygui.button
+        (Rectangle.create 300. 10. 150. 20.)
+        !current_instrument
+    then toggle_instrument_menu ();
+
+    if !instrument_menu_open then begin
+      draw_rectangle 200 40 310 310 Color.black;
+      draw_text "Search below" 375 90 18 Color.lightgray;
+
+      let rect = Rectangle.create 375.0 110.0 125.0 30.0 in
+      let () =
+        text_box_text :=
+          match
+            Raygui.text_box rect !text_box_text !text_box_edit_mode
+          with
+          | vl, true ->
+              text_box_edit_mode := not !text_box_edit_mode;
+              vl
+          | vl, false -> vl
+      in
+      if !text_box_edit_mode then last_filter := !text_box_text;
+
+      (* Use the function to clean text_box_text before comparison or
+         other operations *)
+      let cleaned_text_box_text = trim_null_chars !text_box_text in
+      if not !text_box_edit_mode then begin
+        if List.mem cleaned_text_box_text valid_instrument_names then begin
+          current_instrument := cleaned_text_box_text;
+          last_filter := "";
+          let instrument_idx =
+            match
+              List.find_index
+                (fun name -> name = cleaned_text_box_text)
+                valid_instrument_names
+            with
+            | Some x -> x
+            | None -> failwith "Instrument not found"
+          in
+          list_view_active := instrument_idx;
+          if !previous_instrument <> !current_instrument then begin
+            previous_instrument := !current_instrument;
+            if List.length valid_instrument_names - instrument_idx <= 8
+            then list_view_scroll_index := instrument_idx - 8
+            else list_view_scroll_index := instrument_idx
+          end
+        end
+      end;
+      let filtered_instrument_list =
+        if !text_box_edit_mode then
+          List.filter
+            (fun name ->
+              String.starts_with
+                ~prefix:(trim_null_chars !text_box_text)
+                name)
+            valid_instrument_names
+        else
+          List.filter
+            (fun name ->
+              String.starts_with
+                ~prefix:(trim_null_chars !last_filter)
+                name)
+            valid_instrument_names
+      in
+
+      let rect = Rectangle.create 210. 90. 150. 250. in
+      let new_list_view_active, new_focus, new_list_view_scroll_index =
+        Raygui.list_view_ex rect filtered_instrument_list
+          !list_view_ex_focus !list_view_scroll_index !list_view_active
+      in
+      list_view_active := new_list_view_active;
+      list_view_scroll_index := new_list_view_scroll_index;
+      list_view_ex_focus := new_focus;
+      if !list_view_active == -1 then list_view_active := 0;
+      let selected_instrument =
+        if List.length filtered_instrument_list = 0 then
+          !current_instrument
+        else if !list_view_active < List.length filtered_instrument_list
+        then List.nth filtered_instrument_list !list_view_active
+        else !current_instrument
+        (* Fallback to the current instrument if the index is out of
+           bounds *)
+      in
+
+      if
+        selected_instrument <> !current_instrument
+        && not !text_box_edit_mode
+      then begin
+        previous_instrument := selected_instrument;
+        current_instrument := selected_instrument;
         text_box_text := !current_instrument;
         prev_preset := !preset_list_active;
-        (list_view_scroll_index :=
-           let instr_idx =
-             match
-               List.find_index
-                 (fun name -> name = instr)
-                 valid_instrument_names
-             with
-             | Some x -> x
-             | None -> failwith "Cant find instrument"
-           in
-           if List.length valid_instrument_names - instr_idx <= 8 then
-             instr_idx - 8
-           else instr_idx);
+
+        list_view_scroll_index :=
+          if !last_filter <> "" then
+            let instr_idx =
+              match
+                List.find_index
+                  (fun name -> name = selected_instrument)
+                  valid_instrument_names
+              with
+              | Some x -> x
+              | None -> failwith "Cant find instrument"
+            in
+            if List.length valid_instrument_names - instr_idx <= 8 then
+              instr_idx - 8
+            else instr_idx
+          else !list_view_scroll_index;
 
         last_filter := "";
 
@@ -512,142 +572,72 @@ let rec loop
             !sustain_on
         in
         end_drawing ();
-        loop (Metronome.start bpm) keys octave_keys (Volume.start vol))
-      else ()
-    in
+        loop metronome keys octave_keys volume_control
+      end
+    end;
 
-    let rect = Rectangle.create 10. 40. 150. 300. in
-    let new_list_view_active, new_focus, new_list_view_scroll_index =
-      Raygui.list_view_ex rect filtered_instrument_list
-        !list_view_ex_focus !list_view_scroll_index !list_view_active
-    in
-    list_view_active := new_list_view_active;
-    list_view_scroll_index := new_list_view_scroll_index;
-    list_view_ex_focus := new_focus;
-    if !list_view_active == -1 then list_view_active := 0;
-    let selected_instrument =
-      if List.length filtered_instrument_list = 0 then
-        !current_instrument
-      else if !list_view_active < List.length filtered_instrument_list
-      then List.nth filtered_instrument_list !list_view_active
-      else !current_instrument
-      (* Fallback to the current instrument if the index is out of
-         bounds *)
-    in
-
-    if
-      selected_instrument <> !current_instrument
-      && not !text_box_edit_mode
-    then begin
-      previous_instrument := selected_instrument;
-      current_instrument := selected_instrument;
-      text_box_text := !current_instrument;
-
-      list_view_scroll_index :=
-        if !last_filter <> "" then
-          let instr_idx =
-            match
-              List.find_index
-                (fun name -> name = selected_instrument)
-                valid_instrument_names
-            with
-            | Some x -> x
-            | None -> failwith "Cant find instrument"
-          in
-          if List.length valid_instrument_names - instr_idx <= 8 then
-            instr_idx - 8
-          else instr_idx
-        else !list_view_scroll_index;
-
-      last_filter := "";
-
-      let keys =
-        Keyboard.refresh
-          (Rectangle.create 0.
-             (float_of_int (Raylib.get_screen_height ()) -. 100.)
-             (float_of_int (Raylib.get_screen_width ()))
-             100.)
-          !current_instrument true false !text_box_edit_mode false
-          !sustain_on
-      in
-      end_drawing ();
-      loop metronome keys octave_keys volume_control
-    end
-    else
-      (* Check if save button is pressed *)
-      let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
-      show_save_input_box :=
-        if Raygui.button rect "Save Preset" then 
-          let () = save_input_text := "" in
-          true
-        else !show_save_input_box;
-      if not !show_save_input_box then Raygui.unlock ();
-
-      let keys =
-        if !show_save_input_box then (
-          (* Handle save popup interaction *)
-          let text_input_text, show_text_input_box =
-            if !show_save_input_box then (
-              draw_rectangle 0 0 (get_screen_width ())
-                (get_screen_height ())
-                (fade Color.raywhite 0.8);
-              Raygui.unlock ();
-              let text_input_text, res =
-                Raygui.text_input_box
-                  (Rectangle.create
-                     ((float_of_int (get_screen_width ()) /. 2.0)
-                     -. 120.0)
-                     ((float_of_int (get_screen_height ()) /. 2.0)
-                     -. 60.0)
-                     240.0 140.0)
-                  "Save this preset!" "Enter a name below" "Ok;Cancel"
-                  !save_input_text
+    (* PRESET DIALOG *)
+    let keys =
+      if !show_save_input_box then (
+        (* Handle save popup interaction *)
+        let text_input_text, show_text_input_box =
+          if !show_save_input_box then (
+            draw_rectangle 0 0 (get_screen_width ())
+              (get_screen_height ())
+              (fade Color.raywhite 0.8);
+            Raygui.unlock ();
+            let text_input_text, res =
+              Raygui.text_input_box
+                (Rectangle.create
+                   ((float_of_int (get_screen_width ()) /. 2.0) -. 120.0)
+                   ((float_of_int (get_screen_height ()) /. 2.0) -. 60.0)
+                   240.0 140.0)
+                "Save this preset!" "Enter a name below" "Ok;Cancel"
+                !save_input_text
+            in
+            if res = 1 then (
+              let () = text_box_edit_mode := false in
+              let current_bpm = current_bpm in
+              let current_volume = !volume in
+              let preset_data =
+                ( trim_null_chars !save_input_text,
+                  (current_bpm, current_volume, !current_instrument) )
               in
-              if res = 1 then (
-                let () = text_box_edit_mode := false in
-                let current_bpm = current_bpm in
-                let current_volume = !volume in
-                let preset_data =
-                  ( trim_null_chars !save_input_text,
-                    (current_bpm, current_volume, !current_instrument)
-                  )
-                in
-                let preset_string = Presets.ass_to_string preset_data in
-                Presets.print_string_to_file "presets.txt" preset_string;
-                (text_input_text, false))
-              else if res = 0 || res = 2 then (
-                text_box_edit_mode := false;
-                (text_input_text, false))
-              else (
-                text_box_edit_mode := true;
-                (text_input_text, !show_save_input_box)))
-            else (!save_input_text, !show_save_input_box)
-          in
-          save_input_text := text_input_text;
-          show_save_input_box := show_text_input_box;
+              let preset_string = Presets.ass_to_string preset_data in
+              Presets.print_string_to_file "presets.txt" preset_string;
+              (text_input_text, false))
+            else if res = 0 || res = 2 then (
+              text_box_edit_mode := false;
+              (text_input_text, false))
+            else (
+              text_box_edit_mode := true;
+              (text_input_text, !show_save_input_box)))
+          else (!save_input_text, !show_save_input_box)
+        in
+        save_input_text := text_input_text;
+        show_save_input_box := show_text_input_box;
 
-          if !prev_text_box_edit_mode <> !text_box_edit_mode then
-            Keyboard.refresh
-              (Rectangle.create 0.
-                 (float_of_int (Raylib.get_screen_height ()) -. 100.)
-                 (float_of_int (Raylib.get_screen_width ()))
-                 100.)
-              !current_instrument false true !text_box_edit_mode false
-              !sustain_on
-          else
-            Keyboard.refresh
-              (Rectangle.create 0.
-                 (float_of_int (Raylib.get_screen_height ()) -. 100.)
-                 (float_of_int (Raylib.get_screen_width ()))
-                 100.)
-              !current_instrument false false !text_box_edit_mode false
-              !sustain_on)
-        else keys
-      in
-      (* prev_text_box_edit_mode := !text_box_edit_mode; *)
+        if !prev_text_box_edit_mode <> !text_box_edit_mode then
+          Keyboard.refresh
+            (Rectangle.create 0.
+               (float_of_int (Raylib.get_screen_height ()) -. 100.)
+               (float_of_int (Raylib.get_screen_width ()))
+               100.)
+            !current_instrument false true !text_box_edit_mode false
+            !sustain_on
+        else
+          Keyboard.refresh
+            (Rectangle.create 0.
+               (float_of_int (Raylib.get_screen_height ()) -. 100.)
+               (float_of_int (Raylib.get_screen_width ()))
+               100.)
+            !current_instrument false false !text_box_edit_mode false
+            !sustain_on)
+      else keys
+    in
 
-      end_drawing ();
-      loop metronome keys octave_keys volume_control
+    end_drawing ();
+    loop metronome keys octave_keys volume_control
 
 let () =
   let metronome, keys, octave_keys, volume_control = setup () in
