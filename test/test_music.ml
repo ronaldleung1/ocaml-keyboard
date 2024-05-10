@@ -22,6 +22,7 @@ let test_to_string _ =
   let song = Song.create "Blinding Lights" "The Weeknd" 200 in
   assert_equal "Blinding Lights, The Weeknd, 3:20" (Song.to_string song)
 
+(* TESTS FOR PLAYLIST MODULE *)
 let test_create_playlist _ =
   let pl = Playlist.create "My Playlist" in
   assert_equal "My Playlist" (Playlist.get_name pl);
@@ -47,6 +48,38 @@ let test_total_duration _ =
   Playlist.add_song pl song1;
   Playlist.add_song pl song2;
   assert_equal "Total Duration: 5:05" (Playlist.total_duration pl)
+
+(* TESTS FOR LIBRARY MODULE *)
+
+let test_empty_library _ =
+  let library = Library.empty in
+  assert (Library.is_empty library)
+
+let test_add_new_playlist _ =
+  let library = Library.empty in
+  let pl = Playlist.create "My Playlist" in
+  Library.add_new_playlist pl library;
+  assert_equal [ pl ] (Library.get_playlists library)
+
+let test_remove_playlist _ =
+  let p1 = Playlist.create "My Playlist 1" in
+  let p2 = Playlist.create "My Playlist 2" in
+  let library = Library.empty in
+  Library.add_new_playlist p1 library;
+  Library.add_new_playlist p2 library;
+  Library.remove_playlist "My Playlist 1" library;
+  assert_equal [ p2 ] (Library.get_playlists library)
+
+let test_find_playlist _ =
+  let p1 = Playlist.create "My Playlist 1" in
+  let p2 = Playlist.create "My Playlist 2" in
+  let library = Library.empty in
+  Library.add_new_playlist p1 library;
+  Library.add_new_playlist p2 library;
+  let p = Library.find_playlist "My Playlist 1" library in
+  match p with
+  | Some p -> assert_equal p1 p
+  | None -> assert_failure "Playlist doesn't exist."
 
 (* TESTS FOR KEYBOARD MODULE *)
 
@@ -465,6 +498,13 @@ let tests =
            "test_remove_song" >:: test_remove_song;
            "test_total_duration" >:: test_total_duration;
          ];
+    "test suite for library module"
+    >::: [
+           "test_empty_library" >:: test_empty_library;
+           "test_add_new_playlist" >:: test_add_new_playlist;
+           "test_remove_playlist" >:: test_remove_playlist;
+           "test_find_playlist" >:: test_find_playlist;
+         ];
     "test suite for keyboard module"
     >::: [
            "test_refresh_keyboard" >:: test_refresh_keyboard;
@@ -491,17 +531,19 @@ let tests =
            "test_button_stack_and_music_button"
            >:: test_create_music_button;
            "test adding a bunch of buttons" >:: test_a_bunch_of_buttons;
-           "test client not adding buttons the way intended will not \
-            work as intended" >:: test_not_legit_button;
+           "test client not adding buttons the way\n\
+           \       intended will not  work as intended"
+           >:: test_not_legit_button;
            "test_collision_with_duplicate rectangles"
            >:: test_collision_dup;
            "test_collision_with_newest_button"
            >:: test_collision_newest_button;
            "test_collision_with_a_previous_button"
            >:: test_collision_old_button;
-           "test mouse point not inside newest button"
+           "test mouse point not inside newest\n       button"
            >:: test_collison_not_inside_newest_button;
-           "test mouse point inside a previous button but with a new \
+           "test mouse\n\
+           \       point inside a previous button but with a new  \
             button"
            >:: test_collision_inside_old_button_but_with_new_button;
          ];
