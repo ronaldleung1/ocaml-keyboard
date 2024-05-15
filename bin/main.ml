@@ -1,4 +1,5 @@
 open Music
+
 let screenWidth = 800
 let screenHeight = 450
 
@@ -425,16 +426,21 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    let rec filter p = function
+      | [] -> []
+      | h :: t -> if p h then h :: filter p t else filter p t
+    in
+
     let filtered_instrument_list =
       if !text_box_edit_mode then
-        List.filter
+        filter
           (fun name ->
             String.starts_with
               ~prefix:(trim_null_chars !text_box_text)
               name)
           valid_instrument_names
       else
-        List.filter
+        filter
           (fun name ->
             String.starts_with
               ~prefix:(trim_null_chars !last_filter)
@@ -573,7 +579,7 @@ let rec loop
       (* Check if save button is pressed *)
       let rect = Rectangle.create 175.0 212.0 125.0 30.0 in
       show_save_input_box :=
-        if Raygui.button rect "Save Preset" then 
+        if Raygui.button rect "Save Preset" then
           let () = save_input_text := "" in
           true
         else !show_save_input_box;
@@ -608,7 +614,9 @@ let rec loop
                     (current_bpm, current_volume, !current_instrument)
                   )
                 in
-                let preset_string = Presets.data_to_string preset_data in
+                let preset_string =
+                  Presets.data_to_string preset_data
+                in
                 Presets.print_string_to_file "presets.txt" preset_string;
                 (text_input_text, false))
               else if res = 0 || res = 2 then (
@@ -640,8 +648,8 @@ let rec loop
               !sustain_on)
         else keys
       in
-      (* prev_text_box_edit_mode := !text_box_edit_mode; *)
 
+      (* prev_text_box_edit_mode := !text_box_edit_mode; *)
       end_drawing ();
       loop metronome keys octave_keys volume_control
 
