@@ -502,6 +502,14 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
+let test_volume_default_vol _ = 
+  let vol = Volume.start 10.0 () in 
+  assert_equal 10.0 !vol
+let test_volume_change_vol _ = 
+  let vol = Volume.start 10.0 () in 
+  let newvol = Volume.start (!vol -. 5.) () in
+  assert_equal 5.0 !newvol
+
 let tests =
   [
     "test suite for song module"
@@ -584,6 +592,12 @@ let tests =
            >:: test_map2i_different_lengths2;
            "test_map2i_empty_lists" >:: test_map2i_empty_lists;
          ];
+    "test suite for volume"
+    >::: [
+        "test volume" >:: test_volume_default_vol;
+        "test change volume" >:: test_volume_change_vol;
+    ] 
+        
   ]
 
 let _ = List.iter (fun test -> run_test_tt_main test) tests
