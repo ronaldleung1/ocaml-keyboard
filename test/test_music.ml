@@ -555,6 +555,26 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
+let test_data_to_string_1 _ =
+  assert_equal
+    (Presets.data_to_string ("test", (1.0, 2.0, "abc")))
+    "test,1.,2.,abc\n"
+
+let test_data_to_string_2 _ =
+  assert_equal (Presets.data_to_string ("", (0.0, 0.0, ""))) ",0.,0.,\n"
+
+let test_data_to_string_3 _ =
+  assert_equal
+    (Presets.data_to_string ("hello", (3.14159, 2.71828, "world")))
+    "hello,3.14159,2.71828,world\n"
+
+(* let test_load_array_from_file _ = let presets =
+   Presets.load_array_from_file "preset_test.csv" in assert_equal
+   !presets [||] *)
+let test_load_array_from_empty_file _ =
+  let presets = Presets.load_array_from_file "empty.csv" in
+  assert_equal !presets [||]
+
 let tests =
   [
     "test suite for song module"
@@ -636,6 +656,16 @@ let tests =
            "test_map2i_different_lengths2"
            >:: test_map2i_different_lengths2;
            "test_map2i_empty_lists" >:: test_map2i_empty_lists;
+         ];
+    "test suite for presets"
+    >::: [
+           "test_data_to_string_1" >:: test_data_to_string_1;
+           "test_data_to_string_2" >:: test_data_to_string_2;
+           "test_data_to_string_3" >:: test_data_to_string_3;
+           (* "test_load_array_from_file" >::
+              test_load_array_from_file; *)
+           "test_load_array_from_empty_file"
+           >:: test_load_array_from_empty_file;
          ];
   ]
 
