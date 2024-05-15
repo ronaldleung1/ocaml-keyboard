@@ -120,43 +120,6 @@ let test_find_playlist _ =
 
 (* TESTS FOR KEYBOARD MODULE *)
 
-(* initializing the keyboard should change the current octave to what
-   the input octave is *)
-let test_curr_octave _ =
-  let octave_before = 5 in
-  let _ =
-    Keyboard.init_keyboard octave_before
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  assert_equal octave_before !Octave.curr_octave
-
-(* refreshing the keyboard should not change the current octave because
-   no action has been done to increase or decrease the octave *)
-let test_curr_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  let octave_before = !Octave.curr_octave in
-  let _ =
-    Keyboard.refresh
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" false false false false false
-  in
-  let octave_after = !Octave.curr_octave in
-  assert_equal octave_before octave_after
-
 (* init_keyboard cannot be called twice *)
 let test_init_keyboard _ =
   let octave = 5 in
@@ -202,6 +165,44 @@ let test_refresh_keyboard2 _ =
     (List.length refresh_keyboard)
 
 (* TESTS FOR THE OCTAVE MODULE *)
+
+(* initializing the keyboard should change the current octave to what
+   the input octave is *)
+let test_curr_octave _ =
+  let octave_before = 5 in
+  let _ =
+    Keyboard.init_keyboard octave_before
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  assert_equal octave_before !Octave.curr_octave
+
+(* refreshing the keyboard should not change the current octave because
+   no action has been done to increase or decrease the octave *)
+let test_curr_octave2 _ =
+  let _ =
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  let octave_before = !Octave.curr_octave in
+  let _ =
+    Keyboard.refresh
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" false false false false false
+  in
+  let octave_after = !Octave.curr_octave in
+  assert_equal octave_before octave_after
+
 (* creating the increase octave key should not mean octave is
    increased *)
 let test_increase_octave _ =
