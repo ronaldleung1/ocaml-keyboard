@@ -426,16 +426,21 @@ let rec loop
     let () = set_master_volume (!volume_slider /. 10.) in
     let volume_control = Volume.start !volume_slider in
 
+    let rec filter p = function
+      | [] -> []
+      | h :: t -> if p h then h :: filter p t else filter p t
+    in
+
     let filtered_instrument_list =
       if !text_box_edit_mode then
-        List.filter
+        filter
           (fun name ->
             String.starts_with
               ~prefix:(trim_null_chars !text_box_text)
               name)
           valid_instrument_names
       else
-        List.filter
+        filter
           (fun name ->
             String.starts_with
               ~prefix:(trim_null_chars !last_filter)
