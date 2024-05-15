@@ -216,6 +216,7 @@ let test_refresh_keyboard2 _ =
     (List.length init_keyboard)
     (List.length refresh_keyboard)
 
+(* TESTS FOR THE OCTAVE MODULE *)
 (* creating the increase octave key should not mean octave is
    increased *)
 let test_increase_octave _ =
@@ -240,43 +241,6 @@ let test_decrease_octave _ =
   let _ = Octave.init_decrease_button in
   assert_equal octave !Octave.curr_octave
 
-(* test decrease octave key functionality: must not increase the
-   octave *)
-let test_decrease_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave <= octave)
-
-(* test decrease octave key functionality: cannot go beyond 0 on
-   curr_octave - 0 on keyboard scale *)
-let test_decrease_octave3 _ =
-  let _ =
-    Keyboard.init_keyboard 1
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  assert_equal true (!Octave.curr_octave >= 0)
-
 (* test increase octave key functionality: must not decrease the
    octave *)
 let test_increase_octave2 _ =
@@ -325,23 +289,6 @@ let test_decrease_octave3 _ =
       Octave.curr_octave := !Octave.curr_octave - 1
   in
   assert_equal true (!Octave.curr_octave >= 0)
-
-(* test increase octave key functionality: must not decrease the
-   octave *)
-let test_increase_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false false ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave < 5 then
-      Octave.curr_octave := !Octave.curr_octave + 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave >= octave)
 
 (* test increase octave key functionality: cannot go beyond 5 on
    curr_octave - 6 on keyboard scale *)
@@ -534,6 +481,42 @@ let test_collision_inside_old_button_but_with_new_button _ =
    is_inside = Rectangle.check_collision_point button_rect mouse_point
    in assert_equal true is_inside *)
 
+let test_combine_lists _ =
+  assert_equal
+    (Utils.combine_lists [ 1; 2; 3 ] [ 'a'; 'b'; 'c' ])
+    [ (1, 'a'); (2, 'b'); (3, 'c') ]
+
+let test_combine_lists_different_lengths1 _ =
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.combine_lists [ 1; 2; 3 ] [ 'a'; 'b' ])
+
+let test_combine_lists_different_lengths2 _ =
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.combine_lists [ 1; 2 ] [ 'a'; 'b'; 'c' ])
+
+let test_combine_lists_empty_lists _ =
+  assert_equal (Utils.combine_lists [] []) []
+
+let test_map2i _ =
+  let f i x y = (i, x, y) in
+  assert_equal
+    (Utils.map2i f [ 1; 2; 3 ] [ 'a'; 'b'; 'c' ])
+    [ (0, 1, 'a'); (1, 2, 'b'); (2, 3, 'c') ]
+
+let test_map2i_different_lengths1 _ =
+  let f i x y = (i, x, y) in
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.map2i f [ 1; 2; 3 ] [ 'a'; 'b' ])
+
+let test_map2i_different_lengths2 _ =
+  let f i x y = (i, x, y) in
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.map2i f [ 1; 2 ] [ 'a'; 'b'; 'c' ])
+
+let test_map2i_empty_lists _ =
+  let f i x y = (i, x, y) in
+  assert_equal (Utils.map2i f [] []) []
+
 let tests =
   [
     "test suite for song module"
@@ -602,6 +585,22 @@ let tests =
            \       point inside a previous button but with a new  \
             button"
            >:: test_collision_inside_old_button_but_with_new_button;
+         ];
+    "test suite for list utils"
+    >::: [
+           "test_combine_lists" >:: test_combine_lists;
+           "test_combine_lists_different_lengths1"
+           >:: test_combine_lists_different_lengths1;
+           "test_combine_lists_different_lengths2"
+           >:: test_combine_lists_different_lengths2;
+           "test_combine_lists_empty_lists"
+           >:: test_combine_lists_empty_lists;
+           "test_map2i" >:: test_map2i;
+           "test_map2i_different_lengths1"
+           >:: test_map2i_different_lengths1;
+           "test_map2i_different_lengths2"
+           >:: test_map2i_different_lengths2;
+           "test_map2i_empty_lists" >:: test_map2i_empty_lists;
          ];
   ]
 
