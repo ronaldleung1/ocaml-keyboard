@@ -201,6 +201,7 @@ let test_refresh_keyboard2 _ =
     (List.length init_keyboard)
     (List.length refresh_keyboard)
 
+(* TESTS FOR THE OCTAVE MODULE *)
 (* creating the increase octave key should not mean octave is
    increased *)
 let test_increase_octave _ =
@@ -225,43 +226,6 @@ let test_decrease_octave _ =
   let _ = Octave.init_decrease_button in
   assert_equal octave !Octave.curr_octave
 
-(* test decrease octave key functionality: must not increase the
-   octave *)
-let test_decrease_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave <= octave)
-
-(* test decrease octave key functionality: cannot go beyond 0 on
-   curr_octave - 0 on keyboard scale *)
-let test_decrease_octave3 _ =
-  let _ =
-    Keyboard.init_keyboard 1
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  assert_equal true (!Octave.curr_octave >= 0)
-
 (* test increase octave key functionality: must not decrease the
    octave *)
 let test_increase_octave2 _ =
@@ -310,23 +274,6 @@ let test_decrease_octave3 _ =
       Octave.curr_octave := !Octave.curr_octave - 1
   in
   assert_equal true (!Octave.curr_octave >= 0)
-
-(* test increase octave key functionality: must not decrease the
-   octave *)
-let test_increase_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false false ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave < 5 then
-      Octave.curr_octave := !Octave.curr_octave + 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave >= octave)
 
 (* test increase octave key functionality: cannot go beyond 5 on
    curr_octave - 6 on keyboard scale *)
