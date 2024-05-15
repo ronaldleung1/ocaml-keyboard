@@ -24,4 +24,5 @@ let to_string song =
 
 let to_string_detailed song =
   "Title: " ^ song.title ^ ", Artist: " ^ song.artist ^ " ("
-  ^ time_to_string (seconds_to_minutes song.duration) ^ ")"
+  ^ time_to_string (seconds_to_minutes song.duration)
+  ^ ")"

@@ -1,3 +1,1163 @@
+commit 237cf72eb83ef70c2b5a5767e6ce07cdb92611c9
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 16:38:14 2024 -0400
+
+    Add test_get_playlists
+
+commit 489eeff797df24f05d2d0752ff5d613f8cfb428e
+Merge: 977aa74 af890e5
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Wed May 15 16:32:17 2024 -0400
+
+    Merge pull request #38 from ronaldleung1/playlist
+    
+    Add more tests
+
+commit af890e598280224b4f057fd3d2324133f3e50ff5
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 16:31:07 2024 -0400
+
+    Add more tests
+
+commit 977aa74c6d228ddc9dbd3acb017a83ddf9208d18
+Merge: 2ebcc07 3fea46d
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 16:23:52 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 2ebcc071484739ca1f2312879e548a0c3b089099
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 16:23:50 2024 -0400
+
+    Format fix
+
+commit 3fea46df2b6e9ca1fc5dcb8cebcdde1ed63e3b83
+Merge: 310e3a7 325af50
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Wed May 15 16:23:44 2024 -0400
+
+    Merge pull request #37 from ronaldleung1/playlist
+    
+    Changes
+
+commit 325af503a0a98d3b10f655b0ffb26ada873576cd
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 16:23:24 2024 -0400
+
+    Changes
+
+commit 310e3a770ac3019c70bfdbac113ea013ded35d02
+Merge: 15e9fe0 2e228fd
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 15:29:38 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 15e9fe06d378fc4796b4f7fc07048dfcd46723a3
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 15:29:36 2024 -0400
+
+    Add seconds_to_minutes
+
+commit 2e228fd8a273c98b6ed38a45cdfaa9b84159f808
+Merge: 0ec80ba c74b4b0
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 15 15:28:52 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 0ec80bac9171407566e5562df938b960bb40e62b
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 15 15:26:02 2024 -0400
+
+    test preset loading and converting data to string
+
+commit c74b4b0b014978c3c5f65f9728a53d2eb83684bf
+Merge: a9ad0de 34fb710
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed May 15 15:24:44 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit a9ad0ded06b4cd1104da46353bebfada44b106b5
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed May 15 15:24:40 2024 -0400
+
+    a little more minor modifications
+
+commit 34fb71071af514f239d441a82fb40201cd1bd257
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 15:24:01 2024 -0400
+
+    Fix test_get_playlist test
+
+commit 8d9b668bf5698ded74c34b20c2d0062c0bc44374
+Merge: 7057adc a210003
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 15:03:28 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 7057adcfbb55df883beed70f77d5b190831fbf70
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 15:03:27 2024 -0400
+
+    Test volume
+
+commit a210003d32d714958d6f3b73bd00512529a4b3d6
+Merge: 0985214 554837a
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Wed May 15 14:57:59 2024 -0400
+
+    Merge pull request #36 from ronaldleung1/playlist
+    
+    Song unit tests
+
+commit 554837ac4353dab2930c9857325f248c4afb9634
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 14:57:10 2024 -0400
+
+    Merge changes from main
+
+commit bf4531c71f269eafb018f7f68bc216fe6dc41a44
+Merge: 100c67c 0985214
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 14:55:23 2024 -0400
+
+    Merge remote-tracking branch 'origin/main' into playlist
+
+commit 100c67ca051cfb95ca90c3befaf227c524ed481a
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 14:55:18 2024 -0400
+
+    Add more tests
+
+commit 0985214e35a56dd64f84c4a0f9ca6de2f6f02bcb
+Merge: a68ff92 d27a873
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 14:47:21 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit a68ff9231d7403cd2f48b82fcfed21755daa6d02
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 14:47:20 2024 -0400
+
+    Update gallery.yaml
+
+commit d27a873ee965a8d41f80fc7e1658b1febe610a83
+Merge: 90e0aac f343149
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed May 15 14:45:09 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+    
+    removed duplicate test cases on octaves
+
+commit 90e0aacc6c44924887dda6ab12ddb746eddc7f0a
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed May 15 14:44:49 2024 -0400
+
+    got rid of duplicate test cases
+
+commit f343149d6d0907aa5c5dbdf15334a5d456324a04
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 14:37:16 2024 -0400
+
+    Fix unused variables in main
+
+commit 58783978af063ea32f33555d8514613e76dd4ee0
+Merge: 889e2d0 a6b598f
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 14:24:23 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 889e2d0f446ef68e67889d771e8892fdb6c0c69e
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 14:06:02 2024 -0400
+
+    Finish specifications of mli
+
+commit a6b598f5b87efd40116ab77ac76b112b33e3d6f8
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed May 15 13:59:13 2024 -0400
+
+    added specs for octave.mli
+
+commit 444314d5ddf65ec199aee4e1823871ab092981ed
+Merge: 4a03263 2e66e36
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Wed May 15 13:56:55 2024 -0400
+
+    Merge pull request #35 from ronaldleung1/playlist
+    
+    Add tests and specifications
+
+commit 4a0326325e1be925e72b7cc50de3ae0e872bf796
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 15 13:56:45 2024 -0400
+
+    create tests for map2i and combine list utils
+
+commit 2e66e3699de938c4d406e6fe6cd7c3e1296c0783
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Wed May 15 13:56:31 2024 -0400
+
+    Add tests and specifications
+
+commit 460307ec568b9cf2c121e5f6a78f7b3c573adef2
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 15 13:40:20 2024 -0400
+
+    Complete first half of mli specifications
+
+commit ef612709c872cf5117e7413904665f8454c23a57
+Merge: af18059 98473bf
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Thu May 9 21:12:38 2024 -0400
+
+    Merge pull request #34 from ronaldleung1/playlist
+    
+    Implement ounit tests for library module
+
+commit 98473bfa9740f855865a46f6451dfae3a699e42c
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu May 9 21:12:18 2024 -0400
+
+    Implement ounit tests for library module
+
+commit af180595334ce205d92eab44f7c38c504e1aa600
+Merge: f9f53cb 8a7fdf1
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 23:27:08 2024 -0400
+
+    Merge pull request #32 from ronaldleung1:text_box_bug
+    
+    Fix view only bug
+
+commit 8a7fdf17fd39ce92989b4722838686d33229bc82
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 23:26:45 2024 -0400
+
+    Fix view only bug
+
+commit f9f53cb43c91e937bc53d7638955b7a101433af9
+Merge: d204506 1ee173c
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 22:40:18 2024 -0400
+
+    Merge pull request #31 from ronaldleung1:Reformat
+    
+    Reformat and change color
+
+commit 1ee173c5672e1ed990fed33c6b596e1c0031e7b0
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 22:40:09 2024 -0400
+
+    Reformat and change color
+
+commit d20450607d6aa94b1c76a8a188e21edda4d93262
+Merge: 90bf40a cc47a50
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 22:27:42 2024 -0400
+
+    Merge pull request #30 from ronaldleung1:sustain_button
+    
+    Move sustain button to right
+
+commit cc47a501679150123d840d6dad32728ed4e31ac9
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 22:27:30 2024 -0400
+
+    Move sustain button to right
+
+commit 90bf40a0a9b23d1cca0f6738446f8a81cce73ee6
+Merge: 1b6db3e 0c4a710
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 22:22:31 2024 -0400
+
+    Merge pull request #29 from ronaldleung1/PlaylistUI
+    
+    Playlist UI
+
+commit 0c4a7105b73a3289959bd3699d2e15dc8deea15b
+Merge: 19fdad4 1b6db3e
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 22:22:23 2024 -0400
+
+    Merge branch 'main' into PlaylistUI
+
+commit 19fdad40b2f77b5fe6044c88d9b73d03ad434e3e
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 22:19:13 2024 -0400
+
+    Add text box input for adding playlist and song to library
+
+commit 808f6197e3b3658dedd14d56601838030436911a
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 18:12:59 2024 -0400
+
+    Set up lists and buttons
+
+commit 1b6db3eba6dd74a11b151463f1c013c087d0d7cf
+Merge: 1b68c43 810e0eb
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 16:58:33 2024 -0400
+
+    Merge pull request #28 from ronaldleung1/adjust_sustain
+    
+    Shorten sustain to 4 seconds
+
+commit 810e0ebd967c4710703506298fef27010bc4b286
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 16:57:28 2024 -0400
+
+    Shorten sustain to 4 seconds
+
+commit 1b68c433209ee3172d991102498d9188baf78932
+Merge: deae324 dba5eb5
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 12:25:44 2024 -0400
+
+    Merge pull request #27 from ronaldleung1/tests
+    
+    Tests
+
+commit deae324de8e3d69e6a139c59a625bedddea4b774
+Merge: b963c1a cafd75a
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 09:33:11 2024 -0400
+
+    Merge pull request #26 from ronaldleung1:presets
+    
+    fix text box mode on save exit
+
+commit cafd75a4f9730be5c3f00f844d55ccf4a436e155
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 09:32:53 2024 -0400
+
+    fix text box mode on save exit
+
+commit b963c1a4e45e57bbc7d4e0a07673f05ea0fd274e
+Merge: fdf2257 35b7f84
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 04:19:56 2024 -0400
+
+    Merge pull request #25 from ronaldleung1/octavetext
+    
+    Octavetext
+
+commit 35b7f84449ec933a947a74ea2259da3ef338dd7b
+Merge: 92490ca fdf2257
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 04:17:39 2024 -0400
+
+    Merge branch 'main' into octavetext
+
+commit 92490ca90eadf3fcc70f128e9c12a625dcdc7ef8
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 04:17:27 2024 -0400
+
+    Repositioning elements
+
+commit fdf225741e85ddba17441adc5c357cb0e014bf8b
+Merge: d1d3247 04c7371
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 04:03:12 2024 -0400
+
+    Merge pull request #24 from ronaldleung1:octavetext
+    
+    Draw octave text between buttons
+
+commit 04c737179e70313b4f80a0e44b4b7ebfce37c634
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 04:02:23 2024 -0400
+
+    Draw octave text between buttons
+
+commit d1d32475b10b1f7cc8a47371ea1960e8a7cb4f1c
+Merge: 3a5710f 4a49802
+Author: Justin Xiang <justin.l.xiang@gmail.com>
+Date:   Mon May 6 03:48:01 2024 -0400
+
+    Merge pull request #23 from ronaldleung1:preset
+    
+    Preset
+
+commit 4a49802db950bda8122186e058b500959a940eea
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 03:46:52 2024 -0400
+
+    Implement preset list view toggles and updating
+    GUI states
+
+commit afeaa64eac844e0406ae0ff70f4645b60d66ddeb
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon May 6 01:34:37 2024 -0400
+
+    Color changes and add preset list
+
+commit dba5eb5e9c577bc0095c6158100e1f4f2caccd91
+Author: EricQiu <sq225@cornell.edu>
+Date:   Sun May 5 22:51:53 2024 -0400
+
+    fixed issues with function changes and corresponding tests
+
+commit bf09d3f503703f237d73d0c17fde500fb52f4667
+Merge: 8536a2b 3a5710f
+Author: EricQiu <sq225@cornell.edu>
+Date:   Sun May 5 22:30:03 2024 -0400
+
+    Merge branch 'main' into tests
+
+commit 8536a2b69930a6874a3140f00b8deddb9fea9bf8
+Author: EricQiu <sq225@cornell.edu>
+Date:   Sun May 5 21:47:12 2024 -0400
+
+    added more tests
+
+commit 3a5710f89b27aa895a194ace18b0fe9556e51f52
+Merge: a1d427d 78c9378
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Sun May 5 21:10:41 2024 -0400
+
+    Merge pull request #22 from ronaldleung1/bpm_gui
+    
+    add bpm number input
+
+commit 78c9378a189841527cb63448cf82d4c325cb71f0
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Sun May 5 21:09:44 2024 -0400
+
+    rearrange menu bar
+
+commit 34ec9256606eb57f8e86f1be0c88781c2f318630
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Sun May 5 21:05:34 2024 -0400
+
+    add play pause metronome buttons
+
+commit dd5c33630289e9cde0611ba5af02832f5cb0b09d
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Sun May 5 20:06:07 2024 -0400
+
+    restrict bounds of bpm in spinner
+
+commit 529d9fdebc5a15b799bb0124534efb44b4adceb2
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Fri May 3 01:51:08 2024 -0400
+
+    add bpm number input
+
+commit a1d427dcd07c0da7b75bd7dbee8b61be277825b0
+Merge: e0a907b 0f663c4
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Fri May 3 01:24:03 2024 -0400
+
+    Merge pull request #21 from ronaldleung1/map_test
+    
+    separate map functions and use optional arguments
+
+commit 0f663c4cc47d456a22a53d21fbfdd2cc8826973e
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Fri May 3 00:55:06 2024 -0400
+
+    instrument small name change
+
+commit 75f02f59d527ef7fa320c5170ac294a61dbbd7b9
+Merge: 0a71446 e0a907b
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Fri May 3 00:08:51 2024 -0400
+
+    merge with main
+
+commit e0a907b8edeaee239bc98fab636fa9e0e1f5e58d
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 21:48:30 2024 -0400
+
+    Add extra key mappings to button rows
+
+commit 61f4b4af24f08c667b5de7d8afdf79e085490558
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 20:56:30 2024 -0400
+
+    Implement Sustain toggle button that refreshes keyboard when clicked
+
+commit cbe6f1b7f24c052d6c7d6a71bf0b5950b39ee7e9
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 19:17:43 2024 -0400
+
+    Revert sustain work in progress change
+
+commit a2798ab521e0674c21f9be07e1c229ca27e34343
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 19:14:36 2024 -0400
+
+    Remove print
+
+commit d2a9abea281cff389211591388b076e6f40d978a
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 18:55:09 2024 -0400
+
+    Keep track of BPM in main
+
+commit 97e1283d00b88df66014a7159a8bc0aa4ee8d62c
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu May 2 17:37:17 2024 -0400
+
+    Read instruments from CSV
+
+commit aa8c069f0919a60937984a2a3a4734ee3ec8df03
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 17:58:28 2024 -0400
+
+    Lower metronome volume
+
+commit 0a7144688c81bf94165979130c26967148eb6b55
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 17:20:31 2024 -0400
+
+    use optional argument for view_only mode
+
+commit c13e4a80ece3762ce3b5c675752339e1fe46dd24
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 16:15:30 2024 -0400
+
+    Update last filter on entering in an instrument to return to full list
+
+commit dba14e5da23168481338ba593e54b812becbe88d
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 16:03:16 2024 -0400
+
+    Clean up unused variables
+
+commit 519bee8cd8fa7fbadfe6060ba5fd98973e9a53cb
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 16:01:41 2024 -0400
+
+    Finish implementing search box synchronization with list view by keeping track of last filter before edit_mode turns off on click
+
+commit 12c740b15342856b5bf552dad4147f41688021fb
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 15:52:36 2024 -0400
+
+    Fix search and click instrumnet off list
+
+commit c164d4444a70a270614622d6021b8e4152baeca8
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 15:11:10 2024 -0400
+
+    Debugging searchbox and listview
+
+commit 9269bfcd022140ba043b888bbf23bec72d17cdc2
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 13:10:02 2024 -0400
+
+    Filter list based on search. Still need to fix selecting from list while in edit mode
+
+commit d03943022a8f3445f278245131e1d3c928b0e20d
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 11:36:48 2024 -0400
+
+    try something (uncommit this)
+
+commit bcd88c36d19924d37b64e5a14b875eb3d7223050
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 10:57:25 2024 -0400
+
+    abstract custom map functions for future testing
+
+commit 8c7e555ec58846f6aa60bbe7c602e8f835f2347e
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 10:40:36 2024 -0400
+
+    Fixe bug with scrolling
+
+commit 3013dba86be97bed2b1a1d7aebb0fa847c60e14b
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 03:58:30 2024 -0400
+
+    Color changes
+
+commit 81a238d278727a402a3227114ff46c0bf6e8ab0b
+Merge: eb7d0ca b06f388
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 03:34:50 2024 -0400
+
+    Merge pull request #19 from ronaldleung1/searchbox
+    
+    Implement Instrument search feature that selects the instrument if you enter a valid one
+
+commit b06f388040c679f83d33d08dbfb1106a003f53a6
+Merge: 092e729 eb7d0ca
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 03:34:38 2024 -0400
+
+    Merge branch 'main' into searchbox
+
+commit 092e729daa117a63962983d6e623ff4063ce4875
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Wed May 1 03:24:18 2024 -0400
+
+    Implement Instrument search feature that selects the instrument if you enter a valid one
+    - modified keyboard to have view_only mode if someone is typing in the box
+    - addressed synchronizing list view and text box
+    - added color fonts
+
+commit eb7d0cac70a11f8a56437f8599287950249aa7c2
+Merge: 5247f37 a15d221
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Wed May 1 02:23:21 2024 -0400
+
+    Merge pull request #18 from ronaldleung1/refactor
+    
+    Refactor octave control and use single thread for note fading
+
+commit a15d221c79fae4df190eb350f4002c798217b169
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 02:23:13 2024 -0400
+
+    minor fix using octave module
+
+commit 63092ff7569a07eb0fbfbf6d377bee812e053bd2
+Merge: ab3ca81 5247f37
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Wed May 1 02:21:38 2024 -0400
+
+    Merge branch 'main' into refactor
+
+commit ab3ca8128392ff58f1ddf26ae7091da2ed03fe17
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 02:16:05 2024 -0400
+
+    fix single-threaded note fading
+
+commit 5e47c42730d53ee156bb10d8426349a8099f4e9f
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed May 1 01:16:53 2024 -0400
+
+    breaking: begin work on single-threaded note fading
+
+commit 5247f375832391b790874a4129524b616d3cbb8c
+Merge: 0391ebe 948f11a
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Tue Apr 30 21:13:43 2024 -0400
+
+    Merge pull request #17 from ronaldleung1/playlist
+    
+    Add playlist unit tests
+
+commit 948f11a455a8dc3af477717122b90a4e229a4417
+Merge: 004d916 0391ebe
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Apr 30 21:13:17 2024 -0400
+
+    Resolve merge conflicts
+
+commit 004d916ac0cc3b18be86824db70445319449fb6a
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Apr 30 21:07:14 2024 -0400
+
+    Add playlist unit tests
+
+commit 0391ebe9a363f2109004696db44c7be7a4bb6b89
+Author: EricQiu <sq225@cornell.edu>
+Date:   Tue Apr 30 18:39:16 2024 -0400
+
+    added comments for button and keyboard, added test cases for keyboard
+
+commit ab5d3f830c2e7888eaa96a27dc2617db9a44bb97
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 29 17:49:38 2024 -0400
+
+    begin work on separating octave control
+
+commit 9065271f9d35f417c0663d3bccfe4c5d23991dd6
+Author: EricQiu <sq225@cornell.edu>
+Date:   Mon Apr 29 13:18:13 2024 -0400
+
+    removed the collision file because irrelevant
+
+commit 98b493b41a46a3388fa59e93c160b77c838559d6
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 13:06:16 2024 -0400
+
+    Fix keyboard to re-initialize on changing instruments
+
+commit 66ba8f5083d1b3f2cb85a96c95d3af133f01f0b7
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 13:00:56 2024 -0400
+
+    Fix documentation
+
+commit 79c0e8fe6a27da04790edc90d3dbed6bdf1d9a62
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 12:55:11 2024 -0400
+
+    Start volume at 10 to match computer's
+
+commit 91974d97ab6e1435bb9e26d0be226fc5e713a4e7
+Merge: 3d9d866 5bf0560
+Author: EricQiu <sq225@cornell.edu>
+Date:   Mon Apr 29 12:27:52 2024 -0400
+
+    Merge branch 'main' of https://github.com/ronaldleung1/cs3110-final
+
+commit 3d9d8663536e825d347542fde0d59b1e69813a7d
+Author: EricQiu <sq225@cornell.edu>
+Date:   Mon Apr 29 12:02:30 2024 -0400
+
+    fine tune merge, resulting in interesting feature between octave switch and instrucment switch
+
+commit 5bf0560d627adcdc1dbd25261b6be0f4a8822461
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 29 11:49:01 2024 -0400
+
+    fix merge issues
+
+commit 21c920fac2478c7ddcaed765beb5ec77a220e552
+Merge: 2a397e8 c292079
+Author: EricQiu6 <109805676+EricQiu6@users.noreply.github.com>
+Date:   Mon Apr 29 11:25:37 2024 -0400
+
+    Merge pull request #16 from ronaldleung1/octave-keyboard
+    
+    Octave keyboard
+
+commit c292079b1385a1f73b2ca1919d7632721285623f
+Merge: ee02a4f 2a397e8
+Author: EricQiu6 <109805676+EricQiu6@users.noreply.github.com>
+Date:   Mon Apr 29 11:25:28 2024 -0400
+
+    Merge branch 'main' into octave-keyboard
+
+commit 2a397e896cedb77ee2208beae5cea9dfbdf4c028
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 11:20:53 2024 -0400
+
+    Update install.md for raygui and refromat
+
+commit 25099b85980ffd0b241b49636d276d1b44bbed63
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 10:53:30 2024 -0400
+
+    Reformat keyboard.ml with new keycode text drawings
+
+commit ceb449f1967f2b691b81432244638ac3c4a8c32c
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 10:51:54 2024 -0400
+
+    Add button key visualization
+
+commit f570659e554d3e669dcedf8333f857b9b88c4a71
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 10:51:33 2024 -0400
+
+    Add button key visualization
+
+commit 7559829b67774842e97720552640eb534c054a71
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 04:32:17 2024 -0400
+
+    Reformatted code
+
+commit 365511bde5d026e41412125e6acaa1859902ea48
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 04:30:18 2024 -0400
+
+    Add volume slider and sychronize it with volume arrow key input from volume.ml
+
+commit c45142d4968b522171a783f38893a0b11f99f982
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 03:44:50 2024 -0400
+
+    More instrument files
+
+commit dbaf601bbdfeee9b3c699ae4598ae4579fb6bf86
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 03:42:27 2024 -0400
+
+    Instrument sound files
+
+commit 90351c6a0a9707d9167901caf82189f7352c9467
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Mon Apr 29 03:41:55 2024 -0400
+
+    Implement note release feature with 0.25s fadeout
+    -added all instrument assets
+    -implemented instrument list selection menu
+
+commit 755d51c83eb5e9895f56dd2231092fda8b4eb896
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Sun Apr 28 21:30:08 2024 -0400
+
+    Implement changing current instrument based on dropdown buton
+
+commit a9390d28da92a3f84f0dca1e33ee683176883873
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Sun Apr 28 20:21:34 2024 -0400
+
+    Make window resizable
+
+commit 286e1acd001f9b4d76a776713fabcdecde007428
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Sun Apr 28 19:45:19 2024 -0400
+
+    Reformatting
+
+commit 68ca72b93326ad152f54d23bd57d05a4b79be6fa
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Sun Apr 28 19:33:10 2024 -0400
+
+    Add Instrument Drop down button
+
+commit efd9c003efc83ef3560e29c24ac32bb72dd12057
+Author: Ganesh <gnr25@cornell.edu>
+Date:   Sat Apr 27 17:40:06 2024 -0400
+
+    guitar
+
+commit ee02a4f03ceec40a5e1f8a106980e83c77416121
+Author: EricQiu <sq225@cornell.edu>
+Date:   Fri Apr 26 13:36:21 2024 -0400
+
+    octave switch and key collision fixed
+
+commit 521b73d0546239bdbbb56e14c96afb6776aca049
+Author: EricQiu <sq225@cornell.edu>
+Date:   Fri Apr 26 12:31:23 2024 -0400
+
+    kinda fixed the no block animation issue
+
+commit f20a7e31d6d812c5c25370f05753ce6561acb6fe
+Author: EricQiu <sq225@cornell.edu>
+Date:   Fri Apr 26 02:21:20 2024 -0400
+
+    keyboard with octave switch
+
+commit f1b86a63dd2a5fb853d84445945a439b9b9d3544
+Author: Ganesh <gnr25@cornell.edu>
+Date:   Wed Apr 24 23:00:35 2024 -0400
+
+    instrument list
+
+commit 4502f6fb7d47e53374197f6d2560edbf0e25d82e
+Author: Ganesh <gnr25@cornell.edu>
+Date:   Wed Apr 24 09:12:12 2024 -0400
+
+    instrument
+
+commit 63c79152b8240c287a0be0a3ff2d11600e94c6f2
+Author: Ganesh <gnr25@cornell.edu>
+Date:   Tue Apr 23 22:56:54 2024 -0400
+
+    Instrument
+
+commit 2634635e1abe62b197f3dc1075796a32b3f6cb13
+Merge: ec4bbf7 0da810a
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Tue Apr 23 14:37:33 2024 -0400
+
+    Merge pull request #14 from ronaldleung1/playlist
+    
+    Color Output and Unit Tests
+
+commit 0da810ac3c4df7eefbce4adfcc7f14362a49ac77
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Apr 23 14:36:50 2024 -0400
+
+    Add unit tests for song module
+
+commit e3614b7db6a849bccb8736464116f85ae4e232c3
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Tue Apr 23 09:41:11 2024 -0400
+
+    Add color output to playlist manager
+
+commit ec4bbf76143ad6e71dfa7a236a304a3a65e35608
+Merge: f3adefa 91c496c
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Mon Apr 22 14:22:03 2024 -0400
+
+    Merge pull request #13 from ronaldleung1/visualization
+    
+    add keyboard event support
+
+commit 91c496ce9eaed36b3c39100f4cdd8a1fb3b71088
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 22 14:20:52 2024 -0400
+
+    add keyboard event support
+
+commit f3adefa194292f6de7deadbbbbd9c6542ba61420
+Merge: b25cdd9 a8673be
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Fri Apr 19 15:50:32 2024 -0400
+
+    Merge pull request #12 from ronaldleung1/visualization
+    
+    Add piano visualization with moving blocks
+
+commit a8673be3774735754c2eb52a39c256340d2f59ed
+Merge: 0acd9a2 b25cdd9
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Fri Apr 19 15:50:26 2024 -0400
+
+    Merge branch 'main' into visualization
+
+commit b25cdd9d48b503908d6b6c16d8cec0fbc759f518
+Merge: 561c13f 26da136
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Mon Apr 15 20:48:43 2024 -0400
+
+    Merge pull request #11 from ronaldleung1/playlist
+    
+    Implement Library
+
+commit 26da1369647a9c665fc918bde55aa2f3b5521a78
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Mon Apr 15 20:48:29 2024 -0400
+
+    Modify display to indicate if library or playlist is empty
+
+commit 9a12ca1602495c967c8fd5c38640908a80533db4
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Mon Apr 15 20:43:54 2024 -0400
+
+    Implement playlist library
+    
+    - Create library compilation units
+    - Modify main program to let users manage a playlist library instead of a single playlist
+
+commit 0acd9a24c5e6869f806d9ccff1993afef95cbbed
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 15 18:48:12 2024 -0400
+
+    create rainbow keyboard (for extra lines)
+
+commit 1e9f003be854249aa1dc5edd4b0388fb139a487e
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 15 14:39:01 2024 -0400
+
+    draw moving note blocks
+
+commit 7276e9516a468580f1338ad11ea758db0fb2eb92
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Mon Apr 15 00:11:32 2024 -0400
+
+    draw notes being played without movement
+
+commit cc5faac21604599c5e58a7f8f22f72e51ee8aa16
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Sun Apr 14 23:46:48 2024 -0400
+
+    create keyboard adjustable by rectangle dimensions
+
+commit 561c13f301c694b161aa3f7aa58bafb5c0c9e19d
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Sun Apr 14 15:18:41 2024 -0400
+
+    Implement Volume control feature using left right arrow keys
+
+commit 02ebe88d275500a43cbebbcb040bb4fb33f33a19
+Merge: f84d351 956f4d5
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Sat Apr 13 16:56:51 2024 -0400
+
+    Merge pull request #10 from ronaldleung1/playlist
+    
+    Additional Playlist Functions
+
+commit 956f4d5361f91536e1b16dff2654575cbc8a3c91
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Sat Apr 13 16:51:41 2024 -0400
+
+    Implement additional playlist functions
+    
+    - Modify song to_string method for more detailed output and to display song duration in minutes:seconds instead of seconds
+    - Implement total_duration function for playlists
+
+commit f84d351ccb4390fbb571df62468a4cb0a601a29d
+Merge: bc9fdda 4720b0e
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Thu Apr 11 16:44:41 2024 -0400
+
+    Merge pull request #9 from ronaldleung1/playlist
+    
+    Playlist Operations in Main Program
+
+commit 4720b0ec87be6ea1770481833c573c71591ac6d6
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu Apr 11 16:23:26 2024 -0400
+
+    Implement interactive menu for playlist management
+    
+    - Read user input from the terminal and handle different inputs
+    - Allow users to manage playlists by adding the following menu features: view playlist, add song to playlist, remove songs from playlist, check if a song is in a playlist
+    - Implemented to_string function for displaying song details
+    - Implemented display function for displaying all songs in a playlist
+
+commit bc9fdda0d1186cff18d33ddb1535b863c57e0990
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Thu Apr 11 14:43:48 2024 -0400
+
+    expand keyboard to 2 octaves
+
+commit 816d3f5a56afc573f082de61735eef9057a0114e
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu Apr 11 13:06:55 2024 -0400
+
+    Implement basic song and playlist operations in main program
+
+commit 447fe4f39d3ccaf57b30f4466cdc89fc5afcbd4f
+Author: EricQiu <sq225@cornell.edu>
+Date:   Thu Apr 11 10:04:15 2024 -0400
+
+    keyboard is now a separate module
+
+commit 46c5e069e59dd8cec552e1253f1c34e3d5d5eacd
+Merge: 78199fe fe04c2a
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Thu Apr 11 09:44:26 2024 -0400
+
+    Merge pull request #8 from ronaldleung1/playlist
+    
+    Playlist Module
+
+commit fe04c2a0a7f96795e4407ed425e1e0ad01c49e68
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu Apr 11 09:43:25 2024 -0400
+
+    Remove unnecessary files
+
+commit 70fa5476f5362b47b6be9097ef41ce3e7372d526
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu Apr 11 09:42:07 2024 -0400
+
+    Create playlist compilation unit
+
+commit 78199fe9df67bd01365d406315740d3c27f91109
+Merge: f507ca8 8724ca8
+Author: cassidyxu <68167806+cassidyxu@users.noreply.github.com>
+Date:   Thu Apr 11 09:33:21 2024 -0400
+
+    Merge pull request #7 from ronaldleung1/playlist
+    
+    Song Module
+
+commit 8724ca889cc1e0e9c6b28abb5597babc4b011067
+Author: Cassidy Xu <chx4@cornell.edu>
+Date:   Thu Apr 11 09:27:52 2024 -0400
+
+    Create song compilation unit
+
+commit f507ca8d6a2cd3da20403f86165da1deade043cf
+Author: EricQiu <sq225@cornell.edu>
+Date:   Wed Apr 10 19:29:43 2024 -0400
+
+    naive implementation of a kayboard with black keys (need fix overlap)
+
+commit 11a04b019edfbd5b51ceae20b85aad12d5c2e30f
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Tue Apr 9 11:12:26 2024 -0400
+
+    Update installation for raylib
+
+commit ead1756869b4ba14daf0df78230cff74bf12f395
+Merge: 8179722 fda5aef
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Thu Apr 4 12:02:18 2024 -0400
+
+    Merge pull request #6 from ronaldleung1/gui
+    
+    Switch to Raylib GUI
+
+commit fda5aef2d9b793ad0d6bcefd1146669fec7c4d72
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Thu Apr 4 11:59:58 2024 -0400
+
+    create keyboard for one octave white keys
+
+commit 5bdaf9d271a058beb58a331da5fc110d86a0eb0d
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Thu Apr 4 00:00:37 2024 -0400
+
+    fix playing note on key press
+
+commit 04c82568a8d134912b2c7e658eecc4ea22009f77
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed Apr 3 22:39:51 2024 -0400
+
+    create button that changes color on click
+
+commit 7affea9f69ab02aa3d31d11b2053f615ae1d60f2
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed Apr 3 21:26:58 2024 -0400
+
+    adjust metronome speed and toggle on/off
+
+commit bbd4c7421de71f278780382ada72e41d830f1105
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed Apr 3 19:17:21 2024 -0400
+
+    incorporate metronome with main game loop
+
+commit f72acfd9b6d0a90c2ad10d7c83af5f6e63dda960
+Author: Ronald Leung <ronaldfleung@gmail.com>
+Date:   Wed Apr 3 18:43:03 2024 -0400
+
+    begin gui work, rewrite metronome
+
+commit 8179722675c4135a1e376ce424120ab5dc05263c
+Merge: 42c2775 15b9101
+Author: Ronald Leung <57511576+ronaldleung1@users.noreply.github.com>
+Date:   Thu Mar 28 21:22:17 2024 -0400
+
+    Merge pull request #5 from ronaldleung1/notes
+    
+    Play sounds when playing notes
+
+commit 15b91018dafa9790344debe418ade9ac23625ea2
+Author: Ronald Leung <rfl68@cornell.edu>
+Date:   Thu Mar 28 21:16:32 2024 -0400
+
+    implement ability to play notes with sound
+
+commit 6a9a4c7d0a6a52700918782df81c42c3ab731ea0
+Author: Ronald Leung <rfl68@cornell.edu>
+Date:   Thu Mar 28 21:04:38 2024 -0400
+
+    add piano sound pack to resources
+    
+    Co-authored-by: EricQiu6 <EricQiu6@users.noreply.github.com>
+    Co-authored-by: Ganesh Rayavarapu <gan0412@users.noreply.github.com>
+
+commit 0b3683b5ac7bf8dc474aac0daf9ee431f5c4d629
+Author: Ronald Leung <rfl68@cornell.edu>
+Date:   Thu Mar 28 20:38:57 2024 -0400
+
+    include playing notes in main event loop
+
+commit 42c277530b65567f4336d6ccf1be629ac402e65e
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu Mar 28 17:43:32 2024 -0400
+
+    Update gallery.yaml
+
+commit 80b20a288f4cd04bf5c6dd6d7f9c1754b784cae5
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu Mar 28 17:27:15 2024 -0400
+
+    Update install.md for audio output requirement
+
+commit cb1ca8b9b8ec6a60df39398bbc8ffc8406c152bd
+Author: Justin Xiang <jx372@cornell.edu>
+Date:   Thu Mar 28 15:40:19 2024 -0400
+
+    Update gitlog
+
 commit e1ba6afdd382df4b5cdf2380c79d14bc41fe3237
 Author: Justin Xiang <jx372@cornell.edu>
 Date:   Thu Mar 28 15:38:48 2024 -0400
