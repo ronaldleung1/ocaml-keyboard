@@ -118,7 +118,7 @@ let test_get_playlists _ =
   let library = Library.empty in
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
-  assert_equal 2 (List.length (Library.get_playlists library))
+  assert_equal [ p2 ; p1 ] (Library.get_playlists library)
 
 (* Test for finding a specfic playlist in the library *)
 let test_find_playlist _ =
@@ -543,6 +543,7 @@ let tests =
            "test_remove_song" >:: test_remove_song;
            "test_contains" >:: test_contains;
            "test_total_duration" >:: test_total_duration;
+           "test_get_playlists" >:: test_get_playlists;
          ];
     "test suite for library module"
     >::: [
