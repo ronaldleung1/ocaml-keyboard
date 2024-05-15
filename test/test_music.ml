@@ -145,8 +145,7 @@ let test_get_playlists _ =
   let library = Library.empty in
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
-  assert_equal [ p2 ; p1 ] (Library.get_playlists
-   library)
+  assert_equal [ p2; p1 ] (Library.get_playlists library)
 
 (* Test for finding a specfic playlist in the library *)
 let test_find_playlist _ =
@@ -544,6 +543,49 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
+let test_volume_default_vol _ =
+  let vol = Volume.start 10.0 () in
+  assert_equal 10.0 !vol
+
+let test_volume_change_vol _ =
+  let vol = Volume.start 10.0 () in
+  let newvol = Volume.start (!vol -. 5.) () in
+  assert_equal 5.0 !newvol
+
+let test_data_to_string_1 _ =
+  assert_equal
+    (Presets.data_to_string ("test", (1.0, 2.0, "abc")))
+    "test,1.,2.,abc\n"
+
+let test_data_to_string_2 _ =
+  assert_equal (Presets.data_to_string ("", (0.0, 0.0, ""))) ",0.,0.,\n"
+
+let test_data_to_string_3 _ =
+  assert_equal
+    (Presets.data_to_string ("hello", (3.14159, 2.71828, "world")))
+    "hello,3.14159,2.71828,world\n"
+
+(* let test_print_string_to_file _ = (* let clear_file file_name = let
+   oc = open_out file_name in close_out oc in clear_file "test.csv";
+   Presets.print_string_to_file "test.csv" "preset1,60.,10.,piano\n";
+   Presets.print_string_to_file "test.csv"
+   "preset2,46.,3.25925922394,alto_sax\n"; Presets.print_string_to_file
+   "test.csv" "preset3,0.,10.,acoustic_bass\n";
+   Presets.print_string_to_file "test.csv"
+   "preset4,60.,10.,xylophone\n"; Presets.print_string_to_file
+   "test.csv" "preset5,60.,3.33333325386,acoustic_guitar_steel\n";
+   Presets.print_string_to_file "test.csv" "preset6,40.,10.,trumpet\n";
+   *) let presets = Presets.load_array_from_file "test.csv" in
+   assert_equal !presets [| ("preset1", (60., 10., "piano"));
+   ("preset2", (46., 3.25925922394, "alto_sax")); ("preset3", (0., 10.,
+   "acoustic_bass")); ("preset4", (60., 10., "xylophone")); ("preset5",
+   (60., 3.33333325386, "acoustic_guitar_steel")); ("preset6", (40.,
+   10., "trumpet")); |] *)
+
+let test_load_array_from_empty_file _ =
+  let presets = Presets.load_array_from_file "empty.csv" in
+  assert_equal !presets [||]
+
 let tests =
   [
     "test suite for song module"
@@ -629,6 +671,21 @@ let tests =
            "test_map2i_different_lengths2"
            >:: test_map2i_different_lengths2;
            "test_map2i_empty_lists" >:: test_map2i_empty_lists;
+         ];
+    "test suite for volume"
+    >::: [
+           "test volume" >:: test_volume_default_vol;
+           "test change volume" >:: test_volume_change_vol;
+         ];
+    "test suite for presets"
+    >::: [
+           "test_data_to_string_1" >:: test_data_to_string_1;
+           "test_data_to_string_2" >:: test_data_to_string_2;
+           "test_data_to_string_3" >:: test_data_to_string_3;
+           (* "test_print_string_to_file" >::
+              test_print_string_to_file; *)
+           "test_load_array_from_empty_file"
+           >:: test_load_array_from_empty_file;
          ];
   ]
 

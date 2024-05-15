@@ -26,8 +26,12 @@ let seconds_to_minutes seconds = (seconds / 60, seconds mod 60)
 let time_to_string (time : int * int) =
   let hours, minutes = time in
   let padded_minutes =
-    if minutes < 10 then "0" ^ string_of_int minutes
-    else string_of_int minutes
+    if minutes < 10 then begin
+      "0" ^ string_of_int minutes
+    end
+    else begin
+      string_of_int minutes
+    end
   in
   string_of_int hours ^ ":" ^ padded_minutes
 
@@ -36,8 +40,10 @@ let rec fold_left f accu l =
 
 let total_duration (playlist : t) =
   let total_seconds =
-    fold_left
-      (fun acc song -> acc + Song.duration song)
+    List.fold_left
+      begin
+        fun acc song -> acc + Song.duration song
+      end
       0 playlist.songs
   in
   "Total Duration: " ^ time_to_string (seconds_to_minutes total_seconds)
@@ -45,11 +51,20 @@ let total_duration (playlist : t) =
 let rec map f = function [] -> [] | h :: t -> f h :: map f t
 
 let display playlist =
-  if is_empty playlist then "Playlist is empty."
-  else
-    fold_left
-      (fun acc x -> x ^ "\n" ^ acc)
+  if is_empty playlist then begin
+    "Playlist is empty."
+  end
+  else begin
+    List.fold_left
+      begin
+        fun acc x -> x ^ "\n" ^ acc
+      end
       ""
-      (map (fun song -> Song.to_string_detailed song) playlist.songs)
+      begin
+        List.map
+          (fun song -> Song.to_string_detailed song)
+          playlist.songs
+      end
+  end
 
 let get_songs playlist = playlist.songs
