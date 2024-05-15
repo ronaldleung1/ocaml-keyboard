@@ -4,6 +4,21 @@ open Raylib
 
 (* TESTS FOR SONG MODULE *)
 
+(* Tests for the title function *)
+let test_title _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal "song1" (Song.title song)
+
+(* Tests for the artist function *)
+let test_artist _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal "artist1" (Song.artist song)
+
+(* Tests for the duration function *)
+let test_duration _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal 240 (Song.duration song)
+
 (* Test for creating a song object and verifying its properties *)
 let test_create_song _ =
   let song = Song.create "song1" "artist1" 240 in
@@ -94,8 +109,7 @@ let test_remove_playlist _ =
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
   Library.remove_playlist "My Playlist 1" library;
-  (* assert_equal [ p2 ] (Library.get_playlists library) *)
-  assert_equal 1 (List.length (Library.get_playlists library))
+  assert_equal [ p2 ] (Library.get_playlists library)
 
 (* Test for verifying the correct count of playlists in the library *)
 let test_get_playlists _ =
@@ -104,7 +118,7 @@ let test_get_playlists _ =
   let library = Library.empty in
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
-  assert_equal 2 (List.length (Library.get_playlists library))
+  assert_equal [ p2 ; p1 ] (Library.get_playlists library)
 
 (* Test for finding a specfic playlist in the library *)
 let test_find_playlist _ =
@@ -503,10 +517,21 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
+let test_volume_default_vol _ = 
+  let vol = Volume.start 10.0 () in 
+  assert_equal 10.0 !vol
+let test_volume_change_vol _ = 
+  let vol = Volume.start 10.0 () in 
+  let newvol = Volume.start (!vol -. 5.) () in
+  assert_equal 5.0 !newvol
+
 let tests =
   [
     "test suite for song module"
     >::: [
+           "test_title" >:: test_title;
+           "test_artist" >:: test_artist;
+           "test_duration" >:: test_duration;
            "test_create_song" >:: test_create_song;
            "test_seconds_to_minutes" >:: test_seconds_to_minutes;
            "test_time_to_string" >:: test_time_to_string;
@@ -519,6 +544,7 @@ let tests =
            "test_remove_song" >:: test_remove_song;
            "test_contains" >:: test_contains;
            "test_total_duration" >:: test_total_duration;
+           "test_get_playlists" >:: test_get_playlists;
          ];
     "test suite for library module"
     >::: [
@@ -585,6 +611,12 @@ let tests =
            >:: test_map2i_different_lengths2;
            "test_map2i_empty_lists" >:: test_map2i_empty_lists;
          ];
+    "test suite for volume"
+    >::: [
+        "test volume" >:: test_volume_default_vol;
+        "test change volume" >:: test_volume_change_vol;
+    ] 
+        
   ]
 
 let _ = List.iter (fun test -> run_test_tt_main test) tests

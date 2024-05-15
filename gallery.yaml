@@ -14,17 +14,21 @@ pm:
   name: Jackson Staniec 
   netid: jks273
 publish: true
-title: "Caml Bump Studio"
+title: "The Ocaml Keyboard"
 git-repo: "https://github.com/ronaldleung1/cs3110-final"
 demo-video-url: ""
 desc: >
-  Our current vision entails developing a music player system that offers an interactive 
-  and dynamic approach to music creation. Written in Ocaml, our platform enables users to 
-  play music live by simply pressing keys on the keyboard, facilitating real-time composition. 
-  With the ability to overlay tracks seamlessly, users can effortlessly produce complex pieces. 
-  Additionally, the system includes essential features such as a metronome for timing precision, 
-  as well as support for chord progressions and dynamics. Furthermore, users will have access 
-  to a variety of instruments, looping capabilities, and playback features, enhancing the 
-  versatility and creative potential of the platform. Our goal is to provide a comprehensive 
-  and user-friendly solution that caters to musicians of all levels, fostering creativity 
-  and exploration in music-making.
+  Written in Ocaml, our music player platform offers an interactive
+  and dynamic approach to music creation that enables users to play
+  music live by simply pressing keys on the keyboard, facilitating
+  real-time composition right from your computer. With the ability to
+  seamlessly search and switch between instruments, users can
+  effortlessly play the music they want. Additionally, the system
+  includes essential features such as a metronome for timing
+  precision, as well as support volume, sustain, and octave changing. 
+  Furthermore, users will have access to a preset-saving capabilities 
+  to keep their favorite settings one-click away between sessions,
+  as well as alibrary menu for logging their favorite songs and 
+  playlists. Our goal is to provide a comprehensive and user-friendly 
+  solution that caters to musicians of all levels, fostering 
+  creativity and exploration in music-making.
