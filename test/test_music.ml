@@ -119,7 +119,7 @@ let test_get_playlists _ =
   let library = Library.empty in
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
-  assert_equal [ p2 ; p1 ] (Library.get_playlists library)
+  assert_equal [ p2; p1 ] (Library.get_playlists library)
 
 (* Test for finding a specfic playlist in the library *)
 let test_find_playlist _ =
@@ -134,43 +134,6 @@ let test_find_playlist _ =
   | None -> assert_failure "Playlist doesn't exist."
 
 (* TESTS FOR KEYBOARD MODULE *)
-
-(* initializing the keyboard should change the current octave to what
-   the input octave is *)
-let test_curr_octave _ =
-  let octave_before = 5 in
-  let _ =
-    Keyboard.init_keyboard octave_before
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  assert_equal octave_before !Octave.curr_octave
-
-(* refreshing the keyboard should not change the current octave because
-   no action has been done to increase or decrease the octave *)
-let test_curr_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  let octave_before = !Octave.curr_octave in
-  let _ =
-    Keyboard.refresh
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" false false false false false
-  in
-  let octave_after = !Octave.curr_octave in
-  assert_equal octave_before octave_after
 
 (* init_keyboard cannot be called twice *)
 let test_init_keyboard _ =
@@ -217,6 +180,44 @@ let test_refresh_keyboard2 _ =
     (List.length refresh_keyboard)
 
 (* TESTS FOR THE OCTAVE MODULE *)
+
+(* initializing the keyboard should change the current octave to what
+   the input octave is *)
+let test_curr_octave _ =
+  let octave_before = 5 in
+  let _ =
+    Keyboard.init_keyboard octave_before
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  assert_equal octave_before !Octave.curr_octave
+
+(* refreshing the keyboard should not change the current octave because
+   no action has been done to increase or decrease the octave *)
+let test_curr_octave2 _ =
+  let _ =
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  let octave_before = !Octave.curr_octave in
+  let _ =
+    Keyboard.refresh
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" false false false false false
+  in
+  let octave_after = !Octave.curr_octave in
+  assert_equal octave_before octave_after
+
 (* creating the increase octave key should not mean octave is
    increased *)
 let test_increase_octave _ =
@@ -517,13 +518,34 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
-let test_volume_default_vol _ = 
-  let vol = Volume.start 10.0 () in 
+let test_volume_default_vol _ =
+  let vol = Volume.start 10.0 () in
   assert_equal 10.0 !vol
-let test_volume_change_vol _ = 
-  let vol = Volume.start 10.0 () in 
+
+let test_volume_change_vol _ =
+  let vol = Volume.start 10.0 () in
   let newvol = Volume.start (!vol -. 5.) () in
   assert_equal 5.0 !newvol
+
+let test_data_to_string_1 _ =
+  assert_equal
+    (Presets.data_to_string ("test", (1.0, 2.0, "abc")))
+    "test,1.,2.,abc\n"
+
+let test_data_to_string_2 _ =
+  assert_equal (Presets.data_to_string ("", (0.0, 0.0, ""))) ",0.,0.,\n"
+
+let test_data_to_string_3 _ =
+  assert_equal
+    (Presets.data_to_string ("hello", (3.14159, 2.71828, "world")))
+    "hello,3.14159,2.71828,world\n"
+
+(* let test_load_array_from_file _ = let presets =
+   Presets.load_array_from_file "preset_test.csv" in assert_equal
+   !presets [||] *)
+let test_load_array_from_empty_file _ =
+  let presets = Presets.load_array_from_file "empty.csv" in
+  assert_equal !presets [||]
 
 let tests =
   [
@@ -613,10 +635,19 @@ let tests =
          ];
     "test suite for volume"
     >::: [
-        "test volume" >:: test_volume_default_vol;
-        "test change volume" >:: test_volume_change_vol;
-    ] 
-        
+           "test volume" >:: test_volume_default_vol;
+           "test change volume" >:: test_volume_change_vol;
+         ];
+    "test suite for presets"
+    >::: [
+           "test_data_to_string_1" >:: test_data_to_string_1;
+           "test_data_to_string_2" >:: test_data_to_string_2;
+           "test_data_to_string_3" >:: test_data_to_string_3;
+           (* "test_load_array_from_file" >::
+              test_load_array_from_file; *)
+           "test_load_array_from_empty_file"
+           >:: test_load_array_from_empty_file;
+         ];
   ]
 
 let _ = List.iter (fun test -> run_test_tt_main test) tests
