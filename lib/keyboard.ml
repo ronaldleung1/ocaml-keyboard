@@ -165,13 +165,15 @@ let init_keyboard
      the octave *)
   let curr_notes =
     List.filter
-      (fun note ->
-        let octave_ascii = !Octave.curr_octave + 48 in
-        String.contains note (char_of_int octave_ascii)
-        || String.contains note (char_of_int octave_ascii)
-        || String.contains note (char_of_int (octave_ascii + 1))
-        || String.contains note 'C'
-           && String.contains note (char_of_int (octave_ascii + 2)))
+      begin
+        fun note ->
+          let octave_ascii = !Octave.curr_octave + 48 in
+          String.contains note (char_of_int octave_ascii)
+          || String.contains note (char_of_int octave_ascii)
+          || String.contains note (char_of_int (octave_ascii + 1))
+          || String.contains note 'C'
+             && String.contains note (char_of_int (octave_ascii + 2))
+      end
       notes
   in
   let keyboard_width = int_of_float (Raylib.Rectangle.width rect) in
@@ -185,31 +187,42 @@ let init_keyboard
     let key_width = keyboard_width / num_segments in
     let white_notes =
       List.filter
-        (fun note -> not (String.contains note 'b'))
+        begin
+          fun note -> not (String.contains note 'b')
+        end
         curr_notes
     in
     Utils.map2i
-      (fun i note key_code ->
-        let x =
-          (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
-        in
-        let y = int_of_float (Raylib.Rectangle.y rect) in
-        let width = key_width in
-        let height = int_of_float (Raylib.Rectangle.height rect) in
-        let color = Raylib.Color.white in
-        let key_string = List.nth white_key_code_strings i in
-        if view_only then
-          Button.create ~draw_text:true ~opt_color:color ~view_only:true
-            note key_code key_string
-            (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-               (float_of_int width) (float_of_int height))
-            instrument
-        else
-          Button.create ~draw_text:true ~opt_color:color ~sustain_on
-            note key_code key_string
-            (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-               (float_of_int width) (float_of_int height))
-            instrument)
+      begin
+        fun i note key_code ->
+          let x =
+            (i * key_width) + int_of_float (Raylib.Rectangle.x rect)
+          in
+          let y = int_of_float (Raylib.Rectangle.y rect) in
+          let width = key_width in
+          let height = int_of_float (Raylib.Rectangle.height rect) in
+          let color = Raylib.Color.white in
+          let key_string = List.nth white_key_code_strings i in
+          if view_only then begin
+            Button.create ~draw_text:true ~opt_color:color
+              ~view_only:true note key_code key_string
+              begin
+                Raylib.Rectangle.create (float_of_int x)
+                  (float_of_int y) (float_of_int width)
+                  (float_of_int height)
+              end
+              instrument
+          end
+          else
+            Button.create ~draw_text:true ~opt_color:color ~sustain_on
+              note key_code key_string
+              begin
+                Raylib.Rectangle.create (float_of_int x)
+                  (float_of_int y) (float_of_int width)
+                  (float_of_int height)
+              end
+              instrument
+      end
       white_notes white_key_codes
   in
 
@@ -225,36 +238,53 @@ let init_keyboard
     let key_width = (keyboard_width - white_key_width) / num_segments in
 
     let black_notes =
-      List.filter (fun note -> String.contains note 'b') curr_notes
+      List.filter
+        begin
+          fun note -> String.contains note 'b'
+        end
+        curr_notes
     in
     (* indices of Db, Eb, etc. in the list of notes *)
     let black_indices = [ 1; 3; 6; 8; 10 ] in
     let black_keys =
       Utils.map2i
-        (fun i note key_code ->
-          let x =
-            (List.nth black_indices (i mod 5) + (i / 5 * 12))
-            * key_width
-          in
-          let y = int_of_float (Raylib.Rectangle.y rect) in
-          let width = key_width in
-          let height =
-            int_of_float (Raylib.Rectangle.height rect *. 2. /. 3.)
-          in
-          let color = Raylib.Color.black in
-          let key_string = List.nth black_key_code_strings i in
-          if view_only then
-            Button.create ~draw_text:true ~opt_color:color
-              ~view_only:true note key_code key_string
-              (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-                 (float_of_int width) (float_of_int height))
-              instrument
-          else
-            Button.create ~draw_text:true ~opt_color:color ~sustain_on
-              note key_code key_string
-              (Raylib.Rectangle.create (float_of_int x) (float_of_int y)
-                 (float_of_int width) (float_of_int height))
-              instrument)
+        begin
+          fun i note key_code ->
+            let x =
+              begin
+                List.nth black_indices (i mod 5) + (i / 5 * 12)
+              end
+              * key_width
+            in
+            let y = int_of_float (Raylib.Rectangle.y rect) in
+            let width = key_width in
+            let height =
+              int_of_float
+                begin
+                  Raylib.Rectangle.height rect *. 2. /. 3.
+                end
+            in
+            let color = Raylib.Color.black in
+            let key_string = List.nth black_key_code_strings i in
+            if view_only then
+              Button.create ~draw_text:true ~opt_color:color
+                ~view_only:true note key_code key_string
+                begin
+                  Raylib.Rectangle.create (float_of_int x)
+                    (float_of_int y) (float_of_int width)
+                    (float_of_int height)
+                end
+                instrument
+            else
+              Button.create ~draw_text:true ~opt_color:color ~sustain_on
+                note key_code key_string
+                begin
+                  Raylib.Rectangle.create (float_of_int x)
+                    (float_of_int y) (float_of_int width)
+                    (float_of_int height)
+                end
+                instrument
+        end
         black_notes black_key_codes
     in
     black_keys
