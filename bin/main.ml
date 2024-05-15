@@ -612,7 +612,7 @@ let rec loop
                     (current_bpm, current_volume, !current_instrument)
                   )
                 in
-                let preset_string = Presets.ass_to_string preset_data in
+                let preset_string = Presets.data_to_string preset_data in
                 Presets.print_string_to_file "presets.txt" preset_string;
                 (text_input_text, false))
               else if res = 0 || res = 2 then (
