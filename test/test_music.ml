@@ -482,6 +482,42 @@ let test_collision_inside_old_button_but_with_new_button _ =
    is_inside = Rectangle.check_collision_point button_rect mouse_point
    in assert_equal true is_inside *)
 
+let test_combine_lists _ =
+  assert_equal
+    (Utils.combine_lists [ 1; 2; 3 ] [ 'a'; 'b'; 'c' ])
+    [ (1, 'a'); (2, 'b'); (3, 'c') ]
+
+let test_combine_lists_different_lengths1 _ =
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.combine_lists [ 1; 2; 3 ] [ 'a'; 'b' ])
+
+let test_combine_lists_different_lengths2 _ =
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.combine_lists [ 1; 2 ] [ 'a'; 'b'; 'c' ])
+
+let test_combine_lists_empty_lists _ =
+  assert_equal (Utils.combine_lists [] []) []
+
+let test_map2i _ =
+  let f i x y = (i, x, y) in
+  assert_equal
+    (Utils.map2i f [ 1; 2; 3 ] [ 'a'; 'b'; 'c' ])
+    [ (0, 1, 'a'); (1, 2, 'b'); (2, 3, 'c') ]
+
+let test_map2i_different_lengths1 _ =
+  let f i x y = (i, x, y) in
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.map2i f [ 1; 2; 3 ] [ 'a'; 'b' ])
+
+let test_map2i_different_lengths2 _ =
+  let f i x y = (i, x, y) in
+  assert_raises (Failure "Lists have different lengths") (fun () ->
+      Utils.map2i f [ 1; 2 ] [ 'a'; 'b'; 'c' ])
+
+let test_map2i_empty_lists _ =
+  let f i x y = (i, x, y) in
+  assert_equal (Utils.map2i f [] []) []
+
 let tests =
   [
     "test suite for song module"
@@ -546,6 +582,22 @@ let tests =
            \       point inside a previous button but with a new  \
             button"
            >:: test_collision_inside_old_button_but_with_new_button;
+         ];
+    "test suite for list utils"
+    >::: [
+           "test_combine_lists" >:: test_combine_lists;
+           "test_combine_lists_different_lengths1"
+           >:: test_combine_lists_different_lengths1;
+           "test_combine_lists_different_lengths2"
+           >:: test_combine_lists_different_lengths2;
+           "test_combine_lists_empty_lists"
+           >:: test_combine_lists_empty_lists;
+           "test_map2i" >:: test_map2i;
+           "test_map2i_different_lengths1"
+           >:: test_map2i_different_lengths1;
+           "test_map2i_different_lengths2"
+           >:: test_map2i_different_lengths2;
+           "test_map2i_empty_lists" >:: test_map2i_empty_lists;
          ];
   ]
 
