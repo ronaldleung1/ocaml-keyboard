@@ -56,35 +56,61 @@ let test_create_playlist _ =
    added *)
 let test_add_song _ =
   let pl = Playlist.create "My Playlist" in
-  let song = Song.create "Song" "Artist" 180 in
-  Playlist.add_song pl song;
-  assert_equal true (Playlist.contains pl "Song")
+  let song1 = Song.create "Song" "Artist" 180 in
+  let song2 = Song.create "Song 2" "Artist" 180 in
+  let song3 = Song.create "Song 3" "Artist" 180 in
+  let song4 = Song.create "Song 4" "Artist" 180 in
+  let song5 = Song.create "Song 5" "Artist" 180 in
+  Playlist.add_song pl song1;
+  Playlist.add_song pl song2;
+  Playlist.add_song pl song3;
+  Playlist.add_song pl song4;
+  Playlist.add_song pl song5;
+  assert_equal true (Playlist.contains pl "Song");
+  assert_equal false (Playlist.contains pl "hiiii");
+  assert_equal true (Playlist.contains pl "Song 5")
 
 (* Test for removing a song from the playlist and verifying it's no
    longer present *)
 let test_remove_song _ =
   let pl = Playlist.create "My Playlist" in
   let song = Song.create "Song" "Artist" 180 in
+  let song2 = Song.create "Song 2" "Artist" 180 in
+  let song3 = Song.create "Song 3" "Artist" 180 in
   Playlist.add_song pl song;
+  Playlist.add_song pl song2;
+  Playlist.add_song pl song3;
   Playlist.remove_song pl "Song";
-  assert_equal false (Playlist.contains pl "Song")
+  assert_equal false (Playlist.contains pl "Song");
+  assert_equal true (Playlist.contains pl "Song 2")
 
 (* Test for checking the presence of a song in the playlist *)
 let test_contains _ =
   let pl = Playlist.create "My Playlist" in
   let song = Song.create "Song" "Artist" 180 in
+  let song2 = Song.create "Song 2" "Artist" 180 in
+  let song3 = Song.create "Song 3" "Artist" 180 in
   Playlist.add_song pl song;
+  Playlist.add_song pl song2;
+  Playlist.add_song pl song3;
   assert_equal true (Playlist.contains pl "Song");
+  assert_equal true (Playlist.contains pl "Song 3");
   assert_equal false (Playlist.contains pl "hi")
 
 (* Test for calculating the total duration of all songs in a playlist *)
 let test_total_duration _ =
   let pl = Playlist.create "My Playlist" in
   let song1 = Song.create "Song1" "Artist1" 180 in
-  let song2 = Song.create "Song2" "Artist2" 125 in
+  let song2 = Song.create "Song 2" "Artist2" 125 in
+  let song3 = Song.create "Song 3" "Artist" 100 in
+  let song4 = Song.create "Song 4" "Artist" 120 in
+  let song5 = Song.create "Song 5" "Artist" 180 in
   Playlist.add_song pl song1;
   Playlist.add_song pl song2;
-  assert_equal "Total Duration: 5:05" (Playlist.total_duration pl)
+  Playlist.add_song pl song3;
+  Playlist.add_song pl song4;
+  Playlist.add_song pl song5;
+  assert_equal "Total Duration: 11:45" (Playlist.total_duration pl)
 
 (* TESTS FOR LIBRARY MODULE *)
 
