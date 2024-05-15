@@ -494,21 +494,6 @@ let test_collision_inside_old_button_but_with_new_button _ =
   in
   assert_equal true is_inside
 
-(* let test_collision2 _ = let button_rect = Rectangle.create 100. 100.
-   200. 50. in let mouse_point = Vector2.create 300. 200. in let
-   is_inside = Rectangle.check_collision_point button_rect mouse_point
-   in assert_equal false is_inside
-
-   let test_collision3 _ = let button_rect = Rectangle.create 100. 100.
-   200. 50. in let mouse_point = Vector2.create 250. 75. in let
-   is_inside = Rectangle.check_collision_point button_rect mouse_point
-   in assert_equal false is_inside
-
-   let test_collision4 _ = let button_rect = Rectangle.create 100. 100.
-   200. 50. in let mouse_point = Vector2.create 100. 100. in let
-   is_inside = Rectangle.check_collision_point button_rect mouse_point
-   in assert_equal true is_inside *)
-
 let test_combine_lists _ =
   assert_equal
     (Utils.combine_lists [ 1; 2; 3 ] [ 'a'; 'b'; 'c' ])
@@ -674,4 +659,5 @@ let tests =
 
 let _ = List.iter (fun test -> run_test_tt_main test) tests
 let number_of_tests = "Total number of tests: 53"
+let () = print_endline number_of_tests
 
