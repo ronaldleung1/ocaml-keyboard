@@ -2,6 +2,8 @@ open OUnit2
 open Music
 open Raylib
 
+let () = Raylib.set_trace_log_level Raylib.TraceLogLevel.None
+
 (* TESTS FOR SONG MODULE *)
 
 (* Tests for the title function *)
