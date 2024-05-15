@@ -40,7 +40,7 @@ let rec fold_left f accu l =
 
 let total_duration (playlist : t) =
   let total_seconds =
-    List.fold_left
+    fold_left
       begin
         fun acc song -> acc + Song.duration song
       end
@@ -55,15 +55,13 @@ let display playlist =
     "Playlist is empty."
   end
   else begin
-    List.fold_left
+    fold_left
       begin
         fun acc x -> x ^ "\n" ^ acc
       end
       ""
       begin
-        List.map
-          (fun song -> Song.to_string_detailed song)
-          playlist.songs
+        map (fun song -> Song.to_string_detailed song) playlist.songs
       end
   end
 
