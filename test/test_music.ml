@@ -109,8 +109,7 @@ let test_remove_playlist _ =
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
   Library.remove_playlist "My Playlist 1" library;
-  (* assert_equal [ p2 ] (Library.get_playlists library) *)
-  assert_equal 1 (List.length (Library.get_playlists library))
+  assert_equal [ p2 ] (Library.get_playlists library)
 
 (* Test for verifying the correct count of playlists in the library *)
 let test_get_playlists _ =
