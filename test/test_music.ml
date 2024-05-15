@@ -36,7 +36,8 @@ let test_seconds_to_minutes _ =
 (* Test for converting time tuples to formatted standard time strings *)
 let test_time_to_string _ =
   assert_equal "4:00" (Song.time_to_string (4, 0));
-  assert_equal "4:05" (Song.time_to_string (4, 5))
+  assert_equal "4:05" (Song.time_to_string (4, 5));
+  assert_equal "4:59" (Song.time_to_string (4, 59))
 
 (* Test for generating a detailed string representation of a song *)
 let test_to_string _ =
