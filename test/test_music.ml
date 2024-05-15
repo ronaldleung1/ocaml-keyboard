@@ -4,6 +4,21 @@ open Raylib
 
 (* TESTS FOR SONG MODULE *)
 
+(* Tests for the title function *)
+let test_title _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal "song1" (Song.title song)
+
+(* Tests for the artist function *)
+let test_artist _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal "artist1" (Song.artist song)
+
+(* Tests for the duration function *)
+let test_duration _ =
+  let song = Song.create "song1" "artist1" 240 in
+  assert_equal 240 (Song.duration song)
+
 (* Test for creating a song object and verifying its properties *)
 let test_create_song _ =
   let song = Song.create "song1" "artist1" 240 in
@@ -94,8 +109,7 @@ let test_remove_playlist _ =
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
   Library.remove_playlist "My Playlist 1" library;
-  (* assert_equal [ p2 ] (Library.get_playlists library) *)
-  assert_equal 1 (List.length (Library.get_playlists library))
+  assert_equal [ p2 ] (Library.get_playlists library)
 
 (* Test for verifying the correct count of playlists in the library *)
 let test_get_playlists _ =
@@ -104,7 +118,7 @@ let test_get_playlists _ =
   let library = Library.empty in
   Library.add_new_playlist p1 library;
   Library.add_new_playlist p2 library;
-  assert_equal 2 (List.length (Library.get_playlists library))
+  assert_equal [ p2; p1 ] (Library.get_playlists library)
 
 (* Test for finding a specfic playlist in the library *)
 let test_find_playlist _ =
@@ -119,43 +133,6 @@ let test_find_playlist _ =
   | None -> assert_failure "Playlist doesn't exist."
 
 (* TESTS FOR KEYBOARD MODULE *)
-
-(* initializing the keyboard should change the current octave to what
-   the input octave is *)
-let test_curr_octave _ =
-  let octave_before = 5 in
-  let _ =
-    Keyboard.init_keyboard octave_before
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  assert_equal octave_before !Octave.curr_octave
-
-(* refreshing the keyboard should not change the current octave because
-   no action has been done to increase or decrease the octave *)
-let test_curr_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" ~view_only:false false ()
-  in
-  let octave_before = !Octave.curr_octave in
-  let _ =
-    Keyboard.refresh
-      (Rectangle.create 0.
-         (float_of_int (Raylib.get_screen_height ()) -. 100.)
-         (float_of_int (Raylib.get_screen_width ()))
-         100.)
-      "piano" false false false false false
-  in
-  let octave_after = !Octave.curr_octave in
-  assert_equal octave_before octave_after
 
 (* init_keyboard cannot be called twice *)
 let test_init_keyboard _ =
@@ -201,6 +178,45 @@ let test_refresh_keyboard2 _ =
     (List.length init_keyboard)
     (List.length refresh_keyboard)
 
+(* TESTS FOR THE OCTAVE MODULE *)
+
+(* initializing the keyboard should change the current octave to what
+   the input octave is *)
+let test_curr_octave _ =
+  let octave_before = 5 in
+  let _ =
+    Keyboard.init_keyboard octave_before
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  assert_equal octave_before !Octave.curr_octave
+
+(* refreshing the keyboard should not change the current octave because
+   no action has been done to increase or decrease the octave *)
+let test_curr_octave2 _ =
+  let _ =
+    Keyboard.init_keyboard 5
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" ~view_only:false false ()
+  in
+  let octave_before = !Octave.curr_octave in
+  let _ =
+    Keyboard.refresh
+      (Rectangle.create 0.
+         (float_of_int (Raylib.get_screen_height ()) -. 100.)
+         (float_of_int (Raylib.get_screen_width ()))
+         100.)
+      "piano" false false false false false
+  in
+  let octave_after = !Octave.curr_octave in
+  assert_equal octave_before octave_after
+
 (* creating the increase octave key should not mean octave is
    increased *)
 let test_increase_octave _ =
@@ -225,43 +241,6 @@ let test_decrease_octave _ =
   let _ = Octave.init_decrease_button in
   assert_equal octave !Octave.curr_octave
 
-(* test decrease octave key functionality: must not increase the
-   octave *)
-let test_decrease_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave <= octave)
-
-(* test decrease octave key functionality: cannot go beyond 0 on
-   curr_octave - 0 on keyboard scale *)
-let test_decrease_octave3 _ =
-  let _ =
-    Keyboard.init_keyboard 1
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false true ()
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave > 1 then
-      Octave.curr_octave := !Octave.curr_octave - 1
-  in
-  assert_equal true (!Octave.curr_octave >= 0)
-
 (* test increase octave key functionality: must not decrease the
    octave *)
 let test_increase_octave2 _ =
@@ -310,23 +289,6 @@ let test_decrease_octave3 _ =
       Octave.curr_octave := !Octave.curr_octave - 1
   in
   assert_equal true (!Octave.curr_octave >= 0)
-
-(* test increase octave key functionality: must not decrease the
-   octave *)
-let test_increase_octave2 _ =
-  let _ =
-    Keyboard.init_keyboard 5
-      (Rectangle.create 0. 0. 0. 0.)
-      "piano" ~view_only:false false ()
-  in
-  let octave = !Octave.curr_octave in
-  let _ =
-   fun _ ->
-    if !Octave.curr_octave < 5 then
-      Octave.curr_octave := !Octave.curr_octave + 1
-  in
-  let current_octave = !Octave.curr_octave in
-  assert_equal true (current_octave >= octave)
 
 (* test increase octave key functionality: cannot go beyond 5 on
    curr_octave - 6 on keyboard scale *)
@@ -555,6 +517,15 @@ let test_map2i_empty_lists _ =
   let f i x y = (i, x, y) in
   assert_equal (Utils.map2i f [] []) []
 
+let test_volume_default_vol _ =
+  let vol = Volume.start 10.0 () in
+  assert_equal 10.0 !vol
+
+let test_volume_change_vol _ =
+  let vol = Volume.start 10.0 () in
+  let newvol = Volume.start (!vol -. 5.) () in
+  assert_equal 5.0 !newvol
+
 let test_data_to_string_1 _ =
   assert_equal
     (Presets.data_to_string ("test", (1.0, 2.0, "abc")))
@@ -579,6 +550,9 @@ let tests =
   [
     "test suite for song module"
     >::: [
+           "test_title" >:: test_title;
+           "test_artist" >:: test_artist;
+           "test_duration" >:: test_duration;
            "test_create_song" >:: test_create_song;
            "test_seconds_to_minutes" >:: test_seconds_to_minutes;
            "test_time_to_string" >:: test_time_to_string;
@@ -591,6 +565,7 @@ let tests =
            "test_remove_song" >:: test_remove_song;
            "test_contains" >:: test_contains;
            "test_total_duration" >:: test_total_duration;
+           "test_get_playlists" >:: test_get_playlists;
          ];
     "test suite for library module"
     >::: [
@@ -656,6 +631,11 @@ let tests =
            "test_map2i_different_lengths2"
            >:: test_map2i_different_lengths2;
            "test_map2i_empty_lists" >:: test_map2i_empty_lists;
+         ];
+    "test suite for volume"
+    >::: [
+           "test volume" >:: test_volume_default_vol;
+           "test change volume" >:: test_volume_change_vol;
          ];
     "test suite for presets"
     >::: [

@@ -30,4 +30,5 @@ val refresh :
     redraws the keyboard if the octave, instrument, sustain setting, or
     view setting has changed. Draws with dimensions provided by rect,
     the instrument, the sustain setting, and the view_only setting.
-    Returns the keyboard as a list of interactive keys. *)
+    Returns the keyboard as a list of interactive keys. Raises failure
+    if called before init_keyboard. *)
