@@ -1,10 +1,6 @@
 open Music
-
-exception Break
-
 let screenWidth = 800
 let screenHeight = 450
-let argv : string list = Array.to_list Sys.argv
 
 let load_instruments_from_csv file_path =
   let ic = open_in file_path in
@@ -282,11 +278,11 @@ let rec library_loop () =
              "Exit Library Menu")
       then library_loop () (* Continue the inner loop *)
       else ()
-  with Break -> ()
+  with _ -> ()
 
 let rec loop
     metronome
-    keys
+    _
     octave_keys
     (volume_control : unit -> float ref) =
   if Raylib.window_should_close () then Raylib.close_window ()
