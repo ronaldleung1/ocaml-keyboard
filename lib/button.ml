@@ -97,7 +97,7 @@ let create
   button_stack := rect :: !button_stack;
 
   let sound =
-    load_sound ("assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
+    load_sound ("./assets/" ^ instrument ^ "/" ^ note ^ ".mp3")
   in
   let color = ref opt_color in
   let mouse_point = ref (Vector2.create 0. 0.) in
