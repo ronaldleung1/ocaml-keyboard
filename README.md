@@ -1,4 +1,4 @@
-# 🐫 CS 3110 Final Project
+# 🐫 The OCaml Keyboard - CS 3110 Final Project
 
 Cassidy Xu (chx4)
 
