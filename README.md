@@ -10,4 +10,6 @@ Justin Xiang (jx372)
 
 Ganesh Rayavarapu (gnr25)
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/1oY2G2p8NNQ/0.jpg)](https://www.youtube.com/watch?v=1oY2G2p8NNQ)
+
 [https://www.youtube.com/watch?v=1oY2G2p8NNQ](url)
